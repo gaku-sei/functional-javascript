@@ -71,8 +71,8 @@ assertEq(obj.qux, undefined);
 assertEq(obj.baz, 3);
 assertEq(cobj.qux, 4, 72);
 
-//#_proxy
-var xs = _proxy(3)(Array)(1,2,3,4);
+//#_arity
+var xs = _arity(3)(Array)(1,2,3,4);
 assertEq(xs.length, 3);
 assertEq(xs[0], 1);
 assertEq(xs[1], 2);
@@ -229,6 +229,15 @@ var zs = butlast(xs);
 for(i in zs)
   assertEq(zs[i], ys[i]);
 
+//#get
+assertEq(get([1,2,3], 0), 1);
+assertEq(get({foo: {bar: [1,2]}}, ["foo", "bar", 1]), 2);
+assertEq(get([1,2], 4, "Not Found..."), "Not Found...");
+assertEq(get([1,2], 4), undefined);
+assertEq(get({foo: [1,"bar"]}, ["foo", 1, 2]), "r");
+assertEq(get({foo: "bar"}, "foo"), "bar");
+assertEq(get([1,2,3], 0), 1);
+
 //#sum
 assertEq(sum([1,2,3,4]), 10);
 //Space Oddity Notice: it's a normal behavior and it's neither a desired feature nor a real bug.
@@ -258,9 +267,6 @@ assertEq(ys[2], xs[2]);
 assertEq(ys[3], xs[0]);
 assertEq(ys[4], xs[1]);
 assertEq(ys[5], xs[2]);
-
-//#reduce0
-assertEq(reduce0([1,2,3], function(x, y) { return x + y }), 6);
 
 //#reduce
 //Like map, reduce is heavily used in others functions (mostly the variadic ones)
@@ -522,8 +528,8 @@ assertEq(div(84,2,4), 10.5);
 //Cross Tests
 //  Let's test some more complex (and less realistic) code with several fjs functions in a row.
 
-//wtf creates an array containing the result of id applied to each element of arguments (basically
-//themselves) then joins the elements of this array.
+//wtf creates an array containing the result of id applied to each element of arguments (i.e: themselves)
+//then joins the elements of this array.
 //Why would we do some simple code, when we may do some funny (and test valuable) code?
 var wtf = function() { return flip(comp)(partial(map, arguments), join)(id) };
 assertEq(wtf("foo", "bar"), "foobar");

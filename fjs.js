@@ -1,351 +1,518 @@
 //_core
 //  Internal functions.
-//  They are not supposed to be used in your project.
-//  BTW some of them could be useful (like _for or _proxy).
+//  They are not supposed to be used in a project.
+//  BTW some of them could be useful (like _for (aliased forEach) or _arity).
 
-//#_for
-//  Wrapper for the for statement.
-var _for = function(xs, f) {
-  for(var i in xs)
-    if(xs.hasOwnProperty(i))
-      f.call(null, xs[i], i, xs);
-  return null;
+//Finish & Rewrite
+var _fn = function() {
+  var f = arguments[arguments.length - 1];
+  if(typeof f !== "function") throw Error("Last argument of _fn must be a function.");
+  f.doc = [].slice.call(arguments, 0, -1).join("\n");
+  f.source = f.toString();
+  return f;
 };
 
-//#_is
-//  General purpose type checker.
-//  BTW it's only used in isArray, isObject and isString.
-var _is = function(type) {
-  return function(x) {
-    return second(toString.call(x).match(/\s(\w+)\]$/i)) == type;
-  };
-};
+var _for = _fn(
+  "Wrapper for the for statement.",
+  function(xs, f) {
+    for(var i in xs)
+      if(xs.hasOwnProperty(i))
+        f.call(null, xs[i], i, xs);
+    return null;
+  }
+);
 
-//#_cloneArray:
-//  Recursively clones an Array.
-var _cloneArray = function(x) {
-  return map(x, clone);
-};
-
-//#_cloneObject:
-//  Recursively clones an Object.
-var _cloneObject = function(x) {
-  var y = {};
-  _for(x, function(v, k) {
-    y[k] = clone(v);
-  });
-  return y;
-};
-
-//#_proxy
-//  Use with caution as _proxy may leads to cryptic errors!
-//  Limit the arguments given to a function.
-//  e.g.: _proxy(2)(add)(2,7,6) //=> 9
-//  The first two arguments only are passed to the function add.
-var _proxy = function(n) {
-  return function(f) {
-    return function() {
-      return apply(f, slice(arguments, 0, n));
+var _is = _fn(
+  "General purpose type checker.",
+  "BTW it's only used in isArray, isObject and isString.",
+  function(type) {
+    return function(x) {
+      return second(toString.call(x).match(/\s(\w+)\]$/i)) == type;
     };
-  };
-};
+  }
+);
 
-var _proxy0 = _proxy(0);
+var _cloneArray = _fn(
+  "Recursively clones an Array.",
+  function(x) {
+    return map(x, clone);
+  }
+);
 
-var _proxy1 = _proxy(1);
+var _cloneObject = _fn(
+   "Recursively clones an Object.",
+  function(x) {
+    var y = {};
+    _for(x, function(v, k) {
+      y[k] = clone(v);
+    });
+    return y;
+  }
+);
 
-var _proxy2 = _proxy(2);
+var _arity = _fn(
+  "Use with caution as _arity may leads to cryptic errors!",
+  "Limit the arguments given to a function.",
+  "e.g.: _arity(2)(add)(2,7,6) //=> 9",
+  "The first two arguments only are passed to the function add.",
+  function(n) {
+    return function(f) {
+      return function() {
+        return apply(f, slice(arguments, 0, n));
+      };
+    };
+  }
+);
 
-//#_console
-//  Wrapper for the console object.
-//  The function returned by _console itself returns its arguments.
-//  e.g.: map(_console("log")(1,2), inc) // logs [1,2] then returns [2,3]
-//        add(_console("log")(1), 2) // logs 1 then returns 3
-var _console = function(met) {
-  return function() {
-    if(arguments.length < 2)
-      var x = first(arguments);
-    else var x = slice(arguments);
-    console[met](x);
-    return x;
-  };
-};
+var _arity0 = _arity(0);
+
+var _arity1 = _arity(1);
+
+var _arity2 = _arity(2);
+
+var _console = _fn(
+  "Wrapper for the console object.",
+  "The function returned by _console itself returns its arguments.",
+  "e.g.: map(_console(\"log\")(1,2), inc) // logs [1,2] then returns [2,3]",
+  "      add(_console(\"log\")(1), 2) // logs 1 then returns 3",
+  function(met) {
+    return function() {
+      if(arguments.length < 2)
+        var x = first(arguments);
+      else var x = slice(arguments);
+      console[met](x);
+      return x;
+    };
+  }
+);
+
+//Test
+var _apply = _fn(
+  "This function uses context and rebinds 'this',",
+  "it's not 'absolutely' supposed to be used in functionnal code.",
+  "It applies a function to an array of arguments.",
+  "The first argument must be a function,",
+  "and the second one the context.",
+  function(f, cxt, args) {
+    if(!isArrayLike(args))
+      throw Error("args must be an array or some arguments");
+    return f.apply(cxt, args);
+  }
+);
+
+//Test
+var _call = _fn(
+  "This function uses context and rebinds 'this',",
+  "it's not 'absolutely' supposed to be used in functionnal code.",
+  "It applies a function to a variable number of arguments.",
+  "The first argument must be a function,",
+  "and the second one is the context.",
+  function(f, cxt) {
+    return _apply(f, cxt, slice(arguments, 2));
+  }
+);
 
 //core
 //  General purpose functions.
 
-//#forEach
-//  Alias for _for.
-//  Defined here for readability.
-var forEach = _for;
+var forEach = _fn(
+  "Alias for _for.",
+  "Defined here for readability.",
+  _for
+);
 
-//#id
-//  Returns self.
-var id = function(x) {
-  return x;
-};
-
-//#clone
-//  General purpose clone function.
-//  The Objects and Arrays are mutable in JS
-//  clone allows to bypass this with ease.
-var clone = function(x) {
-  switch(true) {
-  case isArray(x):  return _cloneArray(x);
-  case isObject(x): return _cloneObject(x);
-  default: return x;
+var id = _fn(
+  "Returns self.",
+  function(x) {
+    return x;
   }
-};
+);
 
-//#apply
-//  Applies a function to an array of arguments.
-var apply = function(f, args) {
-  if(!isArrayLike(args))
-    throw Error("args must be an array or some arguments");
-  return f.apply(null, args);
-};
+var clone = _fn(
+  "General purpose clone function.",
+  "The Objects and Arrays are mutable in JS",
+  "clone allows to bypass this with ease.",
+  "If you give arguments to clone, it will return an Array.",
+  function(x) {
+    switch(true) {
+    case isArrayLike(x):  return _cloneArray(x);
+    case isObject(x): return _cloneObject(x);
+    default: return x;
+    }
+  }
+);
 
-//#call
-//  Applies a function to a variable number of arguments.
-var call = function(f) {
-  return apply(f, butfirst(arguments));
-};
+var doc = _fn(
+  "Returns the attribute doc of an object.",
+  function(f) {
+    return f.doc;
+  }
+);
 
-//#slice
-//  Loosely based on the function Array.prototype.slice.
-//  e.g.: slice(arguments) // similar to [].slice.call(arguments)
-//        slice([1,2,3,4], 1,3) // [2, 3]
-//        slice([1,2,3], -1) // [3]
-var slice = function(xs) {
-  var args = [].slice.call(arguments).slice(1);
-  return [].slice.apply(xs, args);
-};
+var source = _fn(
+  "Returns the attribute source of an object.",
+  function(f) {
+    return f.source;
+  }
+);
 
-//#join
-//  Based on Array.prototype.join, join replaces "," with "".
-//  e.g.: join(["foo", "bar"]) // "foobar"
-var join = function(xs) {
-  return [].join.call(xs, second(arguments)||"");
-};
+var attrs = _fn(
+  "Returns an Object containing all the attributes of x.",
+  "You may get the attrs of everything.",
+  function(x) {
+    var o = {};
+    _for(x, function(v,k){o[k] = v});
+    return o;
+  }
+);
 
-//#concat2
-//  Appends the content of ys to xs.
-var concat2 = function(xs, ys) {
-  var xs = slice(xs||[]), ys = slice(ys||[]); //Bruteforce: change that
-  if([].concat)
-    return [].concat.call(xs, ys);
-  else throw Error("Array.prototype.concat not found!"); //Raises for the moment
-  //return conj.call(null, xs, ys);
-};
+var apply = _fn(
+  "Applies a function to an array of arguments.",
+  "The first argument must be a function,",
+  "the context is set to null.",
+  function(f, args) {
+    if(!isArrayLike(args))
+      throw Error("args must be an array or some arguments");
+    return f.apply(null, args);
+  }
+);
 
-//#concat
-//  Like concat2 but variadic.
-var concat = function() {
-  return reduce(arguments, concat2, []);
-};
+var call = _fn(
+  "Applies a function to a variable number of arguments.",
+  "The first argument must be a function,",
+  "the context is set to null.",
+  function(f) {
+    return apply(f, butfirst(arguments));
+  }
+);
 
-//#map
-//  The very famous map function!
-//  e.g.: map([1,2,4], partial(add, 2)) // [3,4,6]
-var map = function(xs, f) {
-  if([].map) return [].map.call(xs, f);
-  var ys = [];
-  _for(xs, function() {
-    ys.push(apply(f, arguments));
-  });
-  return ys;
-};
+var slice = _fn(
+  "Loosely based on the function Array.prototype.slice.",
+  "e.g.: slice(arguments) // similar to [].slice.call(arguments)",
+  "      slice([1,2,3,4], 1,3) // [2, 3]",
+  "      slice([1,2,3], -1) // [3]",
+  function(xs) {
+    var args = [].slice.call(arguments).slice(1);
+    return [].slice.apply(xs, args);
+  }
+);
 
-//#times
-//  Calls function f n times.
-var times = function(n, f) {
-  for(var i = 0; i < n; ++i)
-    call(f, i);
-};
+var join = _fn(
+  "Based on Array.prototype.join, join replaces \",\" with \"\".",
+  "e.g.: join([\"foo\", \"bar\"]) // \"foobar\"",
+  function(xs) {
+    return [].join.call(xs, second(arguments)||"");
+  }
+);
 
-//#cons
-//  Prepends x to xs.
-//  e.g.: cons([2,3], 1) // [1,2,3]
-var cons = function(xs, x) {
-  return concat([x], xs);
-};
+//Finish & Rewrite
+var concat2 = _fn(
+  "Appends the content of ys to xs.",
+  function(xs, ys) {
+    var xs = slice(xs||[]), ys = slice(ys||[]); //Bruteforce: change that
+    if([].concat)
+      return [].concat.call(xs, ys);
+    else throw Error("Array.prototype.concat not found!"); //Raises for the moment
+    //return conj.call(null, xs, ys);
+  }
+);
 
-//#conj
-//  Appends x to xs.
-//  e.g.: conj([1,2], 3) // [1,2,3]
-var conj = function(xs) {
-  var ys = clone(xs);
-  [].push.apply(ys, butfirst(arguments));
-  return ys;
-};
+var concat = _fn(
+  "Like concat2 but variadic.",
+  function() {
+    return reduce(arguments, concat2, []);
+  }
+);
 
-//#first
-//  Returns the first element of xs.
-var first = function(xs) {
-  return xs[0];
-};
-
-//#butfirst
-//  Returns all the elements of xs but the first one.
-var butfirst = function(xs) {
-  return slice(xs, 1, xs.length);
-};
-
-//#second
-//  Returns the second element of xs.
-var second = function(xs) {
-  return xs[1];
-};
-
-//#last
-//  Returns the last elements of xs.
-var last = function(xs) {
-  return xs[xs.length - 1];
-};
-
-//#butlast
-//  Returns all the elements of xs but the last one.
-var butlast = function(xs) {
-  return slice(xs, 0, xs.length - 1);
-};
-
-//#sum
-//  Sums the elements of an array.
-var sum = function(xs) {
-  return reduce(xs, add);
-};
-
-//#repeat
-//  Returns an array containing n times x.
-var repeat = function(x, n) {
-  if(n > 0)
-    return conj(repeat(x, dec(n)), x);
-  else return [];
-};
-
-//#cycle
-//  Returns an array containing n repetitions of the items in xs.
-var cycle = function(xs, n) {
-  if(n > 0)
-    return concat2(cycle(xs, dec(n)), xs);
-  else return [];
-};
-
-//#reduce0
-//  Unlike reduce, reduce0 does not take any aggregator.
-var reduce0 = function(xs, f) {
-  return [].reduce.call(xs, _proxy2(f));
-};
-
-//#reduce
-//  Based on Array.prototype.reduce.
-var reduce = function(xs, f) {
-  return [].reduce.call(xs, _proxy2(f), arguments[2]||0);
-};
-
-//#reverse
-//  Reverse the element of an array.
-var reverse = function(xs) {
-  return reduce(xs, cons, []);
-};
-
-//#every
-//  Based on Array.prototype.every.
-var every = function(xs, f) {
-  return [].every.call(xs, f);
-};
-
-//#some
-//  Based on Array.prototype.some.
-var some = function(xs, f) {
-  return [].some.call(xs, f);
-};
-
-//#comp
-//  Composes two functions (more in the future).
-//  e.g.: comp(partial(add, 1), partial(mul, 2))(2) // 5
-var comp = function(f, g) {
-  return function() {
-    return call(f, apply(g, arguments));
-  };
-};//should be variadic
-
-//#partial
-//  Partially apply a function to a variable number of arguments.
-//  e.g.: partial(add, 1)(2) // 3
-var partial = function(f) {
-  var args = butfirst(arguments);
-  return function() {
-    return apply(f, concat(args, arguments));
-  };
-};
-
-//#juxt
-//  Sequentially applies each function to a variadic number of arguments
-//  then returns an array with the results.
-//  e.g.: juxt(inc, dec)(2) // [3,1]
-var juxt = function() {
-  var fs = arguments;
-  return function() {
-    var args = arguments;
-    return map(fs, function(f) {
-      return apply(f, args);
+var map = _fn(
+  "The very famous map function!",
+  "e.g.: map([1,2,4], partial(add, 2)) // [3,4,6]",
+  function(xs, f) {
+    var ys = [];
+    _for(xs, function() {
+      ys.push(apply(f, arguments));
     });
-  };
-};
+    return ys;
+  }
+);
 
-//#flip
-//  Flips the arguments given to a function.
-//  e.g.: div(10, 2) // 5
-//        flip(div)(10, 2) // 0.2
-var flip = function(f) {
-  return function() {
-    return apply(f, reverse(arguments));
-  };
-};
+var times = _fn(
+  "Calls function f n times.",
+  function(n, f) {
+    for(var i = 0; i < n; ++i)
+      call(f, i);
+  }
+);
 
-//#fmap
-//  Flips the map arguments.
-var fmap = flip(map);
+//Write
+var takeWhile = _fn(
+  "Returns an Array containing the items of xs",
+  "while pred(item) is true.",
+  function(pred, xs) {
+  }
+);
 
-//#feach
-//  Flips the forEach arguments.
-//  e.g.: var log1Each = partial(feach, log1);
-var feach = flip(forEach);
+//Write
+var dropWhile = _fn(
+  "Drops all the items of xs while pred(item) is true",
+  "and returns all the remaining items as an Array",
+  function(pred, xs) {
+  }
+);
 
-//#freduce
-//  Flips the reduce arguments.
-var freduce = flip(reduce);
+var cons = _fn(
+  "Prepends x to xs.",
+  "e.g.: cons([2,3], 1) // [1,2,3]",
+  function(xs, x) {
+    return concat([x], xs);
+  }
+);
 
-//#log
-//  console.log and returns the argument(s) given.
-var log = _console("log");
+var conj = _fn(
+  "Appends x to xs.",
+  "e.g.: conj([1,2], 3) // [1,2,3]",
+  function(xs) {
+    var ys = clone(xs);
+    [].push.apply(ys, butfirst(arguments));
+    return ys;
+  }
+);
 
-//#log1
-//  console.log and returns the first argument given.
-var log1 = _proxy1(_console("log"));
+var first = _fn(
+  "Returns the first element of xs.",
+  function(xs) {
+    return xs[0];
+  }
+);
 
-//#warn
-//  console.warn and returns the argument(s) given.
-var warn = _console("warn");
+var butfirst = _fn(
+  "Returns all the elements of xs but the first one.",
+  function(xs) {
+    return slice(xs, 1, xs.length);
+  }
+);
 
-//#warn1
-//  console.warn and returns the first argument given.
-var warn1 = _proxy1(_console("warn"));
+var second = _fn(
+  "Returns the second element of xs.",
+  function(xs) {
+    return xs[1];
+  }
+);
 
-//#error
-//  console.error and returns the argument(s) given.
-var error = _console("error");
+var last = _fn(
+  "Returns the last elements of xs.",
+  function(xs) {
+    return xs[xs.length - 1];
+  }
+);
 
-//#error1
-//  console.error and returns the first argument given.
-var error1 = _proxy1(_console("error"));
+var butlast = _fn(
+  "Returns all the elements of xs but the last one.",
+  function(xs) {
+    return slice(xs, 0, -1);
+  }
+);
 
-//#eq
-//  Returns wether x equals y or not.
-var eq = function(x, y) {
-  return x === y;
-};//will evolve
+//Rewrite
+var get = _fn(
+  "Object, Array, String and arguments lookup.",
+  "e.g.: get([1,2,3], 0) // 1",
+  "      get({foo: {bar: [1,2]}}, [\"foo\", \"bar\", 1]) // 2",
+  "      get([1,2], 4, \"Not Found...\") // \"Not Found...\".",
+  function(xs, ks, notFound) {
+    var found;
+    if(isArrayLike(ks)) {
+      if(eqOne(ks.length))
+        found = xs[first(ks)];
+      else
+        if(xs[first(ks)])
+          found = get(xs[first(ks)], butfirst(ks));
+    }
+    else found = xs[ks];
+    return isUndefined(found) ? notFound : found;
+  }
+);
+
+var sum = _fn(
+  "Sums the elements of an array.",
+  function(xs) {
+    return reduce(xs, add);
+  }
+);
+
+var repeat = _fn(
+  "Returns an array containing n times x.",
+  function(x, n) {
+    if(n > 0)
+      return conj(repeat(x, dec(n)), x);
+    else return [];
+  }
+);
+
+var cycle = _fn(
+  "Returns an array containing n repetitions of the items in xs.",
+  function(xs, n) {
+    if(n > 0)
+      return concat2(cycle(xs, dec(n)), xs);
+    else return [];
+  }
+);
+
+var reduce = _fn(
+  "An other very famous function!",
+  "The first argument is an array the second one a function",
+  "and you may pass a third argument which is an aggregator",
+  "(first element of xs by default).",
+  "e.g.: reduce([1,2,3], add, 2) // 8",
+  function(xs, f, agg) {
+    var reducer = function(ys, agg) {
+      if(isEmpty(ys)) return agg;
+      return reducer(butfirst(ys), call(f, agg, first(ys)));
+    };
+    if(isUndefined(agg))
+      return reducer(butfirst(xs), first(xs));
+    else return reducer(xs, agg);
+  }
+);
+
+var reverse = _fn(
+  "Reverse the element of an array.",
+  function(xs) {
+    return reduce(xs, cons, []);
+  }
+);
+
+var every = _fn(
+  "Based on Array.prototype.every.",
+  function(xs, f) {
+    return [].every.call(xs, f);
+  }
+);
+
+var some = _fn(
+  "Based on Array.prototype.some.",
+  function(xs, f) {
+    return [].some.call(xs, f);
+  }
+);
+
+//Finish
+var comp = _fn(
+  "Composes two functions (more in the future).",
+  "e.g.: comp(partial(add, 1), partial(mul, 2))(2) // 5",
+  function(f, g) {
+    return function() {
+      return call(f, apply(g, arguments));
+    };
+  }
+);//should be variadic
+
+//Test & Wait for comp to be completed...
+var thread = _fn(
+  "Targeting readability, thread looks like OOP writting.",
+  "e.g.: inc(first([1,3])) becomes thread([1,3], first, inc) // 2",
+  function() {
+    var val = first(arguments);
+    var fs = butfirst(arguments);
+    return apply(flip(comp), fs)(val);
+  }
+);
+
+var partial = _fn(
+  "Partially apply a function to a variable number of arguments.",
+  "e.g.: partial(add, 1)(2) // 3",
+  function(f) {
+    var args = butfirst(arguments);
+    return function() {
+      return apply(f, concat(args, arguments));
+    };
+  }
+);
+
+var juxt = _fn(
+  "Sequentially applies each function to a variadic number of arguments",
+  "then returns an array with the results.",
+  "e.g.: juxt(inc, dec)(2) // [3,1]",
+  function() {
+    var fs = arguments;
+    return function() {
+      var args = arguments;
+      return map(fs, function(f) {
+        return apply(f, args);
+      });
+    };
+  }
+);
+
+var flip = _fn(
+  "Flips the arguments given to a function.",
+  "e.g.: div(10, 2) // 5",
+  "      flip(div)(10, 2) // 0.2",
+  function(f) {
+    return function() {
+      return apply(f, reverse(arguments));
+    };
+  }
+);
+
+var fmap = _fn(
+  "Flips the map arguments.",
+  flip(map)
+);
+
+var feach = _fn(
+  "Flips the forEach arguments.",
+  "e.g.: var log1Each = partial(feach, log1);",
+  flip(forEach)
+);
+
+var freduce = _fn(
+  "Flips the reduce arguments.",
+  "The aggregator remains the third and last argument.",
+  "e.g.: reduce(mul, [2,3]) // 6",
+  "      reduce(mul, [2,3], 2) // 12",
+  function(f, xs, agg) {
+    return reduce(xs, f, agg)
+  }
+);
+
+var log = _fn(
+  "console.log and returns the argument(s) given.",
+  _console("log")
+);
+
+var log1 = _fn(
+  "console.log and returns the first argument given.",
+  _arity1(_console("log"))
+);
+
+var warn = _fn(
+  "console.warn and returns the argument(s) given.",
+  _console("warn")
+);
+
+var warn1 = _fn(
+  "console.warn and returns the first argument given.",
+  _arity1(_console("warn"))
+);
+
+var error = _fn(
+  "console.error and returns the argument(s) given.",
+  _console("error")
+);
+
+var error1 = _fn(
+  "console.error and returns the first argument given.",
+  _arity1(_console("error"))
+);
+
+//Finish
+var eq = _fn(
+  "Returns wether x equals y or not.",
+  function(x, y) {
+    return x === y;
+  }
+);//must dramatically evolve
 
 //core.predicates
 var even = function(x) {
@@ -365,16 +532,16 @@ var dec = function(x) {
 };
 
 var eqZero = function(x) {
-  return x === 0;
+  return eq(x, 0);
 };
 
 var eqOne = function(x) {
-  return x === 1;
+  return eq(x, 1);
 };
 
 var isEmpty = function(x) {
   switch(true) {
-  case(isArray(x) || isString(x)): return eqZero(x.length);
+  case(isArrayLike(x) || isString(x)): return eqZero(x.length);
   case(isObject(x)): for(i in x) return false; return true;
   default: throw Error("x must be an Array, a String or an Object");
   }
@@ -426,21 +593,21 @@ var add = function() {
 
 var sub = function() {
   if(isEmpty(arguments)) return 0;
-  return reduce0(arguments, function(x, y) {
+  return reduce(arguments, function(x, y) {
     return x - y;
   });
 };
 
 var mul = function() {
   if(isEmpty(arguments)) return 0;
-  return reduce0(arguments, function(x, y) {
+  return reduce(arguments, function(x, y) {
     return x * y;
   });
 };
 
 var div = function() {
   if(isEmpty(arguments)) return 0;
-  return reduce0(arguments, function(x, y) {
+  return reduce(arguments, function(x, y) {
     return x / y;
   });
 };
