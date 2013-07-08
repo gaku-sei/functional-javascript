@@ -1,535 +1,868 @@
-var assertEq = function(x, y, line) {
-  if(x !== y) throw Error(x + " is different from " + y + " in fjs_test at line " + line);
-};
+(function() {
+  var assertEq = function(x, y) {
+    if(x !== y) throw Error(x + ' is different from ' + y);
+  };
 
-assertEq(1, 1);
+  var assert = function(x) {
+    if(x !== true) throw Error(x + ' is not true');
+  };
 
-//_core
+  var assertFalse = function(x) {
+    if(x !== false) throw Error(x + ' is not false');
+  };
 
-//#_for
-var i = 0;
-_for([1,2,3], function(x, j, xs) {
-  switch(i) {
-  case 0:
-    assertEq(x, 1);
-    assertEq(j, "0");
-    break;
-  case 1:
-    assertEq(x, 2);
-    assertEq(j, "1");
-    break;
-  case 2:
-    assertEq(x, 3);
-    assertEq(j, "2");
-    break;
-  }
-  ++i;
-});
+  assertEq(1, 1);
+  assert(true);
 
-//#_is
-assertEq(isString("foobar"), true);
-assertEq(isString({}), false);
-assertEq(isString([]), false);
-assertEq(isString(0), false);
-assertEq(isObject({foo:42}), true);
-assertEq(isObject(""), false);
-assertEq(isObject([]), false);
-assertEq(isObject(0), false);
-assertEq(isArray([1,2,3]), true);
-assertEq(isArray({}), false);
-assertEq(isArray(""), false);
-assertEq(isArray(0), false);
+  //#loop
+  var i = 0;
+  fjs.loop(function(k, v) {
+    switch(i) {
+    case 0:
+      assertEq(v, 1);
+      assertEq(k, "0");
+      break;
+    case 1:
+      assertEq(v, 2);
+      assertEq(k, "1");
+      break;
+    case 2:
+      assertEq(v, 3);
+      assertEq(k, "2");
+      break;
+    }
+    ++i;
+  }, [1, 2, 3]);
 
-//#_cloneArray
-var xs = [1,2,3];
-var ys = clone(xs);
-for(i in xs)
-  assertEq(xs[i], ys[i]);
-ys.push(4);
-assertEq(xs.length, 3);
-assertEq(ys.length, 4, 50);
-assertEq(ys[3], 4, 51);
+  //#is
+  assert(fjs.isString("foobar"));
+  assertFalse(fjs.isString({}));
+  assertFalse(fjs.isString([]));
+  assertFalse(fjs.isString(0));
+  assert(fjs.isObject({foo: 42}));
+  assertFalse(fjs.isObject(""));
+  assertFalse(fjs.isObject([]));
+  assertFalse(fjs.isObject(0));
+  assert(fjs.isArray([1,2,3]));
+  assertFalse(fjs.isArray({}));
+  assertFalse(fjs.isArray(""));
+  assertFalse(fjs.isArray(0));
 
-var xs = [[1],2];
-var ys = clone(xs)
-assertEq(xs[0][0], ys[0][0]);
-assertEq(xs[1], ys[1]);
-ys.push([3]);
-xs.push([4]);
-assertEq(ys[2][0], 3);
-assertEq(xs[2][0], 4, 60);
+  //#applyWith
+  var f = function() { return fjs.sum(arguments) * 10; };
+  assertEq(fjs.applyWith(f, 10, [2, 3]), 50);
+  var f = function() { return 'Hello ' + this; };
+  assertEq(fjs.applyWith(f, 'World', []), 'Hello World');
 
-//#_cloneObject
-var obj = {foo: 1, bar: 2};
-var cobj = clone(obj);
-for(i in xs)
-  assertEq(obj[i], cobj[i]);
-obj.baz = 3;
-cobj.qux = 4;
-assertEq(cobj.baz, undefined);
-assertEq(obj.qux, undefined);
-assertEq(obj.baz, 3);
-assertEq(cobj.qux, 4, 72);
+  //#callWith
+  var f = function(x, y) { return (x + y) * 10; };
+  assertEq(fjs.callWith(f, 10, 2, 3), 50);
+  var f = function() { return 'Hello ' + this; };
+  assertEq(fjs.callWith(f, 'World'), 'Hello World');
 
-//#_arity
-var xs = _arity(3)(Array)(1,2,3,4);
-assertEq(xs.length, 3);
-assertEq(xs[0], 1);
-assertEq(xs[1], 2);
-assertEq(xs[2], 3);
+  //#arity
+  var xs = fjs.arity(3)(Array)(1, 2, 3, 4);
+  assertEq(xs.length, 3);
+  assertEq(xs[0], 1);
+  assertEq(xs[1], 2);
+  assertEq(xs[2], 3);
 
-//#_console
-var _consoleTest = function() {
-  var log = _console("log");
-  assertEq(log(1), 1);
-  var xs = log(1,2,3);
-  var ys = [1,2,3];
+  //#cs
+  var consoleTest = function() {
+    var log = fjs.cs('log');
+    assertEq(log(1), 1);
+    var xs = log(1,2,3);
+    var ys = [1,2,3];
+    for(i in xs)
+      assertEq(log(xs[i]), ys[i]);
+  };
+  //consoleTest()
+
+  //#id
+  var xs = [1, 2, 3];
+  var ys = fjs.id(xs);
   for(i in xs)
-    assertEq(log(xs[i]), ys[i]);
-};
-_consoleTest()
+    assertEq(xs[i], ys[i]);
+  xs.push(4);
+  assertEq(xs.length, ys.length);
+  assertEq(xs[3], ys[3]);
+  var x = 'foo';
+  var y = fjs.id(x);
+  assertEq(x, y);
+  var x = 1;
+  var y = fjs.id(1);
+  assertEq(x, y);
 
-//core
+  //#cloneArray
+  var xs = [1, 2, 3];
+  var ys = fjs.clone(xs);
+  for(i in xs)
+    assertEq(xs[i], ys[i]);
+  ys.push(4);
+  assertEq(xs.length, 3);
+  assertEq(ys.length, 4);
+  assertEq(ys[3], 4);
 
-//#id
-var xs = [1,2,3];
-var ys = id(xs);
-for(i in xs)
-  assertEq(xs[i], ys[i]);
-xs.push(4);
-assertEq(xs.length, ys.length);
-assertEq(xs[3], ys[3]);
-var x = "foo";
-var y = id(x);
-assertEq(x, y);
-var x = 1;
-var y = id(1);
-assertEq(x, y);
+  var xs = [[1], 2];
+  var ys = fjs.clone(xs)
+  assertEq(xs[0][0], ys[0][0]);
+  assertEq(xs[1], ys[1]);
+  ys.push([3]);
+  xs.push([4]);
+  assertEq(ys[2][0], 3);
+  assertEq(xs[2][0], 4);
 
-//#clone
-var x = [{foo: [1,2], bar: "baz"}, 2, "qux"];
-var y = clone(x);
-assertEq(x[0].foo[0], y[0].foo[0]);
-assertEq(x[0].bar, y[0].bar);
-assertEq(x[1], y[1]);
-assertEq(x[2], y[2]);
-x[0].foo.push(3);
-y[0].baz = 42;
-assertEq(x[0].foo[2], 3);
-assertEq(y[0].foo[2], undefined);
-assertEq(x[0].baz, undefined);
-assertEq(y[0].baz, 42);
+  //#cloneObject
+  var obj = {foo: 1, bar: 2};
+  var cobj = fjs.clone(obj);
+  for(i in xs)
+    assertEq(obj[i], cobj[i]);
+  obj.baz = 3;
+  cobj.qux = 4;
+  assertEq(cobj.baz, undefined);
+  assertEq(obj.qux, undefined);
+  assertEq(obj.baz, 3);
+  assertEq(cobj.qux, 4);
 
-//#apply
-var addThree = function(x, y, z) { return x + y + z };
-assertEq(apply(addThree, [2,5,6]), 13);
+  //#clone
+  var x = [{foo: [1, 2], bar: 'baz'}, 2, 'qux'];
+  var y = fjs.clone(x);
+  assertEq(x[0].foo[0], y[0].foo[0]);
+  assertEq(x[0].bar, y[0].bar);
+  assertEq(x[1], y[1]);
+  assertEq(x[2], y[2]);
+  x[0].foo.push(3);
+  y[0].baz = 42;
+  assertEq(x[0].foo[2], 3);
+  assertEq(y[0].foo[2], undefined);
+  assertEq(x[0].baz, undefined);
+  assertEq(y[0].baz, 42);
 
-//#call
-var addThree = function(x, y, z) { return x + y + z };
-assertEq(call(addThree, 5, 2, 4), 11);
+  //#attrs
+  var xs = {foo: 1, bar: 2};
+  var ys = fjs.attrs(xs);
+  assertEq(xs.foo, ys.foo);
+  assertEq(xs.bar, xs.bar);
 
-//#slice
-var xs = [1,2,3];
-var ys = slice([1,2,3]);
-for(i in xs)
-  assertEq(xs[i], ys[i]);
-var ys = slice(xs, 1);
-assertEq(ys[0], 2);
-assertEq(ys[1], 3);
-var ys = slice(xs, -1);
-assertEq(ys[0], 3);
-var ys = slice(xs, 1, 2);
-assertEq(ys[0], 2);
-assertEq(ys.length, 1);
+  //#apply
+  var addThree = function(x, y, z) { return x + y + z };
+  assertEq(fjs.apply(addThree, [2, 5, 6]), 13);
 
-//#join
-assertEq(join(["foo", "bar"]), "foobar");
-assertEq(join(["foo", "bar"], "/"), "foo/bar");
+  //#call
+  var addThree = function(x, y, z) { return x + y + z };
+  assertEq(fjs.call(addThree, 5, 2, 4), 11);
 
-//#concat2
-assertEq(concat2().length, 0);
-assertEq(concat2([]).length, 0);
-assertEq(concat2([], []).length, 0);
-var xs = concat2([1], [2]);
-assertEq(xs[0], 1);
-assertEq(xs[1], 2);
-var xs = concat2([[1,2]], [[3]]);
-assertEq(xs[0][1], 2);
-assertEq(xs[1][0], 3);
-var xs = concat2([1], [2], [3]);
-assertEq(xs.length, 2);
+  //#slice
+  var xs = [1, 2, 3];
+  var ys = fjs.slice([1, 2, 3]);
+  for(i in xs)
+    assertEq(xs[i], ys[i]);
+  var ys = fjs.slice(xs, 1);
+  assertEq(ys[0], 2);
+  assertEq(ys[1], 3);
+  var ys = fjs.slice(xs, -1);
+  assertEq(ys[0], 3);
+  var ys = fjs.slice(xs, 1, 2);
+  assertEq(ys[0], 2);
+  assertEq(ys.length, 1);
 
-//#concat
-assertEq(concat().length, 0);
-assertEq(concat([]).length, 0);
-assertEq(concat([], []).length, 0);
-var xs = concat([1,2,3], [4], [5,6]);
-assertEq(xs.length, 6);
+  //#join
+  assertEq(fjs.join(['foo', 'bar']), 'foobar');
+  assertEq(fjs.join(['foo', 'bar'], '/'), 'foo/bar');
 
-//#map
-var xs = [1,2,4];
-var ys = map(xs, function(x) { return x + 2 });
-assertEq(ys[0], 3);
-assertEq(ys[1], 4, 150);
-assertEq(ys[2], 6);
-var inc = function(x) { return x + 1 };
-var ys = map(xs, inc);
-assertEq(ys[0], 2);
-assertEq(ys[1], 3);
-assertEq(ys[2], 5);
+  //#concat
+  assertEq(fjs.concat().length, 0);
+  assertEq(fjs.concat([]).length, 0);
+  assertEq(fjs.concat([], []).length, 0);
+  var xs = fjs.concat([1, 2, 3], [4], [5, 6]);
+  assertEq(xs.length, 6);
+  assertEq(xs[0], 1);
+  assertEq(xs[1], 2);
+  assertEq(xs[2], 3);
+  assertEq(xs[3], 4);
+  assertEq(xs[4], 5);
+  assertEq(xs[5], 6);
 
-//#times
-var i = 0;
-times(12, function() { ++i });
-assertEq(i, 12);
+  assertEq(fjs.concat().length, 0);
+  assertEq(fjs.concat([]).length, 0);
+  assertEq(fjs.concat([], []).length, 0);
+  var xs = fjs.concat([1], [2]);
+  assertEq(xs[0], 1);
+  assertEq(xs[1], 2);
+  var xs = fjs.concat([[1, 2]], [[3]]);
+  assertEq(xs[0][0], 1);
+  assertEq(xs[0][1], 2);
+  assertEq(xs[1][0], 3);
+  var xs = fjs.concat([1], [2], [3]);
+  assertEq(xs.length, 3);
+  assertEq(xs[0], 1);
+  assertEq(xs[1], 2);
+  assertEq(xs[2], 3);
 
-//#cons
-var xs = cons([2, 3], 1);
-assertEq(xs[0], 1);
-assertEq(xs[1], 2);
-assertEq(xs[2], 3);
-var xs = cons([3,[4]], [1]);
-assertEq(xs[0][0], 1);
-assertEq(xs[1], 3);
-assertEq(xs[2][0], 4, 166);
+  //#map
+  var xs = [1,2,4];
+  var ys = fjs.map(function(x) { return x + 2 }, xs);
+  assertEq(ys[0], 3);
+  assertEq(ys[1], 4, 150);
+  assertEq(ys[2], 6);
+  var inc = function(x) { return x + 1};
+  var ys = fjs.map(inc, xs);
+  assertEq(ys[0], 2);
+  assertEq(ys[1], 3);
+  assertEq(ys[2], 5);
 
-//#conj
-var xs = conj([2, 3], 1);
-assertEq(xs[0], 2);
-assertEq(xs[1], 3);
-assertEq(xs[2], 1);
-var xs = conj([3,[4]], [1]);
-assertEq(xs[0], 3);
-assertEq(xs[1][0], 4, 175);
-assertEq(xs[2][0], 1);
+  //#mapkv
+  var f = function(k, v) { return k + v; };
+  var xs = {foo: 'bar', baz: 'qux'};
+  var ys = fjs.mapkv(f, xs);
+  assertEq(ys[0], 'foobar');
+  assertEq(ys[1], 'bazqux');
+  var incv = function(_, v) { return v + 1 };
+  var xs = {foo: 1, bar: 2};
+  var ys = fjs.mapkv(incv, xs);
+  assertEq(ys[0], 2);
+  assertEq(ys[1], 3);
 
-//#first
-assertEq(first([4,5,2]), 4);
-assertEq(first(["foo", "bar", "baz"]), "foo");
+  //#filter
+  var xs = [1, 2, 3, 4, 5];
+  var ys = fjs.filter(fjs.even, xs);
+  assertEq(ys.length, 2);
+  assertEq(ys[0], 2);
+  assertEq(ys[1], 4);
+  var ys = fjs.filter(fjs.odd, xs);
+  assertEq(ys.length, 3);
+  assertEq(ys[0], 1);
+  assertEq(ys[1], 3);
+  assertEq(ys[2], 5);
 
-//#butfirst
-var xs = [2,6,3];
-var ys = [6,3];
-var zs = butfirst(xs);
-for(i in zs)
-  assertEq(zs[i], ys[i]);
+  //#times
+  var i = 0;
+  fjs.times(12, function() { ++i });
+  assertEq(i, 12);
 
-//#second
-assertEq(second([4,5,2]), 5);
-assertEq(second(["foo", "bar", "baz"]), "bar");
+  //#takeWhile
+  var xs = [1, 1, 2, 3, 3];
+  var ys = fjs.takeWhile(fjs.odd, xs);
+  assertEq(ys.length, 2);
+  assertEq(ys[0], 1);
+  assertEq(ys[1], 1);
+  var xs = [2, 4, 6];
+  var ys = fjs.takeWhile(fjs.odd, xs);
+  assertEq(ys.length, 0);
+  var xs = [1, 1];
+  var ys = fjs.takeWhile(fjs.odd, xs);
+  assertEq(ys.length, 2);
+  assertEq(ys[0], 1);
+  assertEq(ys[1], 1);
 
-//#last
-assertEq(last([4,5,2]), 2);
-assertEq(last(["foo", "bar", "baz"]), "baz");
+  //#dropWhile
+  var xs = [1, 1, 2, 3];
+  var ys = fjs.dropWhile(fjs.odd, xs);
+  assertEq(ys.length, 2);
+  assertEq(ys[0], 2);
+  assertEq(ys[1], 3);
+  var xs = [1, 1, 3, 5];
+  var ys = fjs.dropWhile(fjs.odd, xs);
+  assertEq(ys.length, 0);
+  var xs = [2, 1, 1];
+  var ys = fjs.dropWhile(fjs.odd, xs);
+  assertEq(ys.length, 3);
+  assertEq(ys[0], 2);
+  assertEq(ys[1], 1);
+  assertEq(ys[2], 1);
 
-//#butlast
-var xs = [2,6,3];
-var ys = [2,6];
-var zs = butlast(xs);
-for(i in zs)
-  assertEq(zs[i], ys[i]);
+  //#keys
+  var xs = {foo: 1, bar: 2};
+  var ys = fjs.keys(xs);
+  assertEq(ys.length, 2);
+  assertEq(ys[0], 'foo');
+  assertEq(ys[1], 'bar');
 
-//#get
-assertEq(get([1,2,3], 0), 1);
-assertEq(get({foo: {bar: [1,2]}}, ["foo", "bar", 1]), 2);
-assertEq(get([1,2], 4, "Not Found..."), "Not Found...");
-assertEq(get([1,2], 4), undefined);
-assertEq(get({foo: [1,"bar"]}, ["foo", 1, 2]), "r");
-assertEq(get({foo: "bar"}, "foo"), "bar");
-assertEq(get([1,2,3], 0), 1);
+  //#values
+  var xs = {foo: 1, bar: 2};
+  var ys = fjs.values(xs);
+  assertEq(ys.length, 2);
+  assertEq(ys[0], 1);
+  assertEq(ys[1], 2);
+  var xs = {foo: [42, 43], bar: 'baz'};
+  var ys = fjs.values(xs);
+  assertEq(ys.length, 2);
+  assertEq(ys[0][0], 42);
+  assertEq(ys[0][1], 43);
+  assertEq(ys[1], 'baz');
 
-//#sum
-assertEq(sum([1,2,3,4]), 10);
-//Space Oddity Notice: it's a normal behavior and it's neither a desired feature nor a real bug.
-assertEq(sum([1,2,"foo"]), "3foo");
+  //#merge
+  var xs = {foo: 1};
+  var ys = {bar: 2};
+  var zs = fjs.merge(xs, ys);
+  assertEq(zs.foo, 1);
+  assertEq(zs.bar, 2);
 
-//#repeat
-var xs = repeat("foo");
-assertEq(isArray(xs) && eqZero(xs.length), true);
-var xs = repeat("foo", 0);
-assertEq(isArray(xs) && eqZero(xs.length), true);
-var xs = repeat("foo", "");
-assertEq(isArray(xs) && eqZero(xs.length), true);
-var xs = repeat("foo", 10);
-assertEq(isArray(xs) && eq(xs.length, 10), true);
-for(i in xs)
-  assertEq(xs[i], "foo");
+  //#assoc
+  var xs = {foo: 1};
+  var ys = fjs.assoc(xs, 'bar', 2);
+  assertEq(ys.foo, 1);
+  assertEq(ys.bar, 2);
 
-//#cycle
-var xs = ["foo", "bar", "baz"];
-assertEq(cycle(xs).length, 0);
-assertEq(cycle(xs, 0).length, 0);
-assertEq(cycle(xs, 3).length, 9);
-var ys = cycle(xs, 2);
-assertEq(ys[0], xs[0]);
-assertEq(ys[1], xs[1]);
-assertEq(ys[2], xs[2]);
-assertEq(ys[3], xs[0]);
-assertEq(ys[4], xs[1]);
-assertEq(ys[5], xs[2]);
+  //#marshal
+  var xs = [['foo', 1], ['bar', 2]];
+  var ys = fjs.marshal(xs);
+  assertEq(ys.foo, 1);
+  assertEq(ys.bar, 2);
 
-//#reduce
-//Like map, reduce is heavily used in others functions (mostly the variadic ones)
-//such as reverse, sum, add or concat... So if they work properly, so does reduce...
-//No test for the moment!
+  //#unmarshal
+  var xs = {foo: 1, bar: [2, 3]};
+  var ys = fjs.unmarshal(xs);
+  assertEq(ys[0][0], 'foo');
+  assertEq(ys[0][1], 1);
+  assertEq(ys[1][0], 'bar');
+  assertEq(ys[1][1][0], 2);
+  assertEq(ys[1][1][1], 3);
 
-//#reverse
-var xs = [1,2,3];
-var ys = [3,2,1];
-var zs = reverse(xs);
-for(i in zs)
-  assertEq(zs[i], ys[i]);
-var xs = ["foo","bar","baz"];
-var ys = ["baz","bar","foo"];
-var zs = reverse(xs);
-for(i in zs)
-  assertEq(zs[i], ys[i]);
+  //#cons
+  var xs = fjs.cons([2, 3], 1);
+  assertEq(xs[0], 1);
+  assertEq(xs[1], 2);
+  assertEq(xs[2], 3);
+  var xs = fjs.cons([3, [4]], [1]);
+  assertEq(xs[0][0], 1);
+  assertEq(xs[1], 3);
+  assertEq(xs[2][0], 4, 166);
 
-//#every
-var eqFoo = function(x) { return x === "foo" };
-var xs = ["foo", "foo", "foo"];
-var ys = ["foo", "bar", "foo"];
-assertEq(every(xs, eqFoo), true);
-assertEq(every(ys, eqFoo), false);
+  //#conj
+  var xs = fjs.conj([2, 3], 1);
+  assertEq(xs[0], 2);
+  assertEq(xs[1], 3);
+  assertEq(xs[2], 1);
+  var xs = fjs.conj([3, [4]], [1]);
+  assertEq(xs[0], 3);
+  assertEq(xs[1][0], 4, 175);
+  assertEq(xs[2][0], 1);
 
-//#some
-var eqFoo = function(x) { return x === "foo" };
-var xs = ["foo", "bar", "baz"];
-var ys = ["bar", "baz", "qux"];
-assertEq(some(xs, eqFoo), true);
-assertEq(some(ys, eqFoo), false);
+  //#first
+  assertEq(fjs.first([4, 5, 2]), 4);
+  assertEq(fjs.first(['foo', 'bar', 'baz']), 'foo');
 
-//#comp
-var addOne = function(x) { return x + 1 };
-var twoTimes = function(x) { return x * 2 };
-assertEq(comp(addOne, twoTimes)(2), 5);
-assertEq(comp(twoTimes, addOne)(4), 10);
+  //#butfirst
+  var xs = [2, 6, 3];
+  var ys = [6, 3];
+  var zs = fjs.butfirst(xs);
+  for(i in zs)
+    assertEq(zs[i], ys[i]);
 
-//#partial
-var f = function(x, y, z) { return x + y / z };
-var g = partial(f, 2, 10);
-assertEq(g(5), 4, 200);
+  //#second
+  assertEq(fjs.second([4, 5, 2]), 5);
+  assertEq(fjs.second(['foo', 'bar', 'baz']), 'bar');
 
-//#juxt
-var f = function(x) { return x + 1 };
-var g = function(x) { return x - 1 };
-var xs = juxt(f, g)(3);
-assertEq(xs[0], 4, 206);
-assertEq(xs[1], 2);
+  //#last
+  assertEq(fjs.last([4, 5, 2]), 2);
+  assertEq(fjs.last(['foo', 'bar', 'baz']), 'baz');
 
-//#flip
-var f = function(x, y) { return x / y };
-var g = flip(f);
-assertEq(f(10, 2), 5);
-assertEq(g(10, 2), 0.2);
+  //#butlast
+  var xs = [2, 6, 3];
+  var ys = [2, 6];
+  var zs = fjs.butlast(xs);
+  for(i in zs)
+    assertEq(zs[i], ys[i]);
 
-//#fmap
-var xs = [1,2,4];
-var ys = fmap(function(x) { return x + 2 }, xs);
-assertEq(ys[0], 3);
-assertEq(ys[1], 4, 150);
-assertEq(ys[2], 6);
-var inc = function(x) { return x + 1 };
-var ys = fmap(inc, xs);
-assertEq(ys[0], 2);
-assertEq(ys[1], 3);
-assertEq(ys[2], 5);
+  //#get
+  assertEq(fjs.get([1, 2, 3], 0), 1);
+  assertEq(fjs.get({foo: {bar: [1, 2]}}, ['foo', 'bar', 1]), 2);
+  assertEq(fjs.get([1, 2], 4, 'Not Found...'), 'Not Found...');
+  assertEq(fjs.get([1, 2], 4), undefined);
+  assertEq(fjs.get({foo: [1, 'bar']}, ['foo', 1, 2]), 'r');
+  assertEq(fjs.get({foo: 'bar'}, 'foo'), 'bar');
+  assertEq(fjs.get([1, 2, 3], 0), 1);
 
-//#feach
-var i = 0;
-feach(function(x, j, xs) {
-  switch(i) {
-  case 0:
-    assertEq(x, 1);
-    assertEq(j, "0");
-    break;
-  case 1:
-    assertEq(x, 2);
-    assertEq(j, "1");
-    break;
-  case 2:
-    assertEq(x, 3);
-    assertEq(j, "2");
-    break;
-  }
-  ++i;
-}, [1,2,3]);
+  //#sum
+  assertEq(fjs.sum([1, 2, 3, 4]), 10);
+  //Space Oddity Notice: it's a normal behavior and it's neither a desired feature nor a real bug.
+  assertEq(fjs.sum([1, 2, 'foo']), '3foo');
 
-//#freduce
-//See #reduce
+  //#repeat
+  var xs = fjs.repeat('foo');
+  assert(fjs.isArray(xs) && fjs.eqZero(xs.length));
+  var xs = fjs.repeat('foo', 0);
+  assert(fjs.isArray(xs) && fjs.eqZero(xs.length));
+  var xs = fjs.repeat('foo', '');
+  assert(fjs.isArray(xs) && fjs.eqZero(xs.length));
+  var xs = fjs.repeat('foo', 10);
+  assert(fjs.isArray(xs) && fjs.eq(xs.length, 10));
+  for(i in xs)
+    assertEq(xs[i], 'foo');
 
-//#log
-//See #_console
+  //#cycle
+  var xs = ['foo', 'bar', 'baz'];
+  assertEq(fjs.cycle(xs).length, 0);
+  assertEq(fjs.cycle(xs, 0).length, 0);
+  assertEq(fjs.cycle(xs, 3).length, 9);
+  var ys = fjs.cycle(xs, 2);
+  assertEq(ys[0], xs[0]);
+  assertEq(ys[1], xs[1]);
+  assertEq(ys[2], xs[2]);
+  assertEq(ys[3], xs[0]);
+  assertEq(ys[4], xs[1]);
+  assertEq(ys[5], xs[2]);
 
-//#log1
-var log1Test = function() {
-  assertEq(log1(1), 1);
-  assertEq(log1(1,2,3), 1);
-};
-log1Test()
+  //#reduce
+  var xs = [1, 2, 3];
+  var x = fjs.reduce(fjs.add, xs);
+  var y = fjs.reduce(fjs.add, xs, 2);
+  assertEq(x, 6);
+  assertEq(y, 8);
 
-//#warn
-//See #_console
+  //#reducekv
+  var xs = {foo: 1, bar: 2, baz: 3};
+  var f = function(agg, _, v) { return agg + v };
+  var x = fjs.reducekv(f, xs, 0);
+  var y = fjs.reducekv(f, xs, 2);
+  assertEq(x, 6);
+  assertEq(y, 8);
 
-//#warn1
-var warn1Test = function() {
-  assertEq(warn1(1), 1);
-  assertEq(warn1(1,2,3), 1);
-};
-warn1Test()
+  //#reverse
+  var xs = [1, 2, 3];
+  var ys = [3, 2, 1];
+  var zs = fjs.reverse(xs);
+  for(i in zs)
+    assertEq(zs[i], ys[i]);
+  var xs = ['foo', 'bar', 'baz'];
+  var ys = ['baz', 'bar', 'foo'];
+  var zs = fjs.reverse(xs);
+  for(i in zs)
+    assertEq(zs[i], ys[i]);
 
-//#error
-//See #_console
+  //#every
+  var eqFoo = function(x) { return x === 'foo' };
+  var xs = ['foo', 'foo', 'foo'];
+  var ys = ['foo', 'bar', 'foo'];
+  assertEq(fjs.every(eqFoo, xs), true);
+  assertEq(fjs.every(eqFoo, ys), false);
 
-//#error1
-var error1Test = function() {
-  assertEq(error1(1), 1);
-  assertEq(error1(1,2,3), 1);
-};
-error1Test()
+  //#some
+  var eqFoo = function(x) { return x === 'foo' };
+  var xs = ['foo', 'bar', 'baz'];
+  var ys = ['bar', 'baz', 'qux'];
+  assertEq(fjs.some(eqFoo, xs), true);
+  assertEq(fjs.some(eqFoo, ys), false);
 
-//#eq
-assertEq(eq(1, 1), true);
-assertEq(eq("foo", "foo"), true);
+  //#comp
+  var addOne = function(x) { return x + 1 };
+  var twoTimes = function(x) { return x * 2 };
+  var threeTimes = function(x) { return x * 3 };
+  assertEq(fjs.comp(addOne, twoTimes)(2), 5);
+  assertEq(fjs.comp(twoTimes, addOne)(4), 10);
+  assertEq(fjs.comp(twoTimes, addOne, threeTimes)(4), 26);
 
-//#even
-assertEq(even(-15), false);
-assertEq(even(-4), true);
-assertEq(even(0), true);
-assertEq(even(1), false);
-assertEq(even(23), false);
-assertEq(even(2342), true);
+  //#thread
+  var addOne = function(x) { return x + 1 };
+  var twoTimes = function(x) { return x * 2 };
+  var threeTimes = function(x) { return x * 3 };
+  assertEq(fjs.thread(1, addOne), 2);
+  assertEq(fjs.thread(1, addOne, twoTimes), 4);
+  assertEq(fjs.thread(1, addOne, threeTimes, twoTimes), 12);
+  assertEq(fjs.thread(1, addOne, twoTimes, twoTimes, threeTimes), 24);
 
-//#odd
-assertEq(odd(-15), true);
-assertEq(odd(-4), false);
-assertEq(odd(0), false);
-assertEq(odd(1), true);
-assertEq(odd(23), true);
-assertEq(odd(2342), false);
+  //#partial
+  var f = function(x, y, z) { return x + y / z };
+  var g = fjs.partial(f, 2, 10);
+  assertEq(g(5), 4, 200);
 
-//#inc
-assertEq(inc(2), 3);
-assertEq(inc(-4), -3);
+  //#juxt
+  var f = function(x) { return x + 1 };
+  var g = function(x) { return x - 1 };
+  var xs = fjs.juxt(f, g)(3);
+  assertEq(xs[0], 4, 206);
+  assertEq(xs[1], 2);
 
-//#dec
-assertEq(dec(2), 1);
-assertEq(dec(-4), -5);
+  //#flip
+  var f = function(x, y) { return x / y };
+  var g = fjs.flip(f);
+  assertEq(f(10, 2), 5);
+  assertEq(g(10, 2), 0.2);
 
-//#eqZero
-assertEq(eqZero(0), true);
-assertEq(eqZero(2), false);
-assertEq(eqZero(-3), false);
+  //#fmap
+  var xs = [1, 2, 4];
+  var ys = fjs.fmap(xs, function(x) { return x + 2 });
+  assertEq(ys[0], 3);
+  assertEq(ys[1], 4, 150);
+  assertEq(ys[2], 6);
+  var inc = function(x) { return x + 1 };
+  var ys = fjs.fmap(xs, inc);
+  assertEq(ys[0], 2);
+  assertEq(ys[1], 3);
+  assertEq(ys[2], 5);
 
-//#eqOne
-assertEq(eqOne(1), true);
-assertEq(eqOne(0), false);
-assertEq(eqOne(2), false);
-assertEq(eqOne(-3), false);
+  //#fmapkv
+  var i = 0;
+  fjs.fmapkv([1,2,3], function(k, v) {
+    switch(i) {
+    case 0:
+      assertEq(v, 1);
+      assertEq(k, 0);
+      break;
+    case 1:
+      assertEq(v, 2);
+      assertEq(k, 1);
+      break;
+    case 2:
+      assertEq(v, 3);
+      assertEq(k, 2);
+      break;
+    }
+    ++i;
+  });
+  fjs.fmapkv({foo: 1, bar: 2}, function(k, v) {
+    switch(k) {
+    case 'foo': assertEq(v, 1); break;
+    case 'bar': assertEq(v, 2); break;
+    }
+  });
 
-//#isEmpty
-assertEq(isEmpty([]), true);
-assertEq(isEmpty(""), true);
-assertEq(isEmpty({}), true);
-assertEq(isEmpty([1,2]), false);
-assertEq(isEmpty("foo"), false);
-assertEq(isEmpty({foo: 42}), false);
+  //#freduce
+  var xs = [2, 3];
+  assertEq(fjs.freduce(xs, fjs.mul), 6);
+  assertEq(fjs.freduce(xs, fjs.mul, 2), 12);
 
-//#isObject
-assertEq(isObject({}), true);
-assertEq(isObject(""), false);
-assertEq(isObject([]), false);
-assertEq(isObject(function(){}), false);
-assertEq(isObject(2), false);
+  //#freducekv
+  var xs = {foo: 1, bar: 2, baz: 3};
+  var f = function(agg, _, v) { return agg * v };
+  assertEq(fjs.freducekv(xs, f, 1), 6);
+  assertEq(fjs.freducekv(xs, f, 2), 12);
 
-//#isArray
-assertEq(isArray([]), true);
-assertEq(isArray(""), false);
-assertEq(isArray(function(){}), false);
-assertEq(isArray({}), false);
-assertEq(isArray(2), false);
+  //#log
+  //See #cs
 
-//#isString
-assertEq(isString(""), true);
-assertEq(isString(function(){}), false);
-assertEq(isString([]), false);
-assertEq(isString({}), false);
-assertEq(isString(2), false);
+  //#log1
+  var log1Test = function() {
+    assertEq(fjs.log1(1), 1);
+    assertEq(fjs.log1(1, 2, 3), 1);
+  };
+  //log1Test()
 
-//#isFunction
-assertEq(isFunction(function(){}), true);
-assertEq(isFunction(""), false);
-assertEq(isFunction([]), false);
-assertEq(isFunction({}), false);
-assertEq(isFunction(2), false);
+  //#dir
+  //See #cs
 
-//#isArgument
-(function() { assertEq(isArgument(arguments), true) })();
-assertEq(isArgument(function(){}), false);
-assertEq(isArgument(""), false);
-assertEq(isArgument([]), false);
-assertEq(isArgument({}), false);
-assertEq(isArgument(2), false);
+  //#dir1
+  var dir1Test = function() {
+    assertEq(fjs.dir1(1), 1);
+    assertEq(fjs.dir1(1, 2, 3), 1);
+  };
+  //dir1Test()
 
-//#isArrayLike
-(function() { assertEq(isArrayLike(arguments), true) })();
-assertEq(isArrayLike([]), true);
-assertEq(isArrayLike(function(){}), false);
-assertEq(isArrayLike(""), false);
-assertEq(isArrayLike({}), false);
-assertEq(isArrayLike(2), false);
+  //#warn
+  //See #cs
 
-//#isTrue
-assertEq(isTrue(true), true);
-assertEq(isTrue(""), false);
-assertEq(isTrue(1), false);
-assertEq(isTrue(false), false);
+  //#warn1
+  var warn1Test = function() {
+    assertEq(fjs.warn1(1), 1);
+    assertEq(fjs.warn1(1, 2, 3), 1);
+  };
+  //warn1Test()
 
-//#isFalse
-assertEq(isFalse(false), true);
-assertEq(isFalse(""), false);
-assertEq(isFalse(1), false);
-assertEq(isFalse(true), false);
+  //#error
+  //See #cs
 
-//#isNull
-assertEq(isNull(null), true);
-assertEq(isNull(""), false);
-assertEq(isNull([]), false);
-assertEq(isNull({}), false);
-assertEq(isNull(2), false);
+  //#error1
+  var error1Test = function() {
+    assertEq(fjs.error1(1), 1);
+    assertEq(fjs.error1(1, 2, 3), 1);
+  };
+  //error1Test()
 
-//#isUndefined
-assertEq(isUndefined(undefined), true);
-assertEq(isUndefined(""), false);
-assertEq(isUndefined([]), false);
-assertEq(isUndefined({}), false);
-assertEq(isUndefined(2), false);
+  //#range
+  var xs = fjs.range(2);
+  assertEq(xs.length, 2);
+  assertEq(xs[0], 0);
+  assertEq(xs[1], 1);
+  var xs = fjs.range(2, 4);
+  assertEq(xs.length, 2);
+  assertEq(xs[0], 2);
+  assertEq(xs[1], 3);
+  var xs = fjs.range(3, 10, 2);
+  assertEq(xs.length, 4);
+  assertEq(xs[0], 3);
+  assertEq(xs[1], 5);
+  assertEq(xs[2], 7);
+  assertEq(xs[3], 9);
+  var xs = fjs.range(10, 10);
+  assertEq(xs.length, 0);
 
-//#add
-assertEq(add(), 0);
-assertEq(add(2), 2);
-assertEq(add(2,3,4,5), 14);
+  //#xrange
+  var f = fjs.xrange(2);
+  var xs = f();
+  assert(fjs.isFunction(f));
+  assertEq(xs.length, 2);
+  assertEq(xs[0], 0);
+  assertEq(xs[1], 1);
+  var f = fjs.xrange(2, 4);
+  var xs = f();
+  assert(fjs.isFunction(f));
+  assertEq(xs.length, 2);
+  assertEq(xs[0], 2);
+  assertEq(xs[1], 3);
+  var f = fjs.xrange(3, 10, 2);
+  var xs = f();
+  assertEq(xs.length, 4);
+  assertEq(xs[0], 3);
+  assertEq(xs[1], 5);
+  assertEq(xs[2], 7);
+  assertEq(xs[3], 9);
+  var f = fjs.xrange(10, 10);
+  var xs = f();
+  assertEq(xs.length, 0);
 
-//#sub
-assertEq(sub(), 0);
-assertEq(sub(2), 2);
-assertEq(sub(2,3,4,5), -10);
+  //#eq
+  assert(fjs.eq(1, 1));
+  assert(fjs.eq('foo', 'foo'));
+  assert(fjs.eq([1, 2], [1, 2]));
+  assert(fjs.eq([1, {foo: 1}, 2], [1, {foo: 1}, 2]));
+  assert(fjs.eq({foo: 2}, {foo: 2}));
+  assert(fjs.eq([1, null, {foo: undefined, bar: 1}, 3, {baz: 42}],
+                [1, null, {foo: undefined, bar: 1}, 3, {baz: 42}]));
+  assert(fjs.eq({foo: [1, 2, 3], bar: 'foobar', baz: 42},
+                {foo: [1, 2, 3], bar: 'foobar', baz: 42}));
 
-//#mul
-assertEq(mul(), 0);
-assertEq(mul(2), 2);
-assertEq(mul(2,3,4,5), 120);
+  assertFalse(fjs.eq(1, 2));
+  assertFalse(fjs.eq('foo', 'bar'));
+  assertFalse(fjs.eq([1, 2], [2, 2]));
+  assertFalse(fjs.eq([1, {foo: 1}, 2], [1, {foo: 2}, 2]));
+  assertFalse(fjs.eq([1, {foo: 1}, 2], [1, {bar: 1}, 2]));
+  assertFalse(fjs.eq([1, {foo: 1}, 2], [1, {foo: 1, bar: 1}, 2]));
+  assertFalse(fjs.eq({foo: 2}, {foo: 1}));
+  assertFalse(fjs.eq([1, null, {foo: undefined, bar: 1}, 3, {baz: 42}],
+                     [1, null, {foo: undefined, bar: 1}, 3, {baz: 2}]));
+  assertFalse(fjs.eq({foo: [1, 2, 3], bar: 'foobar', baz: 42},
+                     {foo: [1, 2, 3], ba: 'foobar', baz: 42}));
+  assertFalse(fjs.eq({foo: [1, 2, 3], bar: 'foobar', baz: 42},
+                     {foo: [1, 2, 3], bar: 'fobar', baz: 42}));
+  assertFalse(fjs.eq({foo: [1, 2, 3], bar: 'foobar', baz: 42},
+                     {foo: [1, 2, 3], bar: 'foobar', baz: 2}));
+  assertFalse(fjs.eq({foo: [1, 2, 3], bar: 'foobar', baz: 42},
+                     {foo: [1, 3], bar: 'foobar', baz: 42}));
+  assertFalse(fjs.eq({foo: [1, 2, 3], bar: 'foobar', baz: 42},
+                     {foo: [1, 2, 3], bar: 'foobar', az: 42}));
 
-//#div
-assertEq(div(), 0);
-assertEq(div(2), 2);
-assertEq(div(84,2,4), 10.5);
+  //#even
+  assert(fjs.even(2342));
+  assert(fjs.even(-4));
+  assert(fjs.even(0));
+  assertFalse(fjs.even(1));
+  assertFalse(fjs.even(23));
+  assertFalse(fjs.even(-15));
 
-//Cross Tests
-//  Let's test some more complex (and less realistic) code with several fjs functions in a row.
+  //#odd
+  assert(fjs.odd(-15));
+  assert(fjs.odd(1));
+  assert(fjs.odd(23));
+  assertFalse(fjs.odd(-4));
+  assertFalse(fjs.odd(0));
+  assertFalse(fjs.odd(2342));
 
-//wtf creates an array containing the result of id applied to each element of arguments (i.e: themselves)
-//then joins the elements of this array.
-//Why would we do some simple code, when we may do some funny (and test valuable) code?
-var wtf = function() { return flip(comp)(partial(map, arguments), join)(id) };
-assertEq(wtf("foo", "bar"), "foobar");
+  //#inc
+  assertEq(fjs.inc(2), 3);
+  assertEq(fjs.inc(-4), -3);
+
+  //#dec
+  assertEq(fjs.dec(2), 1);
+  assertEq(fjs.dec(-4), -5);
+
+  //#eqZero
+  assert(fjs.eqZero(0));
+  assertFalse(fjs.eqZero(2));
+  assertFalse(fjs.eqZero(-3));
+
+  //#eqOne
+  assert(fjs.eqOne(1));
+  assertFalse(fjs.eqOne(0));
+  assertFalse(fjs.eqOne(2));
+  assertFalse(fjs.eqOne(-3));
+
+  //#isEmpty
+  assert(fjs.isEmpty([]));
+  assert(fjs.isEmpty(''));
+  assert(fjs.isEmpty({}));
+  assertFalse(fjs.isEmpty([1,2]));
+  assertFalse(fjs.isEmpty('foo'));
+  assertFalse(fjs.isEmpty({foo: 42}));
+
+  //#isObject
+  assert(fjs.isObject({}));
+  assertFalse(fjs.isObject(''));
+  assertFalse(fjs.isObject([]));
+  assertFalse(fjs.isObject(function(){}));
+  assertFalse(fjs.isObject(2));
+
+  //#isArray
+  assert(fjs.isArray([]));
+  assertFalse(fjs.isArray(''));
+  assertFalse(fjs.isArray(function(){}));
+  assertFalse(fjs.isArray({}));
+  assertFalse(fjs.isArray(2));
+
+  //#isString
+  assert(fjs.isString(''), true);
+  assertFalse(fjs.isString(function(){}));
+  assertFalse(fjs.isString([]));
+  assertFalse(fjs.isString({}));
+  assertFalse(fjs.isString(2));
+
+  //#isFunction
+  assert(fjs.isFunction(function(){}));
+  assertFalse(fjs.isFunction(''));
+  assertFalse(fjs.isFunction([]));
+  assertFalse(fjs.isFunction({}));
+  assertFalse(fjs.isFunction(2));
+
+  //#isArgument
+  (function() { assert(fjs.isArgument(arguments)) })();
+  assertFalse(fjs.isArgument(function(){}));
+  assertFalse(fjs.isArgument(''));
+  assertFalse(fjs.isArgument([]));
+  assertFalse(fjs.isArgument({}));
+  assertFalse(fjs.isArgument(2));
+
+  //#isArrayLike
+  (function() { assert(fjs.isArrayLike(arguments)) })();
+  assert(fjs.isArrayLike([]));
+  assertFalse(fjs.isArrayLike(function(){}));
+  assertFalse(fjs.isArrayLike(''));
+  assertFalse(fjs.isArrayLike({}));
+  assertFalse(fjs.isArrayLike(2));
+
+  //#isTrue
+  assert(fjs.isTrue(true));
+  assertFalse(fjs.isTrue(''));
+  assertFalse(fjs.isTrue(1));
+  assertFalse(fjs.isTrue(false));
+
+  //#isFalse
+  assert(fjs.isFalse(false));
+  assertFalse(fjs.isFalse(''));
+  assertFalse(fjs.isFalse(1));
+  assertFalse(fjs.isFalse(true));
+
+  //#isNull
+  assert(fjs.isNull(null));
+  assertFalse(fjs.isNull(''));
+  assertFalse(fjs.isNull([]));
+  assertFalse(fjs.isNull({}));
+  assertFalse(fjs.isNull(2));
+
+  //#isUndefined
+  assert(fjs.isUndefined(undefined));
+  assertFalse(fjs.isUndefined(''));
+  assertFalse(fjs.isUndefined([]));
+  assertFalse(fjs.isUndefined({}));
+  assertFalse(fjs.isUndefined(2));
+
+  //#add
+  assertEq(fjs.add(), 0);
+  assertEq(fjs.add(2), 2);
+  assertEq(fjs.add(2, 3, 4, 5), 14);
+
+  //#mul
+  assertEq(fjs.mul(), 1);
+  assertEq(fjs.mul(2), 2);
+  assertEq(fjs.mul(2, 3, 4, 5), 120);
+
+  //#sub
+  assertEq(fjs.sub(), 0);
+  assertEq(fjs.sub(2), 2);
+  assertEq(fjs.sub(2, 3, 4, 5), -10);
+
+  //#div
+  assertEq(fjs.div(), 1);
+  assertEq(fjs.div(2), 2);
+  assertEq(fjs.div(84, 2, 4), 10.5);
+
+  //#use #del
+  try { map }
+  catch(e) { assertEq(e.name, "ReferenceError"); }
+  fjs.use('map');
+  assert(fjs.isFunction(map));
+  fjs.del('map');
+  try { map }
+  catch(e) { assertEq(e.name, "ReferenceError"); }
+
+  try { map }
+  catch(e) { assertEq(e.name, "ReferenceError"); }
+  try { inc }
+  catch(e) { assertEq(e.name, "ReferenceError"); }
+  fjs.use('map', 'inc');
+  assert(fjs.isFunction(map));
+  assert(fjs.isFunction(inc));
+  var xs = [1, 2, 3];
+  var ys = map(inc, xs);
+  assertEq(ys.length, 3);
+  assertEq(ys[0], 2);
+  assertEq(ys[1], 3);
+  assertEq(ys[2], 4);
+  fjs.del('map', 'inc');
+  try { map }
+  catch(e) { assertEq(e.name, "ReferenceError"); }
+  try { inc }
+  catch(e) { assertEq(e.name, "ReferenceError"); }
+
+  try { map }
+  catch(e) { assertEq(e.name, "ReferenceError"); }
+  try { inc }
+  catch(e) { assertEq(e.name, "ReferenceError"); }
+  var vars = ['map', 'inc'];
+  fjs.use(vars);
+  assert(fjs.isFunction(map));
+  assert(fjs.isFunction(inc));
+  var xs = [1, 2, 3];
+  var ys = map(inc, xs);
+  assertEq(ys.length, 3);
+  assertEq(ys[0], 2);
+  assertEq(ys[1], 3);
+  assertEq(ys[2], 4);
+  fjs.del(vars);
+  try { map }
+  catch(e) { assertEq(e.name, "ReferenceError"); }
+  try { inc }
+  catch(e) { assertEq(e.name, "ReferenceError"); }
+
+  try { map }
+  catch(e) { assertEq(e.name, "ReferenceError"); }
+  try { inc }
+  catch(e) { assertEq(e.name, "ReferenceError"); }
+  try { myInc }
+  catch(e) { assertEq(e.name, "ReferenceError"); }
+  var vars = ['map', {inc: 'myInc'}];
+  fjs.use(vars);
+  assert(fjs.isFunction(map));
+  assert(fjs.isFunction(myInc));
+  try { inc }
+  catch(e) { assertEq(e.name, "ReferenceError"); }
+  var xs = [1, 2, 3];
+  var ys = map(myInc, xs);
+  assertEq(ys.length, 3);
+  assertEq(ys[0], 2);
+  assertEq(ys[1], 3);
+  assertEq(ys[2], 4);
+  fjs.del(vars);
+  try { map }
+  catch(e) { assertEq(e.name, "ReferenceError"); }
+  try { inc }
+  catch(e) { assertEq(e.name, "ReferenceError"); }
+  try { myInc }
+  catch(e) { assertEq(e.name, "ReferenceError"); }
+
+  //Let's test some more complex (and less realistic) code with several fjs functions in a row.
+  var wtf = function() { return fjs.flip(fjs.comp)(fjs.partial(fjs.fmap, arguments), fjs.join)(fjs.id) };
+  assertEq(wtf('foo', 'bar'), 'foobar');
+  //Somewhat equivalent to:
+  var wtf2 = fjs.flip(fjs.comp)(fjs.partial(fjs.map, fjs.id), fjs.join);
+  assertEq(wtf2(['foo', 'bar']), 'foobar');
+
+  //wtf3 is more readable, thanks to fjs.use:
+  //we 'use' the variables we need
+  var vars = ['flip', 'comp', 'map', 'id', 'join', {partial: 'p'}];
+  fjs.apply(fjs.use, vars);
+  //then we test
+  var wtf3 = flip(comp)(p(map, id), join);
+  assertEq(wtf2(['foo', 'bar']), 'foobar');
+  //at last we clean
+  fjs.apply(fjs.del, vars);
+})();
