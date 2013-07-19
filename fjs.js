@@ -122,9 +122,8 @@ this.fjs = function() {
       };
       var cloneObject = function(xs) {
         var y = {};
-        loop(function(k, v) {
-          y[clone(k)] = clone(v);
-        }, xs);
+        for(i in xs)
+          y[clone(i)] = clone(xs[i]);
         return y;
       };
 
@@ -215,27 +214,42 @@ this.fjs = function() {
   );
 
   //#Array.prototype
-  //#finish(if [].concat does not exist)
+  //#notice([].concat raises a RangeError when you try to concat too many arrays in a row on Chrome
+  //        and so does mine, but with more arrays)
   exports.concat = concat = fn(
     'Concats several arrays',
     function() {
-      return reduce(function(xs, ys) {
-        return [].concat.call(slice(xs||[]), slice(ys||[]));
-      }, arguments, []);
+      //if([].concat) {
+      //  var args = some(isArgument, arguments) ? map(slice, arguments) : arguments;
+      //  return [].concat.apply([], arguments);
+      //}
+
+      ////the functionnal version of concat:
+      //return reduce(function(xs, ys) {
+      //  applyWith([].push, xs, slice(ys||[]));
+      //  return xs;
+      //}, arguments, []);
+
+      var xs = [];
+      for(var i in arguments)
+        for(var j in arguments[i])
+          xs.push(arguments[i][j]);
+      return xs;
     }
   );
 
   //#Array.prototype
+  //#notice(my version of map is way faster on Chrome)
   exports.map = map = fn(
     'Applies f to each item of xs and returns the results as an array.',
     'e.g.: map(partial(add, 2), [1,2,4]) // [3,4,6]',
     function(f, xs) {
+      //if([].map) return callWith([].map, xs, arity1(f));
+
       ////the functionnal version of map:
       //return reduce(function(agg, x) {
       //  return conj(agg, call(f, x));
       //}, xs, []);
-
-      if([].map) return callWith([].map, xs, arity1(f));
 
       var ret = [];
       loop(function(_, x) {
@@ -246,16 +260,17 @@ this.fjs = function() {
   );
 
   //#Array.prototype
+  //#notice(my version of mapkv is way faster on Chrome)
   exports.mapkv = mapkv = fn(
     'Like map but mapkv also passes the key to the given function.',
     'Notice that if xs is an Array, its indexes are auto-cast into Int.',
     function(f, obj) {
+      //if([].map && !isObject(obj)) return callWith([].map, obj, arity2(flip(f)));
+
       ////the functionnal version of mapkv:
       //return reducekv(function(agg, k, v) {
       //  return conj(agg, call(f, k, v));
       //}, xs, []);
-
-      if([].map && !isObject(obj)) return callWith([].map, obj, arity2(flip(f)));
 
       var ret = [];
       loop(function(k, v) {
@@ -370,7 +385,7 @@ this.fjs = function() {
   );
 
   exports.conj = conj = fn(
-    'Appends x to xs.',
+    'Appends arguments to xs.',
     'e.g.: conj([1,2], 3) // [1,2,3]',
     function(xs) {
       var ys = clone(xs);
@@ -443,18 +458,21 @@ this.fjs = function() {
   exports.repeat = repeat = fn(
     'Returns an array containing n times x',
     function(x, n) {
-      if(n > 0)
-        return conj(repeat(x, dec(n)), x);
-      else return [];
+      if(n < 1) return [];
+      var xs = [];
+      for(var i = 0; i < n; i++)
+        xs[i] = x;
+      return xs;
     }
   );
 
   exports.cycle = cycle = fn(
     'Returns an array containing n repetitions of the items in xs',
     function(xs, n) {
-      if(n > 0)
-        return concat(cycle(xs, dec(n)), xs);
-      else return [];
+      var ys = [];
+      for(var i = 0; i < n; i++)
+        applyWith([].push, ys, xs);
+      return ys;
     }
   );
 
@@ -503,32 +521,39 @@ this.fjs = function() {
   exports.reverse = reverse = fn(
     'Reverse the element of an array.',
     function(xs) {
-      return reduce(cons, xs, []);
+      ////the functionnal version of reverse:
+      //return reduce(cons, xs, []);
+
+      var ys = [];
+      for(i in xs)
+        ys[xs.length - 1 - i] = xs[i];
+      return ys;
     }
   );
 
   //#Array.prototype
+  //#notice(my version of every is way faster on Chrome)
   exports.every = every = fn(
     'Applies pred to each items of xs.',
     'If pred(item) is true every time, return true.',
     function(pred, xs) {
-      if([].every) return callWith([].every, xs, arity1(pred));
+      //if([].every) return callWith([].every, xs, arity1(pred));
 
-      var n = 0;
       for(i in xs)
         if(xs.hasOwnProperty(i))
-          if(pred(xs[i]))
-            n++;
-      return n === xs.length;
+          if(!pred(xs[i]))
+            return false;
+      return true;
     }
   );
 
   //#Array.prototype
+  //#notice(my version of some is way faster on Chrome)
   exports.some = some = fn(
     'Applies pred to each items of xs.',
     'If pred(item) is true, return true.',
     function(pred, xs) {
-      if([].some) return callWith([].some, xs, arity1(pred));
+      //if([].some) return callWith([].some, xs, arity1(pred));
 
       for(i in xs)
         if(xs.hasOwnProperty(i))
