@@ -235,9 +235,27 @@
   assertEq(ys[1], 3);
   assertEq(ys[2], 5);
 
+  //#sort
+  var xs = [2, 1, 3];
+  var ys = fjs.sort(xs);
+  assertEq(ys[0], 1);
+  assertEq(ys[1], 2);
+  assertEq(ys[2], 3);
+  var ys = fjs.sort(function(x, y) { return x < y; }, xs);
+  assertEq(ys[0], 3);
+  assertEq(ys[1], 2);
+  assertEq(ys[2], 1);
+
+  //#shuffle
+  var xs = [1, 2, 3, 4, 5];
+  for(var i = 0; i < 10; i++) {
+    var ys = fjs.shuffle(xs);
+    assertEq(xs.length, ys.length);
+  }
+
   //#times
   var i = 0;
-  fjs.times(12, function() { ++i });
+  fjs.times(12, function() { i++ });
   assertEq(i, 12);
 
   //#takeWhile
@@ -382,11 +400,24 @@
   //#repeat
   var xs = fjs.repeat('foo');
   assert(fjs.isArray(xs) && fjs.eqZero(xs.length));
-  var xs = fjs.repeat('foo', 0);
+  var xs = fjs.repeat(0, 'foo');
   assert(fjs.isArray(xs) && fjs.eqZero(xs.length));
-  var xs = fjs.repeat('foo', '');
+  var xs = fjs.repeat('', 'foo');
   assert(fjs.isArray(xs) && fjs.eqZero(xs.length));
-  var xs = fjs.repeat('foo', 10);
+  var xs = fjs.repeat(10, 'foo');
+  assert(fjs.isArray(xs) && fjs.eq(xs.length, 10));
+  for(i in xs)
+    assertEq(xs[i], 'foo');
+
+  //#repeatedly
+  var f = function() { return 'foo'; };
+  var xs = fjs.repeatedly(f);
+  assert(fjs.isArray(xs) && fjs.eqZero(xs.length));
+  var xs = fjs.repeatedly(0, f);
+  assert(fjs.isArray(xs) && fjs.eqZero(xs.length));
+  var xs = fjs.repeatedly('', f);
+  assert(fjs.isArray(xs) && fjs.eqZero(xs.length));
+  var xs = fjs.repeatedly(10, f);
   assert(fjs.isArray(xs) && fjs.eq(xs.length, 10));
   for(i in xs)
     assertEq(xs[i], 'foo');
@@ -394,9 +425,9 @@
   //#cycle
   var xs = ['foo', 'bar', 'baz'];
   assertEq(fjs.cycle(xs).length, 0);
-  assertEq(fjs.cycle(xs, 0).length, 0);
-  assertEq(fjs.cycle(xs, 3).length, 9);
-  var ys = fjs.cycle(xs, 2);
+  assertEq(fjs.cycle(0, xs).length, 0);
+  assertEq(fjs.cycle(3, xs).length, 9);
+  var ys = fjs.cycle(2, xs);
   assertEq(ys[0], xs[0]);
   assertEq(ys[1], xs[1]);
   assertEq(ys[2], xs[2]);
@@ -713,13 +744,67 @@
   assertFalse(fjs.isFunction({}));
   assertFalse(fjs.isFunction(2));
 
-  //#isArgument
-  (function() { assert(fjs.isArgument(arguments)) })();
-  assertFalse(fjs.isArgument(function(){}));
-  assertFalse(fjs.isArgument(''));
-  assertFalse(fjs.isArgument([]));
-  assertFalse(fjs.isArgument({}));
-  assertFalse(fjs.isArgument(2));
+  //#isNumber
+  assert(fjs.isNumber(1));
+  assert(fjs.isNumber(-43));
+  assert(fjs.isNumber(0));
+  assert(fjs.isNumber(2.3));
+  assert(fjs.isNumber(-23.4));
+  assert(fjs.isNumber(0.0));
+  assertFalse(fjs.isNumber([]));
+  assertFalse(fjs.isNumber({}));
+  assertFalse(fjs.isNumber(''));
+  assertFalse(fjs.isNumber(null));
+  assertFalse(fjs.isNumber(undefined));
+  assertFalse(fjs.isNumber(function(){}));
+
+  //#isInt
+  assert(fjs.isInt(1));
+  assert(fjs.isInt(-43));
+  assert(fjs.isInt(0));
+  assertFalse(fjs.isInt(1.1));
+  assertFalse(fjs.isInt(-12.32));
+  assertFalse(fjs.isInt(0.1));
+
+  assert(fjs.isInt(3.0));
+  assert(fjs.isInt(0.0));
+  //assertFalse(fjs.isInt(3.0));
+  //assertFalse(fjs.isInt(0.0));
+
+  assertFalse(fjs.isInt([]));
+  assertFalse(fjs.isInt({}));
+  assertFalse(fjs.isInt(''));
+  assertFalse(fjs.isInt(null));
+  assertFalse(fjs.isInt(undefined));
+  assertFalse(fjs.isInt(function(){}));
+
+  //#isFloat
+  assert(fjs.isFloat(1.32));
+  assert(fjs.isFloat(-43.2));
+  assert(fjs.isFloat(0.2));
+
+  //assert(fjs.isFloat(1.0));
+  //assert(fjs.isFloat(0.0));
+  assertFalse(fjs.isFloat(1.0));
+  assertFalse(fjs.isFloat(0.0));
+
+  assertFalse(fjs.isFloat(1));
+  assertFalse(fjs.isFloat(-12));
+  assertFalse(fjs.isFloat(0));
+  assertFalse(fjs.isFloat([]));
+  assertFalse(fjs.isFloat({}));
+  assertFalse(fjs.isFloat(''));
+  assertFalse(fjs.isFloat(null));
+  assertFalse(fjs.isFloat(undefined));
+  assertFalse(fjs.isFloat(function(){}));
+
+  //#areArguments
+  (function() { assert(fjs.areArguments(arguments)) })();
+  assertFalse(fjs.areArguments(function(){}));
+  assertFalse(fjs.areArguments(''));
+  assertFalse(fjs.areArguments([]));
+  assertFalse(fjs.areArguments({}));
+  assertFalse(fjs.areArguments(2));
 
   //#isArrayLike
   (function() { assert(fjs.isArrayLike(arguments)) })();
