@@ -395,7 +395,7 @@ this.fjs = function() {
     'Returns an Array containing the items of xs',
     'while pred(item) is true.',
     function(pred, xs) {
-      for(var i=0; xs[i] && pred(xs[i]); i++);
+      for(var i = 0; i < xs.length && pred(xs[i]); i++);
       return slice(xs, 0, i);
     }
   );
@@ -404,7 +404,7 @@ this.fjs = function() {
     'Drops all the items of xs while pred(item) is true',
     'and returns all the remaining items as an Array',
     function(pred, xs) {
-      for(var i=0; xs[i] && pred(xs[i]); i++);
+      for(var i = 0; i < xs.length && pred(xs[i]); i++);
       return slice(xs, i);
     }
   );
@@ -602,7 +602,6 @@ this.fjs = function() {
     }
   );
 
-  //#fails(fjs.reducekv(function(agg, k, v){return agg+v}, [1, 2, 3], 0) returns 3 (k and v are inverted))
   //#Array.prototype
   exports.reducekv = reducekv = fn(
     'The first argument is a function which takes three arguments,',
@@ -613,9 +612,9 @@ this.fjs = function() {
     function(f, obj, agg) {
       if([].reduce && !isObject(obj)) return callWith([].reduce, obj, arity3(f), agg);
 
-      var reducer = function(obj2, agg) {
-        if(isEmpty(obj2)) return agg;
-        return reducer(butfirst(obj2), call(f, agg, obj2[0][0], obj2[0][1]));
+      var reducer = function(obj, agg) {
+        if(isEmpty(obj)) return agg;
+        return reducer(butfirst(obj), call(f, agg, obj[0][0], obj[0][1]));
       };
       return reducer(unmarshal(obj), agg);
     }
@@ -947,18 +946,20 @@ this.fjs = function() {
     is('Boolean')
   );
 
-  //#finish(isFloat(1.0) should return true)
+  //#finish(isFloat(1.0) should return true ?)
   exports.isFloat = isFloat = fn(
     'Returns true if x is a Float.',
+    'Notice: isFloat(1.0) returns false.',
     function(x) {
       if(!isNumber(x)) return false;
       return some(function(c) { return c === '.' }, x.toString());
     }
   );
 
-  //#finish(isInt(1.0) should return false)
+  //#finish(isInt(1.0) should return false ?)
   exports.isInt = isInt = fn(
     'Returns true if x is an Int',
+    'Notice: isInt(1.0) returns true.',
     function(x) {
       return isNumber(x) && !isFloat(x);
     }
@@ -1109,7 +1110,7 @@ this.fjs = function() {
       return join(values(exports.version.details), '.');
     }
   );
-  exports.version.details = {major: 0, minor: 9, patch: 2};
+  exports.version.details = {major: 0, minor: 9, patch: 3};
 
   return exports;
 }();
