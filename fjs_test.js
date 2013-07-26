@@ -52,6 +52,69 @@
   assert(fjs.not(false));
   assertFalse(fjs.not(true));
 
+  //#deq
+  assert(fjs.deq(1, 1));
+  assert(fjs.deq('', ''));
+  assert(fjs.deq('foo', 'foo'));
+  assert(fjs.deq(1, '1'));
+  assertFalse(fjs.deq(true, false));
+
+  //#teq
+  assert(fjs.teq(1, 1));
+  assert(fjs.teq('', ''));
+  assert(fjs.teq('foo', 'foo'));
+  assertFalse(fjs.teq(1, '1'));
+  assertFalse(fjs.teq(true, false));
+
+  //#ndeq
+  assert(fjs.ndeq(1, 2));
+  assert(fjs.ndeq('', 'foo'));
+  assert(fjs.ndeq(true, false));
+  assertFalse(fjs.ndeq(1, '1'));
+  assertFalse(fjs.ndeq(true, true));
+
+  //#nteq
+  assert(fjs.nteq(1, 2));
+  assert(fjs.nteq('', 'foo'));
+  assert(fjs.nteq(1, '1'));
+  assert(fjs.nteq(true, false));
+  assertFalse(fjs.nteq(true, true));
+
+  //#lt
+  assert(fjs.lt(1, 2));
+  assertFalse(fjs.lt(1, 1));
+  assertFalse(fjs.lt(2, 1));
+
+  //#gt
+  assert(fjs.gt(2, 1));
+  assertFalse(fjs.gt(1, 1));
+  assertFalse(fjs.gt(1, 2));
+
+  //#lte
+  assert(fjs.lte(1, 2));
+  assert(fjs.lte(1, 1));
+  assertFalse(fjs.lte(2, 1));
+
+  //#gte
+  assert(fjs.gte(2, 1));
+  assert(fjs.gte(1, 1));
+  assertFalse(fjs.gte(1, 2));
+
+  //#and
+  assert(fjs.and(true, true));
+  assertFalse(fjs.and(true, false));
+  assertFalse(fjs.and(false, false));
+
+  //#or
+  assert(fjs.or(true, true));
+  assert(fjs.or(true, false));
+  assertFalse(fjs.or(false, false));
+
+  //#xor
+  assert(fjs.xor(true, false));
+  assertFalse(fjs.xor(true, true));
+  assertFalse(fjs.xor(false, false));
+
   //#complement
   var even = function(x) { return (x & 1) === 0; };
   assert(even(2));

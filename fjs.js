@@ -1,13 +1,13 @@
 this.fjs = function() {
   var exports = {};
   //public
-  var add, apply, applyWith, areArguments, arity, arity0, arity1, arity2, arity3, assoc, attrs, butfirst, butlast, call,
-      callWith, clone, comp, complement, concat, conj, cons, cs, cycle, dec, del, dir, dir1, div, doc, dropWhile, eq, eqOne,
-      eqZero, error, error1, even, every, filter, first, flip, fmap, fmapkv, fn, freduce, freducekv, get, id, inc, isArray,
+  var add, apply, applyWith, and, areArguments, arity, arity0, arity1, arity2, arity3, assoc, attrs, butfirst, butlast, call,
+      callWith, clone, comp, complement, concat, conj, cons, cs, cycle, dec, del, deq, dir, dir1, div, doc, dropWhile, eq, eqOne,
+      eqZero, error, error1, even, every, filter, first, flip, fmap, fmapkv, fn, freduce, freducekv, get, gt, gte, id, inc, isArray,
       isArrayLike, isBoolean, isEmpty, isFalse, isFloat, isFunction, isInt, isNull, isNumber, isObject, isString, isTrue,
-      isUndefined, join, juxt, keys, last, log, log1, loop, map, mapkv, marshal, merge, mul, not, odd, partial, rand, randIndex,
-      randInt, range, reduce, reducekv, repeat, repeatedly, reverse, second, shuffle, slice, some, sort, source, sub, sum, takeWhile,
-      thread, times, unmarshal, use, useAll, values, version, warn, warn1, xrange;
+      isUndefined, join, juxt, keys, last, log, log1, loop, lt, lte, map, mapkv, marshal, merge, mul, ndeq, not, nteq, odd, or, partial,
+      rand, randIndex, randInt, range, reduce, reducekv, repeat, repeatedly, reverse, second, shuffle, slice, some, sort, source, sub,
+      sum, takeWhile, teq, thread, times, unmarshal, use, useAll, values, version, warn, warn1, xor, xrange;
   //private
   var is, parseArgs, wip;
 
@@ -50,6 +50,94 @@ this.fjs = function() {
     'Negates boolean value',
     function(bool) {
       return !bool;
+    }
+  );
+
+  //#finish(variadic)
+  exports.deq = deq = fn(
+    'Wrapper for the == operator',
+    function(x, y) {
+      return x == y;
+    }
+  );
+
+  //#finish(variadic)
+  exports.teq = teq = fn(
+    'Wrapper for the === operator',
+    function(x, y) {
+      return x === y;
+    }
+  );
+
+  //#finish(variadic)
+  exports.ndeq = ndeq = fn(
+    'Wrapper for the != operator',
+    function(x, y) {
+      return x != y;
+    }
+  );
+
+  //#finish(variadic)
+  exports.nteq = nteq = fn(
+    'Wrapper for the != operator',
+    function(x, y) {
+      return x !== y;
+    }
+  );
+
+  //#finish(variadic)
+  exports.lt = lt = fn(
+    'Wrapper for the < operator',
+    function(x, y) {
+      return x < y;
+    }
+  );
+
+  //#finish(variadic)
+  exports.gt = gt = fn(
+    'Wrapper for the > operator',
+    function(x, y) {
+      return x > y;
+    }
+  );
+
+  //#finish(variadic)
+  exports.lte = lte = fn(
+    'Wrapper for the <= operator',
+    function(x, y) {
+      return x <= y;
+    }
+  );
+
+  //#finish(variadic)
+  exports.gte = gte = fn(
+    'Wrapper for the >= operator',
+    function(x, y) {
+      return x >= y;
+    }
+  );
+
+  //#finish(variadic)
+  exports.and = and = fn(
+    'Wrapper for the && operator',
+    function(x, y) {
+      return x && y;
+    }
+  );
+
+  //#finish(variadic)
+  exports.or = or = fn(
+    'Wrapper for the || operator',
+    function(x, y) {
+      return x || y;
+    }
+  );
+
+  //#finish(variadic)
+  exports.xor = xor = fn(
+    'xor operator',
+    function(x, y) {
+      return !x !== !y && (x || y);
     }
   );
 
@@ -1110,7 +1198,7 @@ this.fjs = function() {
       return join(values(exports.version.details), '.');
     }
   );
-  exports.version.details = {major: 0, minor: 9, patch: 3};
+  exports.version.details = {major: 0, minor: 9, patch: 4};
 
   return exports;
 }();
