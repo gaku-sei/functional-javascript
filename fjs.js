@@ -2,12 +2,12 @@ this.fjs = function() {
   var exports = {};
   //public
   var add, apply, applyWith, areArguments, arity, arity0, arity1, arity2, arity3, assoc, attrs, butfirst, butlast, call,
-      callWith, clone, comp, concat, conj, cons, cs, cycle, dec, del, dir, dir1, div, doc, dropWhile, eq, eqOne, eqZero,
-      error, error1, even, every, filter, first, flip, fmap, fmapkv, fn, freduce, freducekv, get, id, inc, isArray,
-      isArrayLike, isEmpty, isFalse, isFloat, isFunction, isInt, isNull, isNumber, isObject, isString, isTrue, isUndefined,
-      join, juxt, keys, last, log, log1, loop, map, mapkv, marshal, merge, mul, odd, partial, rand, randIndex, randInt, range,
-      reduce, reducekv, repeat, repeatedly, reverse, second, shuffle, slice, some, sort, source, sub, sum, takeWhile, thread,
-      times, unmarshal, use, useAll, values, version, warn, warn1, xrange;
+      callWith, clone, comp, complement, concat, conj, cons, cs, cycle, dec, del, dir, dir1, div, doc, dropWhile, eq, eqOne,
+      eqZero, error, error1, even, every, filter, first, flip, fmap, fmapkv, fn, freduce, freducekv, get, id, inc, isArray,
+      isArrayLike, isBoolean, isEmpty, isFalse, isFloat, isFunction, isInt, isNull, isNumber, isObject, isString, isTrue,
+      isUndefined, join, juxt, keys, last, log, log1, loop, map, mapkv, marshal, merge, mul, not, odd, partial, rand, randIndex,
+      randInt, range, reduce, reducekv, repeat, repeatedly, reverse, second, shuffle, slice, some, sort, source, sub, sum, takeWhile,
+      thread, times, unmarshal, use, useAll, values, version, warn, warn1, xrange;
   //private
   var is, parseArgs, wip;
 
@@ -38,14 +38,32 @@ this.fjs = function() {
   );
 
   exports.is = is = fn(
-    'General purpose type checker.',
-    'By the way it\'s only used in isArray, isObject, isString and isNumber.',
+    'General purpose type checker',
     function(type) {
       return function(x) {
-        return second({}.toString.call(x).match(/\s(\w+)\]$/i)) === type;
+        return {}.toString.call(x).slice(8, -1) === type;
       };
     }
   );
+
+  exports.not = not = fn(
+    'Negates boolean value',
+    function(bool) {
+      return !bool;
+    }
+  );
+
+  exports.complement = complement = fn(
+    'Takes a function and returns a function which does the exact thing',
+    'except it negates the returned boolean value',
+    //partial(comp, not)
+    function(f) {
+      return function() {
+        return !apply(f, arguments);
+      };
+    }
+  );
+
 
   exports.applyWith = applyWith = fn(
     'Uses context and rebinds \'this\',',
@@ -114,7 +132,7 @@ this.fjs = function() {
 
   exports.clone = clone = fn(
     'General purpose clone function.',
-    'The Objects and Arrays are mutable in JS',
+    'The objects and arrays are mutable in JS',
     'clone allows to bypass this with ease.',
     function(x) {
       if(this.JSON) return JSON.parse(JSON.stringify(x));
@@ -393,6 +411,7 @@ this.fjs = function() {
 
   exports.keys = keys = fn(
     'Returns the keys of an Object',
+    //partial(mapkv, id)
     function(obj) {
       return mapkv(id, obj);
     }
@@ -718,53 +737,53 @@ this.fjs = function() {
   exports.freducekv = freducekv = fn(
     'Flips the arguments given to reducekv.',
     'The aggregator remains the third and last argument.',
-    'e.g.: var xs = {foo: 1, bar: 2, baz: 3}',
+    'e.g.: var obj = {foo: 1, bar: 2, baz: 3}',
     '      var f = function(agg, _, v) { return agg * v }',
-    '      freducekv(xs, f, 1) // 6',
-    '      freducekv(xs, f, 2) // 12',
+    '      freducekv(obj, f, 1) // 6',
+    '      freducekv(obj, f, 2) // 12',
     function(obj, f, agg) {
       return reducekv(f, obj, agg)
     }
   );
 
   exports.log = log = fn(
-    'console.log and returns the argument(s) given.',
+    'console.log and returns the given argument(s)',
     cs('log')
   );
 
   exports.log1 = log1 = fn(
-    'console.log and returns the first argument given.',
-    arity1(cs('log'))
+    'console.log and returns the first argument given',
+    arity1(log)
   );
 
   exports.dir = dir = fn(
-    'console.dir and returns the argument(s) given.',
+    'console.dir and returns the given argument(s)',
     cs('dir')
   );
 
   exports.dir1 = dir1 = fn(
-    'console.dir and returns the first argument given.',
-    arity1(cs('dir'))
+    'console.dir and returns the first argument given',
+    arity1(dir)
   );
 
   exports.warn = warn = fn(
-    'console.warn and returns the argument(s) given.',
+    'console.warn and returns the given argument(s)',
     cs('warn')
   );
 
   exports.warn1 = warn1 = fn(
-    'console.warn and returns the first argument given.',
-    arity1(cs('warn'))
+    'console.warn and returns the first argument given',
+    arity1(warn)
   );
 
   exports.error = error = fn(
-    'console.error and returns the argument(s) given.',
+    'console.error and returns the given argument(s)',
     cs('error')
   );
 
   exports.error1 = error1 = fn(
-    'console.error and returns the first argument given.',
-    arity1(cs('error'))
+    'console.error and returns the first argument given',
+    arity1(error)
   );
 
   exports.range = range = fn(
@@ -801,7 +820,7 @@ this.fjs = function() {
 
   exports.eq = eq = fn(
     'Returns wether x equals y or not.',
-    'eq makes a deep comparison of x and y.',
+    'eq does a deep comparison of x and y.',
     function(x, y) {
       switch(true) {
       case isArrayLike(x) && isArrayLike(y):
@@ -833,9 +852,7 @@ this.fjs = function() {
 
   exports.odd = odd = fn(
     'Returns true if x is odd',
-    function(x) {
-      return !even(x);
-    }
+    complement(even)
   );
 
   exports.inc = inc = fn(
@@ -898,17 +915,19 @@ this.fjs = function() {
 
   exports.isFunction = isFunction = fn(
     'Returns true if x is a Function',
-    function(x) {
-      return typeof x === 'function';
-    }
+    is('Function')
+    //function(x) {
+    //  return typeof x === 'function';
+    //}
   );
 
   exports.areArguments = areArguments = fn(
     'Returns true if x is an instance of Arguments',
-    function(x) {
-      if(isNull(x) || isUndefined(x)) return false;
-      return x.toString && x.toString() === '[object Arguments]';
-    }
+    is('Arguments')
+    //function(x) {
+    //  if(isNull(x) || isUndefined(x)) return false;
+    //  return x.toString && x.toString() === '[object Arguments]';
+    //}
   );
 
   exports.isArrayLike = isArrayLike = fn(
@@ -921,6 +940,11 @@ this.fjs = function() {
   exports.isNumber = isNumber = fn(
     'Returns true if x is a Number',
     is('Number')
+  );
+
+  exports.isBoolean = isBoolean = fn(
+    'Returns true if x is a Boolean',
+    is('Boolean')
   );
 
   //#finish(isFloat(1.0) should return true)
@@ -970,7 +994,7 @@ this.fjs = function() {
 
   exports.add = add = fn(
     'Returns the sum of given arguments.',
-    'add() returns 0.',
+    'add() returns 0',
     function() {
       return reduce(function(x, y) {
         return x + y;
@@ -980,7 +1004,7 @@ this.fjs = function() {
 
   exports.mul = mul = fn(
     'Returns the product of given arguments.',
-    'mul() returns 1.',
+    'mul() returns 1',
     function() {
       if(isEmpty(arguments)) return 1;
       return reduce(function(x, y) {
@@ -1085,7 +1109,7 @@ this.fjs = function() {
       return join(values(exports.version.details), '.');
     }
   );
-  exports.version.details = {major: 0, minor: 9, patch: 1};
+  exports.version.details = {major: 0, minor: 9, patch: 2};
 
   return exports;
 }();

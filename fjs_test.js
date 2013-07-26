@@ -48,6 +48,18 @@
   assertFalse(fjs.isArray(""));
   assertFalse(fjs.isArray(0));
 
+  //#not
+  assert(fjs.not(false));
+  assertFalse(fjs.not(true));
+
+  //#complement
+  var even = function(x) { return (x & 1) === 0; };
+  assert(even(2));
+  assertFalse(even(3));
+  var odd = fjs.complement(even);
+  assert(odd(3));
+  assertFalse(odd(2));
+
   //#applyWith
   var f = function() { return fjs.sum(arguments) * 10; };
   assertEq(fjs.applyWith(f, 10, [2, 3]), 50);
@@ -93,7 +105,20 @@
   var y = fjs.id(1);
   assertEq(x, y);
 
-  //#cloneArray
+  //#clone
+  var x = [{foo: [1, 2], bar: 'baz'}, 2, 'qux'];
+  var y = fjs.clone(x);
+  assertEq(x[0].foo[0], y[0].foo[0]);
+  assertEq(x[0].bar, y[0].bar);
+  assertEq(x[1], y[1]);
+  assertEq(x[2], y[2]);
+  x[0].foo.push(3);
+  y[0].baz = 42;
+  assertEq(x[0].foo[2], 3);
+  assertEq(y[0].foo[2], undefined);
+  assertEq(x[0].baz, undefined);
+  assertEq(y[0].baz, 42);
+
   var xs = [1, 2, 3];
   var ys = fjs.clone(xs);
   for(i in xs)
@@ -112,7 +137,6 @@
   assertEq(ys[2][0], 3);
   assertEq(xs[2][0], 4);
 
-  //#cloneObject
   var obj = {foo: 1, bar: 2};
   var cobj = fjs.clone(obj);
   for(i in xs)
@@ -123,20 +147,6 @@
   assertEq(obj.qux, undefined);
   assertEq(obj.baz, 3);
   assertEq(cobj.qux, 4);
-
-  //#clone
-  var x = [{foo: [1, 2], bar: 'baz'}, 2, 'qux'];
-  var y = fjs.clone(x);
-  assertEq(x[0].foo[0], y[0].foo[0]);
-  assertEq(x[0].bar, y[0].bar);
-  assertEq(x[1], y[1]);
-  assertEq(x[2], y[2]);
-  x[0].foo.push(3);
-  y[0].baz = 42;
-  assertEq(x[0].foo[2], 3);
-  assertEq(y[0].foo[2], undefined);
-  assertEq(x[0].baz, undefined);
-  assertEq(y[0].baz, 42);
 
   //#attrs
   var xs = {foo: 1, bar: 2};
@@ -397,6 +407,19 @@
   //Space Oddity Notice: it's a normal behavior and it's neither a desired feature nor a real bug.
   assertEq(fjs.sum([1, 2, 'foo']), '3foo');
 
+  //#cycle
+  var xs = ['foo', 'bar', 'baz'];
+  assertEq(fjs.cycle(xs).length, 0);
+  assertEq(fjs.cycle(0, xs).length, 0);
+  assertEq(fjs.cycle(3, xs).length, 9);
+  var ys = fjs.cycle(2, xs);
+  assertEq(ys[0], xs[0]);
+  assertEq(ys[1], xs[1]);
+  assertEq(ys[2], xs[2]);
+  assertEq(ys[3], xs[0]);
+  assertEq(ys[4], xs[1]);
+  assertEq(ys[5], xs[2]);
+
   //#repeat
   var xs = fjs.repeat('foo');
   assert(fjs.isArray(xs) && fjs.eqZero(xs.length));
@@ -421,19 +444,6 @@
   assert(fjs.isArray(xs) && fjs.eq(xs.length, 10));
   for(i in xs)
     assertEq(xs[i], 'foo');
-
-  //#cycle
-  var xs = ['foo', 'bar', 'baz'];
-  assertEq(fjs.cycle(xs).length, 0);
-  assertEq(fjs.cycle(0, xs).length, 0);
-  assertEq(fjs.cycle(3, xs).length, 9);
-  var ys = fjs.cycle(2, xs);
-  assertEq(ys[0], xs[0]);
-  assertEq(ys[1], xs[1]);
-  assertEq(ys[2], xs[2]);
-  assertEq(ys[3], xs[0]);
-  assertEq(ys[4], xs[1]);
-  assertEq(ys[5], xs[2]);
 
   //#reduce
   var xs = [1, 2, 3];
@@ -744,6 +754,22 @@
   assertFalse(fjs.isFunction({}));
   assertFalse(fjs.isFunction(2));
 
+  //#areArguments
+  (function() { assert(fjs.areArguments(arguments)) })();
+  assertFalse(fjs.areArguments(function(){}));
+  assertFalse(fjs.areArguments(''));
+  assertFalse(fjs.areArguments([]));
+  assertFalse(fjs.areArguments({}));
+  assertFalse(fjs.areArguments(2));
+
+  //#isArrayLike
+  (function() { assert(fjs.isArrayLike(arguments)) })();
+  assert(fjs.isArrayLike([]));
+  assertFalse(fjs.isArrayLike(function(){}));
+  assertFalse(fjs.isArrayLike(''));
+  assertFalse(fjs.isArrayLike({}));
+  assertFalse(fjs.isArrayLike(2));
+
   //#isNumber
   assert(fjs.isNumber(1));
   assert(fjs.isNumber(-43));
@@ -758,25 +784,16 @@
   assertFalse(fjs.isNumber(undefined));
   assertFalse(fjs.isNumber(function(){}));
 
-  //#isInt
-  assert(fjs.isInt(1));
-  assert(fjs.isInt(-43));
-  assert(fjs.isInt(0));
-  assertFalse(fjs.isInt(1.1));
-  assertFalse(fjs.isInt(-12.32));
-  assertFalse(fjs.isInt(0.1));
-
-  assert(fjs.isInt(3.0));
-  assert(fjs.isInt(0.0));
-  //assertFalse(fjs.isInt(3.0));
-  //assertFalse(fjs.isInt(0.0));
-
-  assertFalse(fjs.isInt([]));
-  assertFalse(fjs.isInt({}));
-  assertFalse(fjs.isInt(''));
-  assertFalse(fjs.isInt(null));
-  assertFalse(fjs.isInt(undefined));
-  assertFalse(fjs.isInt(function(){}));
+  //#isBoolean
+  assert(fjs.isBoolean(true));
+  assert(fjs.isBoolean(false));
+  assertFalse(fjs.isBoolean(1));
+  assertFalse(fjs.isBoolean([]));
+  assertFalse(fjs.isBoolean({}));
+  assertFalse(fjs.isBoolean(''));
+  assertFalse(fjs.isBoolean(null));
+  assertFalse(fjs.isBoolean(undefined));
+  assertFalse(fjs.isBoolean(function(){}));
 
   //#isFloat
   assert(fjs.isFloat(1.32));
@@ -798,21 +815,25 @@
   assertFalse(fjs.isFloat(undefined));
   assertFalse(fjs.isFloat(function(){}));
 
-  //#areArguments
-  (function() { assert(fjs.areArguments(arguments)) })();
-  assertFalse(fjs.areArguments(function(){}));
-  assertFalse(fjs.areArguments(''));
-  assertFalse(fjs.areArguments([]));
-  assertFalse(fjs.areArguments({}));
-  assertFalse(fjs.areArguments(2));
+  //#isInt
+  assert(fjs.isInt(1));
+  assert(fjs.isInt(-43));
+  assert(fjs.isInt(0));
+  assertFalse(fjs.isInt(1.1));
+  assertFalse(fjs.isInt(-12.32));
+  assertFalse(fjs.isInt(0.1));
 
-  //#isArrayLike
-  (function() { assert(fjs.isArrayLike(arguments)) })();
-  assert(fjs.isArrayLike([]));
-  assertFalse(fjs.isArrayLike(function(){}));
-  assertFalse(fjs.isArrayLike(''));
-  assertFalse(fjs.isArrayLike({}));
-  assertFalse(fjs.isArrayLike(2));
+  assert(fjs.isInt(3.0));
+  assert(fjs.isInt(0.0));
+  //assertFalse(fjs.isInt(3.0));
+  //assertFalse(fjs.isInt(0.0));
+
+  assertFalse(fjs.isInt([]));
+  assertFalse(fjs.isInt({}));
+  assertFalse(fjs.isInt(''));
+  assertFalse(fjs.isInt(null));
+  assertFalse(fjs.isInt(undefined));
+  assertFalse(fjs.isInt(function(){}));
 
   //#isTrue
   assert(fjs.isTrue(true));
