@@ -617,6 +617,18 @@
   var g = fjs.partial(f, 2, 10);
   assertEq(g(5), 4, 200);
 
+  //#curry
+  var cmap = fjs.curry(fjs.map);
+  var mapinc = cmap(fjs.inc);
+  var xs = mapinc([1, 2, 3]);
+  assertEq(xs[0], 2);
+  assertEq(xs[1], 3);
+  assertEq(xs[2], 4);
+  var cadd = fjs.curry(fjs.add, 3);
+  var add2and3 = cadd(2)(3);
+  assertEq(add2and3(4), 9);
+  assertEq(cadd(1)(2)(3), 6);
+
   //#juxt
   var f = function(x) { return x + 1 };
   var g = function(x) { return x - 1 };

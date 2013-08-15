@@ -852,20 +852,24 @@ var fjs = function() {
     }
   );
 
-  //#test #finish
   exports.curry = curry = fn(
-    '',
+    'Allows to curry a function.',
+    'The arity if by default f.length, but it can be set.',
+    'e.g.: var cmap = curry(map)',
+    '      var mapinc = cmap(inc)',
+    '      mapinc([1, 2, 3]) // [2, 3, 4]',
+    '      mapinc([2, 3, 4]) // [3, 4, 5]',
+    'e.g.: var cadd = curry(add, 3)',
+    '      cadd(1)(2)(3) // 6',
     function(f, arity) {
-      wip('curry');
-      var args = [],
-          curried = function(nargs) {
-        var arity = f.length; //arity || f.length,
-        args.concat(nargs);
-        if(arity > 0)
-          return curried;
-        else return f(args);
+      var curried = function(args, arity) {
+        return function(arg) {
+          if(arity > 1)
+            return curried(conj(args, arg), dec(arity));
+          else return apply(f, conj(args, arg));
+        };
       };
-      return curried;
+      return curried([], arity || f.length);
     }
   );
 
@@ -1313,7 +1317,7 @@ var fjs = function() {
       return join(values(exports.version.details), '.');
     }
   );
-  exports.version.details = {major: 0, minor: 11, patch: 0};
+  exports.version.details = {major: 0, minor: 12, patch: 0};
 
   return exports;
 }();
