@@ -3,11 +3,11 @@ this.fjs = function() {
   //public
   var add, apply, applyWith, and, areArguments, arity, arity0, arity1, arity2, arity3, assoc, attrs, butfirst, butlast, call,
       callWith, clone, comp, complement, concat, conj, cons, cs, curry, cycle, dec, del, dir, dir1, div, doc, dropWhile, eq, eq2, eq3,
-      eqOne, eqZero, error, error1, even, every, filter, first, flip, fmap, fmapkv, fn, freduce, freducekv, get, gt, gte, id, inc, isArray,
-      isArrayLike, isBoolean, isEmpty, isFalse, isFloat, isFunction, isInt, isNull, isNumber, isObject, isString, isTrue,
+      eqOne, eqZero, error, error1, even, every, filter, first, flip, fmap, fmapkv, fn, freduce, freducekv, freducer, get, gt, gte, id,
+      inc, isArray, isArrayLike, isBoolean, isEmpty, isFalse, isFloat, isFunction, isInt, isNull, isNumber, isObject, isString, isTrue,
       isUndefined, join, juxt, keys, last, log, log1, loop, lt, lte, map, mapkv, marshal, merge, mul, neq2, not, neq3, odd, or, partial,
-      product, rand, randIndex, randInt, range, reduce, reducekv, repeat, repeatedly, reverse, second, shuffle, slice, some, sort, source,
-      sub, sum, takeWhile, thread, time, times, unmarshal, use, useAll, values, version, warn, warn1, xor, xrange;
+      product, rand, randIndex, randInt, range, reduce, reducekv, reducer, repeat, repeatedly, reverse, second, shuffle, slice, some, sort,
+      source, sub, sum, takeWhile, thread, time, times, unmarshal, use, useAll, values, version, warn, warn1, xor, xrange;
   //private
   var is, parseArgs, wip;
 
@@ -763,6 +763,28 @@ this.fjs = function() {
     }
   );
 
+  exports.reducer = reducer = fn(
+    'Similar to reduce but starts iteration at the end of the array.',
+    'e.g.: reduce(sub, [10, 2, 5]) // 3',
+    '      reducer(sub, [10, 2, 5]) // -7',
+    function(f, xs, agg) {
+      if([].reduce) {
+        if(isUndefined(agg))
+          return callWith([].reduceRight, xs, arity2(f));
+        else return callWith([].reduceRight, xs, arity2(f), agg);
+      }
+
+      //reducer is named reducer2 for readability
+      var reducer2 = function(ys, agg) {
+        if(isEmpty(ys)) return agg;
+        return reducer2(butlast(ys), call(f, agg, last(ys)));
+      };
+      if(isUndefined(agg))
+        return reducer2(butlast(xs), last(xs));
+      else return reducer2(xs, agg);
+    }
+  );
+
   //#Array.prototype
   //#notice(for any reason my version of reverse is way faster on Chrome)
   exports.reverse = reverse = fn(
@@ -902,6 +924,15 @@ this.fjs = function() {
     '      freducekv(obj, f, 2) // 12',
     function(obj, f, agg) {
       return reducekv(f, obj, agg)
+    }
+  );
+
+  exports.freducer = freducer = fn(
+    'Flips the argument given to reducer.',
+    'The aggregator remains the third and last argument.',
+    'e.g.: freducer([3, 2, 10], sub) // 5',
+    function(xs, f, agg) {
+      return reducer(f, xs, agg);
     }
   );
 
@@ -1282,7 +1313,8 @@ this.fjs = function() {
       return join(values(exports.version.details), '.');
     }
   );
-  exports.version.details = {major: 0, minor: 10, patch: 0};
+  exports.version.details = {major: 0, minor: 10, patch: 1};
 
   return exports;
 }();
+if(this._ === undefined) this._ = this.fjs;

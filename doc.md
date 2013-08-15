@@ -9,10 +9,10 @@ or in their doc attribute. Plus, the source code defines several versions of the
 
 # What is FJS
 
-  FJS exports an object fjs with more than 100 functions:
+  FJS defines an object fjs (and _ if not defined yet) with more than 120 functions:
     - general purpose functions (eq, clone, keys, values, etc...)
-    - iteration functions (map, mapkv, reduce, reducekv, filter, some, every, takeWhile, dropWhile, etc...)
-    - functions manipulation (comp, partial, juxt, call, callWith, apply, applyWith, etc...)
+    - iteration functions (map, mapkv, reduce, reducer, reducekv, filter, some, every, takeWhile, dropWhile, etc...)
+    - functions manipulation (comp, partial, curry, juxt, call, callWith, apply, applyWith, etc...)
     - variadic operator functions (deq, teq, gt, lt, gte, lte, or, and, xor, etc...)
     - manipulation and access functions (cons, conj, merge, assoc, get, first, second, last, butfirst, butlast, etc...)
     - type checking (isArray, isArrayLike, areArguments, isFalse, isTrue, isNull, isUndefined, isObject, isString, etc...)

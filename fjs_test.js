@@ -562,6 +562,13 @@
   assertEq(x, 6);
   assertEq(y, 8);
 
+  //#reducer
+  var xs = [1, 2, 3];
+  var x = fjs.reducer(fjs.sub, xs);
+  var y = fjs.reducer(fjs.sub, xs, 2);
+  assertEq(x, 0);
+  assertEq(y, -4);
+
   //#reverse
   var xs = [1, 2, 3];
   var ys = [3, 2, 1];
@@ -671,6 +678,11 @@
   var f = function(agg, _, v) { return agg * v };
   assertEq(fjs.freducekv(xs, f, 1), 6);
   assertEq(fjs.freducekv(xs, f, 2), 12);
+
+  //#freducer
+  var xs = [5, 10];
+  assertEq(fjs.freducer(xs, fjs.sub), 5);
+  assertEq(fjs.freducer(xs, fjs.sub, 2), -13);
 
   //#log
   //See #cs
