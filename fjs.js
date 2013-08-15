@@ -1,4 +1,4 @@
-this.fjs = function() {
+var fjs = function() {
   var exports = {};
   //public
   var add, apply, applyWith, and, areArguments, arity, arity0, arity1, arity2, arity3, assoc, attrs, butfirst, butlast, call,
@@ -1313,8 +1313,15 @@ this.fjs = function() {
       return join(values(exports.version.details), '.');
     }
   );
-  exports.version.details = {major: 0, minor: 10, patch: 1};
+  exports.version.details = {major: 0, minor: 11, patch: 0};
 
   return exports;
 }();
-if(this._ === undefined) this._ = this.fjs;
+
+if(typeof window === 'undefined' && typeof module !== 'undefined') {
+  module.exports = fjs;
+} else {
+  this.fjs = fjs;
+  if(typeof this._ === 'undefined') this._ = this.fjs;
+}
+delete fjs;
