@@ -52,68 +52,103 @@
   assert(fjs.not(false));
   assertFalse(fjs.not(true));
 
-  //#deq
-  assert(fjs.deq(1, 1));
-  assert(fjs.deq('', ''));
-  assert(fjs.deq('foo', 'foo'));
-  assert(fjs.deq(1, '1'));
-  assertFalse(fjs.deq(true, false));
+  //#eq2
+  assert(fjs.eq2(1, 1));
+  assert(fjs.eq2(1, 1, 1, '1'));
+  assert(fjs.eq2('', ''));
+  assert(fjs.eq2('foo', 'foo'));
+  assert(fjs.eq2('foo', 'foo', 'foo'));
+  assert(fjs.eq2(1, '1'));
+  assertFalse(fjs.eq2(true, false));
+  assertFalse(fjs.eq2(true, true, false));
+  assertFalse(fjs.eq2(true, false, true));
+  assertFalse(fjs.eq2(false, true, true));
 
-  //#teq
-  assert(fjs.teq(1, 1));
-  assert(fjs.teq('', ''));
-  assert(fjs.teq('foo', 'foo'));
-  assertFalse(fjs.teq(1, '1'));
-  assertFalse(fjs.teq(true, false));
+  //#eq3
+  assert(fjs.eq3(1, 1));
+  assert(fjs.eq3(1, 1, 1, 1));
+  assert(fjs.eq3('', ''));
+  assert(fjs.eq3('foo', 'foo'));
+  assert(fjs.eq3('foo', 'foo', 'foo'));
+  assertFalse(fjs.eq3(1, '1'));
+  assertFalse(fjs.eq3(1, 1, 1, '1'));
+  assertFalse(fjs.eq3('1', 1, 1, 1));
+  assertFalse(fjs.eq3(1, 1, '1', 1));
+  assertFalse(fjs.eq3(true, false));
 
-  //#ndeq
-  assert(fjs.ndeq(1, 2));
-  assert(fjs.ndeq('', 'foo'));
-  assert(fjs.ndeq(true, false));
-  assertFalse(fjs.ndeq(1, '1'));
-  assertFalse(fjs.ndeq(true, true));
+  //#neq2
+  assert(fjs.neq2(1, 2));
+  assert(fjs.neq2(1, 2, 2));
+  assert(fjs.neq2(2, 1, 2));
+  assert(fjs.neq2(2, 2, 1));
+  assert(fjs.neq2('', 'foo'));
+  assert(fjs.neq2(true, false));
+  assertFalse(fjs.neq2(1, '1'));
+  assertFalse(fjs.neq2(true, true));
+  assertFalse(fjs.neq2(true, true, true, true));
 
-  //#nteq
-  assert(fjs.nteq(1, 2));
-  assert(fjs.nteq('', 'foo'));
-  assert(fjs.nteq(1, '1'));
-  assert(fjs.nteq(true, false));
-  assertFalse(fjs.nteq(true, true));
+  ////#neq3
+  assert(fjs.neq3(1, 2));
+  assert(fjs.neq3(1, 2, 3));
+  assert(fjs.neq3('', 'foo'));
+  assert(fjs.neq3(1, '1'));
+  assert(fjs.neq3(1, '1', 1));
+  assert(fjs.neq3(true, false));
+  assertFalse(fjs.neq3(true, true));
+  assertFalse(fjs.neq3(true, true, true, true));
 
   //#lt
   assert(fjs.lt(1, 2));
-  assertFalse(fjs.lt(1, 1));
-  assertFalse(fjs.lt(2, 1));
+  assert(fjs.lt(1, 2, 3, 4, 5));
+  assertFalse(fjs.lt(1, 1, 1));
+  assertFalse(fjs.lt(2, 3, 2));
 
   //#gt
   assert(fjs.gt(2, 1));
-  assertFalse(fjs.gt(1, 1));
+  assert(fjs.gt(2, 1, 0, -1));
+  assertFalse(fjs.gt(1, 1, 1));
   assertFalse(fjs.gt(1, 2));
 
   //#lte
   assert(fjs.lte(1, 2));
+  assert(fjs.lte(1, 2, 3, 4, 5));
   assert(fjs.lte(1, 1));
+  assert(fjs.lte(1, 1, 1, 1, 1, 2));
+  assertFalse(fjs.lte(2, 1));
+  assertFalse(fjs.lte(2, 2, 1));
   assertFalse(fjs.lte(2, 1));
 
   //#gte
   assert(fjs.gte(2, 1));
+  assert(fjs.gte(2, 1, 1, 1, 0));
   assert(fjs.gte(1, 1));
   assertFalse(fjs.gte(1, 2));
+  assertFalse(fjs.gte(1, 1, 0, 2));
 
   //#and
   assert(fjs.and(true, true));
+  assert(fjs.and(true, true, true, true, true));
   assertFalse(fjs.and(true, false));
+  assertFalse(fjs.and(true, true, false));
   assertFalse(fjs.and(false, false));
+  assertFalse(fjs.and(false, false, false));
 
   //#or
   assert(fjs.or(true, true));
-  assert(fjs.or(true, false));
+  assert(fjs.or(true, true, true, true));
+  assert(fjs.or(true, false, true, true, false));
+  assert(fjs.or(true, false, false, false, false));
+  assert(fjs.or(false, false, false, false, true));
   assertFalse(fjs.or(false, false));
 
   //#xor
   assert(fjs.xor(true, false));
+  assert(fjs.xor(true, false, false, false));
+//  assert(fjs.xor(true, false, true, true));
   assertFalse(fjs.xor(true, true));
+  assertFalse(fjs.xor(true, true, true, true));
   assertFalse(fjs.xor(false, false));
+  assertFalse(fjs.xor(false, false, false, false));
 
   //#complement
   var even = function(x) { return (x & 1) === 0; };
@@ -469,6 +504,10 @@
   assertEq(fjs.sum([1, 2, 3, 4]), 10);
   //Space Oddity Notice: it's a normal behavior and it's neither a desired feature nor a real bug.
   assertEq(fjs.sum([1, 2, 'foo']), '3foo');
+
+  //#product
+  assertEq(fjs.product([1]), 1);
+  assertEq(fjs.product([1, 2, 3, 4]), 24);
 
   //#cycle
   var xs = ['foo', 'bar', 'baz'];

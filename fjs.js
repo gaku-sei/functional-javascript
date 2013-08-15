@@ -2,12 +2,12 @@ this.fjs = function() {
   var exports = {};
   //public
   var add, apply, applyWith, and, areArguments, arity, arity0, arity1, arity2, arity3, assoc, attrs, butfirst, butlast, call,
-      callWith, clone, comp, complement, concat, conj, cons, cs, cycle, dec, del, deq, dir, dir1, div, doc, dropWhile, eq, eqOne,
-      eqZero, error, error1, even, every, filter, first, flip, fmap, fmapkv, fn, freduce, freducekv, get, gt, gte, id, inc, isArray,
+      callWith, clone, comp, complement, concat, conj, cons, cs, curry, cycle, dec, del, dir, dir1, div, doc, dropWhile, eq, eq2, eq3,
+      eqOne, eqZero, error, error1, even, every, filter, first, flip, fmap, fmapkv, fn, freduce, freducekv, get, gt, gte, id, inc, isArray,
       isArrayLike, isBoolean, isEmpty, isFalse, isFloat, isFunction, isInt, isNull, isNumber, isObject, isString, isTrue,
-      isUndefined, join, juxt, keys, last, log, log1, loop, lt, lte, map, mapkv, marshal, merge, mul, ndeq, not, nteq, odd, or, partial,
-      rand, randIndex, randInt, range, reduce, reducekv, repeat, repeatedly, reverse, second, shuffle, slice, some, sort, source, sub,
-      sum, takeWhile, teq, thread, times, unmarshal, use, useAll, values, version, warn, warn1, xor, xrange;
+      isUndefined, join, juxt, keys, last, log, log1, loop, lt, lte, map, mapkv, marshal, merge, mul, neq2, not, neq3, odd, or, partial,
+      product, rand, randIndex, randInt, range, reduce, reducekv, repeat, repeatedly, reverse, second, shuffle, slice, some, sort, source,
+      sub, sum, takeWhile, thread, time, times, unmarshal, use, useAll, values, version, warn, warn1, xor, xrange;
   //private
   var is, parseArgs, wip;
 
@@ -53,91 +53,139 @@ this.fjs = function() {
     }
   );
 
-  //#finish(variadic)
-  exports.deq = deq = fn(
+  exports.eq2 = eq2 = fn(
     'Wrapper for the == operator',
-    function(x, y) {
-      return x == y;
+    function() {
+      var args = arguments;
+      var reducer = function(x, y, rest) {
+        if(rest.length == 1) return x == y;
+        return (x == y) && reducer(rest[0], rest[1], slice(rest, 1));
+      }
+      return reducer(args[0], args[1], slice(args, 1));
     }
   );
 
-  //#finish(variadic)
-  exports.teq = teq = fn(
+  exports.eq3 = eq3 = fn(
     'Wrapper for the === operator',
-    function(x, y) {
-      return x === y;
+    function() {
+      var args = arguments;
+      var reducer = function(x, y, rest) {
+        if(rest.length == 1) return x === y;
+        return (x === y) && reducer(rest[0], rest[1], slice(rest, 1));
+      }
+      return reducer(args[0], args[1], slice(args, 1));
     }
   );
 
-  //#finish(variadic)
-  exports.ndeq = ndeq = fn(
+  exports.neq2 = neq2 = fn(
     'Wrapper for the != operator',
-    function(x, y) {
-      return x != y;
+    function() {
+      var args = arguments;
+      var reducer = function(x, y, rest) {
+        if(rest.length == 1) return x != y;
+        return (x != y) || reducer(rest[0], rest[1], slice(rest, 1));
+      }
+      return reducer(args[0], args[1], slice(args, 1));
     }
   );
 
-  //#finish(variadic)
-  exports.nteq = nteq = fn(
+  exports.neq3 = neq3 = fn(
     'Wrapper for the != operator',
-    function(x, y) {
-      return x !== y;
+    function() {
+      var args = arguments;
+      var reducer = function(x, y, rest) {
+        if(rest.length == 1) return x !== y;
+        return (x !== y) || reducer(rest[0], rest[1], slice(rest, 1));
+      }
+      return reducer(args[0], args[1], slice(args, 1));
     }
   );
 
-  //#finish(variadic)
   exports.lt = lt = fn(
     'Wrapper for the < operator',
-    function(x, y) {
-      return x < y;
+    function() {
+      var args = arguments;
+      var reducer = function(x, y, rest) {
+        if(rest.length == 1) return x < y;
+        return (x < y) && reducer(rest[0], rest[1], slice(rest, 1));
+      }
+      return reducer(args[0], args[1], slice(args, 1));
     }
   );
 
-  //#finish(variadic)
   exports.gt = gt = fn(
     'Wrapper for the > operator',
-    function(x, y) {
-      return x > y;
+    function() {
+      var args = arguments;
+      var reducer = function(x, y, rest) {
+        if(rest.length == 1) return x > y;
+        return (x > y) && reducer(rest[0], rest[1], slice(rest, 1));
+      }
+      return reducer(args[0], args[1], slice(args, 1));
     }
   );
 
-  //#finish(variadic)
   exports.lte = lte = fn(
     'Wrapper for the <= operator',
-    function(x, y) {
-      return x <= y;
+    function() {
+      var args = arguments;
+      var reducer = function(x, y, rest) {
+        if(rest.length == 1) return x <= y;
+        return (x <= y) && reducer(rest[0], rest[1], slice(rest, 1));
+      }
+      return reducer(args[0], args[1], slice(args, 1));
     }
   );
 
-  //#finish(variadic)
   exports.gte = gte = fn(
     'Wrapper for the >= operator',
-    function(x, y) {
-      return x >= y;
+    function() {
+      var args = arguments;
+      var reducer = function(x, y, rest) {
+        if(rest.length == 1) return x >= y;
+        return (x >= y) && reducer(rest[0], rest[1], slice(rest, 1));
+      }
+      return reducer(args[0], args[1], slice(args, 1));
     }
   );
 
-  //#finish(variadic)
   exports.and = and = fn(
     'Wrapper for the && operator',
-    function(x, y) {
-      return x && y;
+    function() {
+      var args = arguments;
+      var reducer = function(x, y, rest) {
+        if(rest.length == 1) return x && y;
+        return (x && y) && reducer(rest[0], rest[1], slice(rest, 1));
+      }
+      return reducer(args[0], args[1], slice(args, 1));
     }
   );
 
-  //#finish(variadic)
   exports.or = or = fn(
     'Wrapper for the || operator',
-    function(x, y) {
-      return x || y;
+    function() {
+      var args = arguments;
+      var reducer = function(x, y, rest) {
+        if(rest.length == 1) return x || y;
+        return (x || y) || reducer(rest[0], rest[1], slice(rest, 1));
+      }
+      return reducer(args[0], args[1], slice(args, 1));
     }
   );
 
-  //#finish(variadic)
+  //debug(seems to be buggy)
   exports.xor = xor = fn(
     'xor operator',
     function(x, y) {
-      return !x !== !y && (x || y);
+      var args = arguments;
+      var reducer = function(x, y, rest) {
+        if(rest.length == 1) return !x !== !y && (x || y);
+        var val1 = (!x !== !y && (x || y));
+        var val2 = reducer(rest[0], rest[1], slice(rest, 1));
+        return !val1 !== !val2 && (val1 || val2);
+      }
+      return reducer(args[0], args[1], slice(args, 1));
+      //return !x !== !y && (x || y);
     }
   );
 
@@ -634,6 +682,13 @@ this.fjs = function() {
     }
   );
 
+  exports.product = product = fn(
+    'Returns the product of the elements of an array',
+    function(xs) {
+      return reduce(mul, xs);
+    }
+  );
+
   exports.cycle = cycle = fn(
     'Returns an array containing n repetitions of the items in xs',
     function(n, xs) {
@@ -775,6 +830,23 @@ this.fjs = function() {
     }
   );
 
+  //#test #finish
+  exports.curry = curry = fn(
+    '',
+    function(f, arity) {
+      wip('curry');
+      var args = [],
+          curried = function(nargs) {
+        var arity = f.length; //arity || f.length,
+        args.concat(nargs);
+        if(arity > 0)
+          return curried;
+        else return f(args);
+      };
+      return curried;
+    }
+  );
+
   exports.juxt = juxt = fn(
     'Sequentially applies each function to a variadic number of arguments',
     'then returns an array with the results.',
@@ -871,6 +943,21 @@ this.fjs = function() {
   exports.error1 = error1 = fn(
     'console.error and returns the first argument given',
     arity1(error)
+  );
+
+  //#test
+  exports.time = time = fn(
+    'Uses console.time and console.timeEnd to calculate',
+    'the time taken by a given function and returns its value.',
+    'Remainings arguments are given to function.',
+    function(f) {
+      var label = '#' + (f.name || 'unknown') + ' #fjs-time-label-' + (new Date).getTime();
+      var args = butfirst(arguments);
+      console.time(label);
+      var ret = apply(f, args);
+      console.timeEnd(label);
+      return ret;
+    }
   );
 
   exports.range = range = fn(
@@ -1034,17 +1121,14 @@ this.fjs = function() {
     is('Boolean')
   );
 
-  //#finish(isFloat(1.0) should return true ?)
   exports.isFloat = isFloat = fn(
     'Returns true if x is a Float.',
     'Notice: isFloat(1.0) returns false.',
     function(x) {
-      if(!isNumber(x)) return false;
-      return some(function(c) { return c === '.' }, x.toString());
+      return isNumber(x) && (parseFloat(x) != parseInt(x));
     }
   );
 
-  //#finish(isInt(1.0) should return false ?)
   exports.isInt = isInt = fn(
     'Returns true if x is an Int',
     'Notice: isInt(1.0) returns true.',
@@ -1198,7 +1282,7 @@ this.fjs = function() {
       return join(values(exports.version.details), '.');
     }
   );
-  exports.version.details = {major: 0, minor: 9, patch: 4};
+  exports.version.details = {major: 0, minor: 10, patch: 0};
 
   return exports;
 }();
