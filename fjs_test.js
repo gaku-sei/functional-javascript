@@ -48,6 +48,23 @@
   assertFalse(fjs.isArray(""));
   assertFalse(fjs.isArray(0));
 
+  //#isa
+  assert(fjs.isa({}, Object));
+  assertFalse(fjs.isa({}, Array));
+  var Foo = function() {};
+  var foo = new Foo;
+  assert(fjs.isa(foo, Foo));
+  assert(fjs.isa(foo, Object));
+  assert(fjs.isa(foo, Foo, Object));
+  assertFalse(fjs.isa(foo, Array));
+  assertFalse(fjs.isa({}, Foo));
+
+  //#owns
+  assert(fjs.owns({foo: 1}, 'foo'));
+  assert(fjs.owns([1, 2, 3], 2));
+  assertFalse(fjs.owns({foo: 1}, 'bar'));
+  assertFalse(fjs.owns([1, 2, 3], 4));
+
   //#not
   assert(fjs.not(false));
   assertFalse(fjs.not(true));
@@ -491,6 +508,9 @@
   for(i in zs)
     assertEq(zs[i], ys[i]);
 
+  //#index
+  assertEq(fjs.index([1, 2, 3], 1), 2);
+
   //#get
   assertEq(fjs.get([1, 2, 3], 0), 1);
   assertEq(fjs.get({foo: {bar: [1, 2]}}, ['foo', 'bar', 1]), 2);
@@ -641,6 +661,9 @@
   var g = fjs.flip(f);
   assertEq(f(10, 2), 5);
   assertEq(g(10, 2), 0.2);
+
+  //#findex
+  assertEq(fjs.findex(1, [1, 2, 3]), 2);
 
   //#fmap
   var xs = [1, 2, 4];

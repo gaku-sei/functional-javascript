@@ -2,12 +2,13 @@ var fjs = function() {
   var exports = {};
   //public
   var add, apply, applyWith, and, areArguments, arity, arity0, arity1, arity2, arity3, assoc, attrs, butfirst, butlast, call,
-      callWith, clone, comp, complement, concat, conj, cons, cs, curry, cycle, dec, del, dir, dir1, div, doc, dropWhile, eq, eq2, eq3,
-      eqOne, eqZero, error, error1, even, every, filter, first, flip, fmap, fmapkv, fn, freduce, freducekv, freducer, get, gt, gte, id,
-      inc, isArray, isArrayLike, isBoolean, isEmpty, isFalse, isFloat, isFunction, isInt, isNull, isNumber, isObject, isString, isTrue,
-      isUndefined, join, juxt, keys, last, log, log1, loop, lt, lte, map, mapkv, marshal, merge, mul, neq2, not, neq3, odd, or, partial,
-      product, rand, randIndex, randInt, range, reduce, reducekv, reducer, repeat, repeatedly, reverse, second, shuffle, slice, some, sort,
-      source, sub, sum, takeWhile, thread, time, times, unmarshal, use, useAll, values, version, warn, warn1, xor, xrange;
+      callWith, clone, comp, complement, concat, conj, cons, cs, curriedFunctions, curry, cycle, dec, del, dir, dir1, div, doc,
+      dropWhile, eq, eq2, eq3, eqOne, eqZero, error, error1, even, every, filter, findex, first, flip, fmap, fmapkv, fn, freduce,
+      freducekv, freducer, get, gt, gte, id, inc, index, isa, isArray, isArrayLike, isBoolean, isEmpty, isFalse, isFloat, isFunction,
+      isInt, isNull, isNumber, isObject, isString, isTrue, isUndefined, join, juxt, keys, last, log, log1, loop, lt, lte, map, mapkv,
+      marshal, merge, mul, neq2, not, neq3, odd, or, owns, partial, product, rand, randIndex, randInt, range, reduce, reducekv, reducer,
+      repeat, repeatedly, reverse, second, shuffle, slice, some, sort, source, sub, sum, takeWhile, thread, time, times, unmarshal, use,
+      useAll, values, version, warn, warn1, xor, xrange;
   //private
   var is, parseArgs, wip;
 
@@ -43,6 +44,29 @@ var fjs = function() {
       return function(x) {
         return {}.toString.call(x).slice(8, -1) === type;
       };
+    }
+  );
+
+  exports.isa = isa = fn(
+    'Wrapper for instanceof operator',
+    'e.g.: isa({}, Object) // true',
+    '      var Foo = function() {}',
+    '      var foo = new Foo',
+    '      isa(foo, Foo) // true',
+    '      isa(foo, Foo, Object) // true',
+    function(obj) {
+      var fs = butfirst(arguments);
+      for(i in fs)
+        if(fs.hasOwnProperty(i) && !(obj instanceof fs[i]))
+          return false;
+      return true;
+    }
+  );
+
+  exports.owns = owns = fn(
+    'Wrapper for the hasOwnProperty method',
+    function(xs, prop) {
+      return xs.hasOwnProperty(prop);
     }
   );
 
@@ -176,7 +200,7 @@ var fjs = function() {
   //debug(seems to be buggy)
   exports.xor = xor = fn(
     'xor operator',
-    function(x, y) {
+    function() {
       var args = arguments;
       var reducer = function(x, y, rest) {
         if(rest.length == 1) return !x !== !y && (x || y);
@@ -521,6 +545,7 @@ var fjs = function() {
 
   exports.times = times = fn(
     'Calls function f n times.',
+    'Is void.',
     function(n, f) {
       while(n--)
         apply(f, slice(arguments, 2));
@@ -656,6 +681,13 @@ var fjs = function() {
     }
   );
 
+  exports.index = index = fn(
+    'Similar to xs[i].',
+    function(xs, i) {
+      return xs[i];
+    }
+  );
+
   exports.get = get = fn(
     'Object, Array, String and arguments lookup.',
     'e.g.: get([1, 2, 3], 0) // 1',
@@ -763,6 +795,7 @@ var fjs = function() {
     }
   );
 
+  //#Array.prototype
   exports.reducer = reducer = fn(
     'Similar to reduce but starts iteration at the end of the array.',
     'e.g.: reduce(sub, [10, 2, 5]) // 3',
@@ -899,6 +932,11 @@ var fjs = function() {
     }
   );
 
+  exports.findex = findex = fn(
+    'Flips the args given to index.',
+    flip(index)
+  );
+
   exports.fmap = fmap = fn(
     'Flips the arguments given to map',
     flip(map)
@@ -980,7 +1018,6 @@ var fjs = function() {
     arity1(error)
   );
 
-  //#test
   exports.time = time = fn(
     'Uses console.time and console.timeEnd to calculate',
     'the time taken by a given function and returns its value.',
@@ -1311,13 +1348,31 @@ var fjs = function() {
     }
   );
 
-  exports.version = fn(
-    'Returns version of fjs',
-    function() {
-      return join(values(exports.version.details), '.');
-    }
-  );
-  exports.version.details = {major: 0, minor: 12, patch: 0};
+  //Currying
+  (function() {
+    var fs = ['apply', 'applyWith', 'assoc', 'cons', 'cycle', 'dropWhile',
+              'every', 'filter', 'findex', 'index', 'loop', 'map', 'mapkv',
+              'repeat', 'repeatedly', 'some', 'takeWhile'];
+    loop(function(_, v) {
+      exports['c'+v] = curry(exports[v]);
+    }, fs);
+    var fs2 = {'findex': 2, 'fmap': 2, 'fmapkv': 2};
+    loop(function(k, v) {
+      exports['c'+k] = curry(exports[k], v);
+    }, fs2);
+    exports.curriedFunctions = sort(concat(fs, keys(fs2)));
+  })();
+
+  //Version
+  (function() {
+    exports.version = fn(
+      'Returns version of fjs',
+      function() {
+        return join(values(exports.version.details), '.');
+      }
+    );
+    exports.version.details = {major: 0, minor: 13, patch: 0};
+  })();
 
   return exports;
 }();
