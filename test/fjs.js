@@ -400,6 +400,9 @@
   assertEq(xss[1][0], 2);
   assertEq(xss[1][1], 5);
 
+  //#flatten
+  true
+
   //#min
   assertEq(fjs.min(1, 2, 3, 4, 5), 1);
   assertEq(fjs.min(2, 3, 4, 5, 1), 1);
@@ -862,8 +865,10 @@
   //#eq
   assert(fjs.eq(1, 1));
   assert(fjs.eq('foo', 'foo'));
+  assert(fjs.eq('foo', 'foo', 'foo'));
   assert(fjs.eq([1, 2], [1, 2]));
   assert(fjs.eq([1, {foo: 1}, 2], [1, {foo: 1}, 2]));
+  assert(fjs.eq([1, {foo: 1}, 2], [1, {foo: 1}, 2], [1, {foo: 1}, 2]));
   assert(fjs.eq({foo: 2}, {foo: 2}));
   assert(fjs.eq([1, null, {foo: undefined, bar: 1}, 3, {baz: 42}],
                 [1, null, {foo: undefined, bar: 1}, 3, {baz: 42}]));

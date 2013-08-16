@@ -1,26 +1,39 @@
+//     Fjs.js 0.14.0
+//     http://github.com/../..
+//     (c) 2013 Beviral
+
 var fjs = function() {
+  // Vars
+  // ----
+
   var exports = {};
-  //public
+  // Public
   var add, apply, applyWith, and, areArguments, arity, arity0, arity1, arity2, arity3, assoc, attrs, butfirst, butlast, call,
       callWith, clone, comp, complement, concat, conj, cons, cs, curriedFunctions, curry, cycle, dec, del, dir, dir1, div, doc,
-      drop, dropWhile, eq, eq2, eq3, eqOne, eqZero, error, error1, even, every, fdrop, fget, filter, first, flip, fmap, fmapkv,
+      drop, dropWhile, eq, eq2, eq3, eqOne, eqZero, error, error1, even, every, fdrop, fget, filter, first, flatten, flip, fmap, fmapkv,
       fn, freduce, freducekv, freducer, get, gt, gte, id, inc, interpose, isa, isArray, isArrayLike, isBoolean, isEmpty, isFalse,
       isFloat, isFunction, isInt, isNull, isNumber, isObject, isString, isTrue, isUndefined, join, juxt, keys, last, len, log, log1,
       loop, lookup, lt, lte, map, mapkv, marshal, max, merge, min, mul, neq2, not, neq3, odd, or, owns, partial, product, rand, randIndex,
       randInt, range, reduce, reducekv, reducer, repeat, repeatedly, reverse, second, shuffle, slice, some, sort, source, sub, sum,
       takeWhile, thread, time, times, unmarshal, use, useAll, values, version, warn, warn1, xor, xrange, zip;
-  //private
+  // Private
   var is, parseArgs, wip;
 
+
+  // Functions
+  // ---------
+
+  // Create a function with doc
   exports.fn = fn = function() {
     var f = arguments[arguments.length - 1];
     if(typeof f !== 'function')
       throw new Error('Last argument of fn must be a function');
     f.doc = [].slice.call(arguments, 0, -1).join('\n');
-    //f.source = f.toString();
     return f;
   };
 
+  // Wrapper for the for statement.
+  // loop also checks hasOwnProperty before calling given function.
   exports.loop = loop = fn(
     'Wrapper for the for statement.',
     'loop also checks hasOwnProperty before calling given function.',
@@ -31,6 +44,7 @@ var fjs = function() {
     }
   );
 
+  // Throws a work in progress message
   wip = fn(
     'Throws a work in progress message',
     function(fname) {
@@ -38,6 +52,7 @@ var fjs = function() {
     }
   );
 
+  // General purpose type checker
   exports.is = is = fn(
     'General purpose type checker',
     function(type) {
@@ -47,6 +62,12 @@ var fjs = function() {
     }
   );
 
+  // Wrapper for instanceof operator
+  // e.g.: isa({}, Object) // true
+  //       var Foo = function() {}
+  //       var foo = new Foo
+  //       isa(foo, Foo) // true
+  //       isa(foo, Foo, Object) // true
   exports.isa = isa = fn(
     'Wrapper for instanceof operator',
     'e.g.: isa({}, Object) // true',
@@ -63,6 +84,7 @@ var fjs = function() {
     }
   );
 
+  // Wrapper for the hasOwnProperty method
   exports.owns = owns = fn(
     'Wrapper for the hasOwnProperty method',
     function(xs, prop) {
@@ -70,6 +92,7 @@ var fjs = function() {
     }
   );
 
+  // Negates boolean value
   exports.not = not = fn(
     'Negates boolean value',
     function(bool) {
@@ -77,6 +100,7 @@ var fjs = function() {
     }
   );
 
+  // Wrapper for the == operator
   exports.eq2 = eq2 = fn(
     'Wrapper for the == operator',
     function() {
@@ -89,6 +113,7 @@ var fjs = function() {
     }
   );
 
+  // Wrapper for the === operator
   exports.eq3 = eq3 = fn(
     'Wrapper for the === operator',
     function() {
@@ -101,6 +126,7 @@ var fjs = function() {
     }
   );
 
+  // Wrapper for the != operator
   exports.neq2 = neq2 = fn(
     'Wrapper for the != operator',
     function() {
@@ -113,6 +139,7 @@ var fjs = function() {
     }
   );
 
+  // Wrapper for the != operator
   exports.neq3 = neq3 = fn(
     'Wrapper for the != operator',
     function() {
@@ -125,6 +152,7 @@ var fjs = function() {
     }
   );
 
+  // Wrapper for the < operator
   exports.lt = lt = fn(
     'Wrapper for the < operator',
     function() {
@@ -137,6 +165,7 @@ var fjs = function() {
     }
   );
 
+  // Wrapper for the > operator
   exports.gt = gt = fn(
     'Wrapper for the > operator',
     function() {
@@ -149,6 +178,7 @@ var fjs = function() {
     }
   );
 
+  // Wrapper for the <= operator
   exports.lte = lte = fn(
     'Wrapper for the <= operator',
     function() {
@@ -161,6 +191,7 @@ var fjs = function() {
     }
   );
 
+  // Wrapper for the >= operator
   exports.gte = gte = fn(
     'Wrapper for the >= operator',
     function() {
@@ -173,6 +204,7 @@ var fjs = function() {
     }
   );
 
+  // Wrapper for the && operator
   exports.and = and = fn(
     'Wrapper for the && operator',
     function() {
@@ -185,6 +217,7 @@ var fjs = function() {
     }
   );
 
+  // Wrapper for the || operator
   exports.or = or = fn(
     'Wrapper for the || operator',
     function() {
@@ -197,7 +230,7 @@ var fjs = function() {
     }
   );
 
-  //debug(seems to be buggy)
+  // xor operator
   exports.xor = xor = fn(
     'xor operator',
     function() {
@@ -209,14 +242,14 @@ var fjs = function() {
         return !val1 !== !val2 && (val1 || val2);
       }
       return reducer(args[0], args[1], slice(args, 1));
-      //return !x !== !y && (x || y);
     }
   );
 
+  // Takes a function and returns a function which does the exact thing
+  // except it negates the returned boolean value
   exports.complement = complement = fn(
     'Takes a function and returns a function which does the exact thing',
     'except it negates the returned boolean value',
-    //partial(comp, not)
     function(f) {
       return function() {
         return !apply(f, arguments);
@@ -224,7 +257,10 @@ var fjs = function() {
     }
   );
 
-
+  // Uses context and rebinds \'this\',
+  // it applies a function to an array of arguments.
+  // The first argument must be a function,
+  // and the second one the context.
   exports.applyWith = applyWith = fn(
     'Uses context and rebinds \'this\',',
     'it applies a function to an array of arguments.',
@@ -237,6 +273,10 @@ var fjs = function() {
     }
   );
 
+  // Uses context and rebinds \'this\',
+  // It applies a function to a variable number of arguments.
+  // The first argument must be a function,
+  // and the second one is the context.
   exports.callWith = callWith = fn(
     'Uses context and rebinds \'this\',',
     'It applies a function to a variable number of arguments.',
@@ -247,6 +287,10 @@ var fjs = function() {
     }
   );
 
+  // Use with caution as arity may leads to cryptic errors!
+  // Limit the arguments given to a function.
+  // e.g.: arity(2)(add)(2, 7, 6) //=> 9
+  // The first two arguments only are passed to the function add.
   exports.arity = arity = fn(
     'Use with caution as arity may leads to cryptic errors!',
     'Limit the arguments given to a function.',
@@ -269,6 +313,10 @@ var fjs = function() {
 
   exports.arity3 = arity3 = arity(3);
 
+  // Wrapper for the console object.
+  // The function returned by cs itself returns its arguments.
+  // e.g.: map(inc, cs(\'log\')(1, 2)) // logs [1, 2] then returns [2, 3]
+  //       add(cs(\'log\')(1), 2) // logs 1 then returns 3
   exports.cs = cs = fn(
     'Wrapper for the console object.',
     'The function returned by cs itself returns its arguments.',
@@ -283,6 +331,7 @@ var fjs = function() {
     }
   );
 
+  // Returns self
   exports.id = id = fn(
     'Returns self',
     function(x) {
@@ -290,6 +339,9 @@ var fjs = function() {
     }
   );
 
+  // General purpose clone function.
+  // The objects and arrays are mutable in JS
+  // clone allows to bypass this with ease.
   exports.clone = clone = fn(
     'General purpose clone function.',
     'The objects and arrays are mutable in JS',
@@ -315,6 +367,7 @@ var fjs = function() {
     }
   );
 
+  // Returns the attribute doc of an object
   exports.doc = doc = fn(
     'Returns the attribute doc of an object',
     function(obj) {
@@ -322,13 +375,7 @@ var fjs = function() {
     }
   );
 
-  //exports.source = source = fn(
-  //  'Returns the attribute source of an object',
-  //  function(obj) {
-  //    return obj.source;
-  //  }
-  //);
-
+  // Return the length attribute of obj
   exports.len = len = fn(
     'Return the length attribute of obj',
     function(obj) {
@@ -336,13 +383,12 @@ var fjs = function() {
     }
   );
 
+  // Returns an Object containing all the properties owned by obj.
+  // You may get the attrs of everything.
   exports.attrs = attrs = fn(
     'Returns an Object containing all the properties owned by obj.',
     'You may get the attrs of everything.',
     function(obj) {
-      ////the functionnal version of attrs:
-      //return reducekv(assoc, x, {});
-
       var attrsObj = {};
       for(var i in obj)
         attrsObj[i] = obj[i];
@@ -350,6 +396,9 @@ var fjs = function() {
     }
   );
 
+  // Applies a function to an array of arguments.
+  // The first argument must be a function,
+  // the context is set to void 8.
   exports.apply = apply = fn(
     'Applies a function to an array of arguments.',
     'The first argument must be a function,',
@@ -361,6 +410,9 @@ var fjs = function() {
     }
   );
 
+  // Applies a function to a variable number of arguments.
+  // The first argument must be a function,
+  // the context is set to void 8.
   exports.call = call = fn(
     'Applies a function to a variable number of arguments.',
     'The first argument must be a function,',
@@ -370,6 +422,9 @@ var fjs = function() {
     }
   );
 
+  // Composes functions.
+  // e.g.: comp(partial(add, 1), partial(mul, 2))(2) // 5
+  //       comp(partial(mul, 2), partial(add, 1), partial(mul, 3))(4) // 26
   exports.comp = comp = fn(
     'Composes functions.',
     'e.g.: comp(partial(add, 1), partial(mul, 2))(2) // 5',
@@ -383,8 +438,10 @@ var fjs = function() {
     }
   );
 
-  //#Array.prototype
-  //#finish(if [].slice does not exist)
+  // Based on the function Array.prototype.slice.
+  // e.g.: slice(arguments) // similar to [].slice.call(arguments)
+  //       slice([1,2,3,4], 1,3) // [2, 3]
+  //       slice([1,2,3], -1) // [3]
   exports.slice = slice = fn(
     'Based on the function Array.prototype.slice.',
     'e.g.: slice(arguments) // similar to [].slice.call(arguments)',
@@ -398,7 +455,8 @@ var fjs = function() {
     }
   );
 
-  //#Array.prototype
+  // Based on Array.prototype.join, join replaces \',\' with \'\'.
+  // e.g.: join([\'foo\', \'bar\']) // \'foobar\'
   exports.join = join = fn(
     'Based on Array.prototype.join, join replaces \',\' with \'\'.',
     'e.g.: join([\'foo\', \'bar\']) // \'foobar\'',
@@ -415,23 +473,10 @@ var fjs = function() {
     }
   );
 
-  //#Array.prototype
-  //#notice([].concat raises a RangeError when you try to concat too many arrays in a row on Chrome
-  //        ... and so does mine ... but with more arrays)
+  // Concats several arrays
   exports.concat = concat = fn(
     'Concats several arrays',
     function() {
-      //if([].concat) {
-      //  var args = some(areArguments, arguments) ? map(slice, arguments) : arguments;
-      //  return [].concat.apply([], arguments);
-      //}
-
-      ////the functionnal version of concat:
-      //return reduce(function(xs, ys) {
-      //  applyWith([].push, xs, slice(ys||[]));
-      //  return xs;
-      //}, arguments, []);
-
       var xs = [];
       for(var i in arguments)
         for(var j in arguments[i])
@@ -440,17 +485,13 @@ var fjs = function() {
     }
   );
 
-  //#Array.prototype
+  // Applies f to each item of xs and returns the results as an array.
+  // e.g.: map(partial(add, 2), [1, 2, 4]) // [3, 4, 6]
   exports.map = map = fn(
     'Applies f to each item of xs and returns the results as an array.',
     'e.g.: map(partial(add, 2), [1, 2, 4]) // [3, 4, 6]',
     function(f, xs) {
       if([].map) return callWith([].map, xs, arity1(f));
-
-      ////the functionnal version of map:
-      //return reduce(function(agg, x) {
-      //  return conj(agg, call(f, x));
-      //}, xs, []);
 
       var ret = [];
       loop(function(i, x) {
@@ -460,20 +501,12 @@ var fjs = function() {
     }
   );
 
-  //#Array.prototype
-  //#notice(for any reason my version of mapkv is way faster on Chrome)
-  //#modify(should return an array or an object?)
+  // Like map but mapkv also passes the key to the given function.
+  // Notice that if xs is an Array its indexes are automatically casted into Int.
   exports.mapkv = mapkv = fn(
     'Like map but mapkv also passes the key to the given function.',
     'Notice that if xs is an Array its indexes are automatically casted into Int.',
     function(f, obj) {
-      //if([].map && !isObject(obj)) return callWith([].map, obj, arity2(flip(f)));
-
-      ////the functionnal version of mapkv:
-      //return reducekv(function(agg, k, v) {
-      //  return conj(agg, call(f, k, v));
-      //}, xs, []);
-
       var ret = [];
       loop(function(k, v) {
         ret.push(f.call(f, isArrayLike(obj) ? parseInt(k) : k, v));
@@ -482,9 +515,9 @@ var fjs = function() {
     }
   );
 
-  //#Array.prototype
+  // Returns an array of the items in coll for which pred(x) returns true
   exports.filter = filter = fn(
-    'Returns an array of the items in coll for which pred(x) returns true.',
+    'Returns an array of the items in coll for which pred(x) returns true',
     function(pred, xs) {
       if([].filter) return callWith([].filter, xs, arity1(pred));
 
@@ -496,8 +529,8 @@ var fjs = function() {
     }
   );
 
-  //#Array.prototype
-  //#finish(if [].sort does not exist)
+  // Sort element of an array.
+  // You can pass a sorter function to sort.
   exports.sort = sort = fn(
     'Sort element of an array.',
     'You can pass a sorter function to sort.',
@@ -512,6 +545,7 @@ var fjs = function() {
     }
   );
 
+  // Returns a shuffled xs
   exports.shuffle = shuffle = fn(
     'Returns a shuffled xs',
     function(xs) {
@@ -525,6 +559,8 @@ var fjs = function() {
     }
   );
 
+  // Zips arrays together.
+  // e.g.: zip([1, 2, 3], [4, 5, 6]) // [[1, 4], [2, 5], [3, 6]]
   exports.zip = zip = fn(
     'Zips arrays together.',
     'e.g.: zip([1, 2, 3], [4, 5, 6]) // [[1, 4], [2, 5], [3, 6]]',
@@ -540,6 +576,20 @@ var fjs = function() {
     }
   );
 
+  // Flattens an ArrayLike object
+  exports.flatten = flatten = fn(
+    'Flattens an ArrayLike object',
+    function(xs) {
+      wip('flatten');
+      var ret = [];
+      loop(function(_, v) {
+        ret.push(isArrayLike(v) ? flatten(v) : v);
+      }, xs);
+      return ret;
+    }
+  );
+
+  // Returns min value
   exports.min = min = fn(
     'Returns min value',
     function() {
@@ -547,6 +597,7 @@ var fjs = function() {
     }
   );
 
+  // Returns max value
   exports.max = max = fn(
     'Returns max value',
     function() {
@@ -554,6 +605,8 @@ var fjs = function() {
     }
   );
 
+  // Wrapper for the Math.random function.
+  // rand returns a random floating point number between 0 and n (default 1).
   exports.rand = rand = fn(
     'Wrapper for the Math.random function.',
     'rand returns a random floating point number between 0 and n (default 1).',
@@ -563,6 +616,8 @@ var fjs = function() {
     }
   );
 
+  // Returns a random integer between 0 and n.
+  // randInt() always returns 0.
   exports.randInt = randInt = fn(
     'Returns a random integer between 0 and n.',
     'randInt() always returns 0.',
@@ -571,6 +626,7 @@ var fjs = function() {
     }
   );
 
+  // Returns a random item of xs
   exports.randIndex = randIndex = fn(
     'Returns a random item of xs',
     function(xs) {
@@ -578,8 +634,9 @@ var fjs = function() {
     }
   );
 
+  // Calls function f n times
   exports.times = times = fn(
-    'Calls function f n times.',
+    'Calls function f n times',
     'Is void.',
     function(n, f) {
       while(n--)
@@ -587,6 +644,8 @@ var fjs = function() {
     }
   );
 
+  // Returns an Array containing the items of xs
+  // while pred(item) is true.
   exports.takeWhile = takeWhile = fn(
     'Returns an Array containing the items of xs',
     'while pred(item) is true.',
@@ -596,6 +655,8 @@ var fjs = function() {
     }
   );
 
+  // Drops all the items of xs while pred(item) is true
+  // and returns all the remaining items as an Array
   exports.dropWhile = dropWhile = fn(
     'Drops all the items of xs while pred(item) is true',
     'and returns all the remaining items as an Array',
@@ -605,6 +666,7 @@ var fjs = function() {
     }
   );
 
+  // Returns an array of the elements of xs separated of sep
   exports.interpose = interpose = fn(
     'Returns an array of the elements of xs separated of sep',
     function(sep, xs) {
@@ -615,14 +677,15 @@ var fjs = function() {
     }
   );
 
+  // Returns the keys of an Object
   exports.keys = keys = fn(
     'Returns the keys of an Object',
-    //partial(mapkv, id)
     function(obj) {
       return mapkv(id, obj);
     }
   );
 
+  // Returns the values of an Object
   exports.values = values = fn(
     'Returns the values of an Object',
     function(obj) {
@@ -630,12 +693,10 @@ var fjs = function() {
     }
   );
 
+  // Merges a variable number of objects
   exports.merge = merge = fn(
     'Merges a variable number of objects',
     function() {
-      ////the functionnal version of merge:
-      //return marshal(concat(unmarshal(xs), unmarshal(ys)));
-
       var merge2 = function(obj1, obj2) {
         var ret = {};
         for(k in obj1) ret[k] = obj1[k];
@@ -646,6 +707,8 @@ var fjs = function() {
     }
   );
 
+  // Assoc key/value to object.
+  // Equivalent to `obj[k] = v` but doesn\'t modify obj.
   exports.assoc = assoc = fn(
     'Assoc key/value to object.',
     'Equivalent to `obj[k] = v` but doesn\'t modify obj.',
@@ -656,6 +719,7 @@ var fjs = function() {
     }
   );
 
+  // Converts an array of pairs into an object
   exports.marshal = marshal = fn(
     'Converts an array of pairs into an object',
     function(xs) {
@@ -666,6 +730,7 @@ var fjs = function() {
     }
   );
 
+  // Converts an object into an array of pairs
   exports.unmarshal = unmarshal = fn(
     'Converts an object into an array of pairs',
     function(obj) {
@@ -675,6 +740,8 @@ var fjs = function() {
     }
   );
 
+  // Prepends x to xs.
+  // e.g.: cons([2, 3], 1) // [1, 2, 3]
   exports.cons = cons = fn(
     'Prepends x to xs.',
     'e.g.: cons([2, 3], 1) // [1, 2, 3]',
@@ -683,17 +750,17 @@ var fjs = function() {
     }
   );
 
+  // Appends arguments to xs.
+  // e.g.: conj([1, 2], 3) // [1, 2, 3]
   exports.conj = conj = fn(
     'Appends arguments to xs.',
     'e.g.: conj([1, 2], 3) // [1, 2, 3]',
     function(xs) {
-      //var ys = clone(xs);
-      //applyWith([].push, ys, butfirst(arguments));
-      //return ys;
       return concat(xs, butfirst(arguments));
     }
   );
 
+  // Drops the n first elements of xs
   exports.drop = drop = fn(
     'Drops the n first elements of xs',
     function(n, xs) {
@@ -701,6 +768,7 @@ var fjs = function() {
     }
   );
 
+  // Returns the first element of xs
   exports.first = first = fn(
     'Returns the first element of xs',
     function(xs) {
@@ -708,6 +776,7 @@ var fjs = function() {
     }
   );
 
+  // Returns all the elements of xs but the first one
   exports.butfirst = butfirst = fn(
     'Returns all the elements of xs but the first one',
     function(xs) {
@@ -715,6 +784,7 @@ var fjs = function() {
     }
   );
 
+  // Returns the second element of xs
   exports.second = second = fn(
     'Returns the second element of xs',
     function(xs) {
@@ -722,6 +792,7 @@ var fjs = function() {
     }
   );
 
+  // Returns the last elements of xs
   exports.last = last = fn(
     'Returns the last elements of xs',
     function(xs) {
@@ -729,6 +800,7 @@ var fjs = function() {
     }
   );
 
+  // Returns all the elements of xs but the last one
   exports.butlast = butlast = fn(
     'Returns all the elements of xs but the last one',
     function(xs) {
@@ -736,13 +808,18 @@ var fjs = function() {
     }
   );
 
+  // Similar to obj[i]
   exports.get = get = fn(
-    'Similar to obj[i].',
+    'Similar to obj[i]',
     function(obj, i) {
       return obj[i];
     }
   );
 
+  // Object, Array, String and arguments lookup.
+  // e.g.: lookup([1, 2, 3], 0) // 1
+  //       lookup({foo: {bar: [1, 2]}}, [\'foo\', \'bar\', 1]) // 2
+  //       lookup([1, 2], 4, \'Not Found...\') // \'Not Found...\'.
   exports.lookup = lookup = fn(
     'Object, Array, String and arguments lookup.',
     'e.g.: lookup([1, 2, 3], 0) // 1',
@@ -750,18 +827,16 @@ var fjs = function() {
     '      lookup([1, 2], 4, \'Not Found...\') // \'Not Found...\'.',
     function(xs, ks, notFound) {
       var found;
-      if(isArrayLike(ks)) {
-        if(eqOne(ks.length))
-          found = xs[first(ks)];
-        else
-          //?if(xs[first(ks)])
-            found = lookup(xs[first(ks)], butfirst(ks));
-      }
+      if(isArrayLike(ks))
+        found = eqOne(ks.length)
+          ? xs[first(ks)]
+          : lookup(xs[first(ks)], butfirst(ks));
       else found = xs[ks];
       return isUndefined(found) ? notFound : found;
     }
   );
 
+  // Sums the elements of an array
   exports.sum = sum = fn(
     'Sums the elements of an array',
     function(xs) {
@@ -769,6 +844,7 @@ var fjs = function() {
     }
   );
 
+  // Returns the product of the elements of an array
   exports.product = product = fn(
     'Returns the product of the elements of an array',
     function(xs) {
@@ -776,6 +852,7 @@ var fjs = function() {
     }
   );
 
+  // Returns an array containing n repetitions of the items in xs
   exports.cycle = cycle = fn(
     'Returns an array containing n repetitions of the items in xs',
     function(n, xs) {
@@ -786,6 +863,7 @@ var fjs = function() {
     }
   );
 
+  // Returns an array containing n times x
   exports.repeat = repeat = fn(
     'Returns an array containing n times x',
     function(n, x) {
@@ -797,6 +875,7 @@ var fjs = function() {
     }
   );
 
+  // Returns an array containing n times f()
   exports.repeatedly = repeatedly = fn(
     'Returns an array containing n times f()',
     function(n, f) {
@@ -808,7 +887,11 @@ var fjs = function() {
     }
   );
 
-  //#Array.prototype
+  // The first argument is a function which takes two arguments,
+  // the second one is an array and you may pass a third argument which is an aggregator
+  // the aggregator is the first element of xs by default.
+  // e.g.: reduce(add, [1, 2, 3]) // 6
+  //       reduce(add, [1, 2, 3], 2) // 8
   exports.reduce = reduce = fn(
     'The first argument is a function which takes two arguments,',
     'the second one is an array and you may pass a third argument which is an aggregator',
@@ -832,7 +915,11 @@ var fjs = function() {
     }
   );
 
-  //#Array.prototype
+  // The first argument is a function which takes three arguments,
+  // the second one is an array and the third one is an aggregator
+  // e.g.: var f = function(agg, _, v) { return agg + v }
+  //       reducekv(f, {foo: 1, bar: 2, baz: 3}, 0) // 6
+  //       reducekv(f, {foo: 1, bar: 2, baz: 3}, 2) // 8
   exports.reducekv = reducekv = fn(
     'The first argument is a function which takes three arguments,',
     'the second one is an array and the third one is an aggregator',
@@ -850,7 +937,9 @@ var fjs = function() {
     }
   );
 
-  //#Array.prototype
+  // Similar to reduce but starts iteration at the end of the array.
+  // e.g.: reduce(sub, [10, 2, 5]) // 3
+  //       reducer(sub, [10, 2, 5]) // -7
   exports.reducer = reducer = fn(
     'Similar to reduce but starts iteration at the end of the array.',
     'e.g.: reduce(sub, [10, 2, 5]) // 3',
@@ -862,7 +951,6 @@ var fjs = function() {
         else return callWith([].reduceRight, xs, arity2(f), agg);
       }
 
-      //reducer is named reducer2 for readability
       var reducer2 = function(ys, agg) {
         if(isEmpty(ys)) return agg;
         return reducer2(butlast(ys), call(f, agg, last(ys)));
@@ -873,16 +961,10 @@ var fjs = function() {
     }
   );
 
-  //#Array.prototype
-  //#notice(for any reason my version of reverse is way faster on Chrome)
+  // Reverses the elements of an array.
   exports.reverse = reverse = fn(
     'Reverses the elements of an array.',
     function(xs) {
-      //if([].reverse) return callWith([].reverse, clone(xs));
-
-      ////the functionnal version of reverse:
-      //return reduce(cons, xs, []);
-
       var ys = Array(xs.length), i = xs.length;
       while(i > 0)
         ys[xs.length - i] = xs[--i];
@@ -890,14 +972,12 @@ var fjs = function() {
     }
   );
 
-  //#Array.prototype
-  //#notice(for any reason my version of every is way faster on Chrome)
+  // Applies pred to each items of xs.
+  // If pred(item) is true every time, return true.
   exports.every = every = fn(
     'Applies pred to each items of xs.',
     'If pred(item) is true every time, return true.',
     function(pred, xs) {
-      //if([].every) return callWith([].every, xs, arity1(pred));
-
       for(i in xs)
         if(xs.hasOwnProperty(i) && !pred(xs[i]))
           return false;
@@ -905,14 +985,12 @@ var fjs = function() {
     }
   );
 
-  //#Array.prototype
-  //#notice(for any reason my version of some is way faster on Chrome)
+  // Applies pred to each items of xs.
+  // If pred(item) is true, returns true.
   exports.some = some = fn(
     'Applies pred to each items of xs.',
     'If pred(item) is true, returns true.',
     function(pred, xs) {
-      //if([].some) return callWith([].some, xs, arity1(pred));
-
       for(i in xs)
         if(xs.hasOwnProperty(i))
           if(pred(xs[i]))
@@ -921,6 +999,8 @@ var fjs = function() {
     }
   );
 
+  // Targeting readability, thread looks like OOP writting.
+  // e.g.: inc(first([1,3])) becomes thread([1,3], first, inc) // 2
   exports.thread = thread = fn(
     'Targeting readability, thread looks like OOP writting.',
     'e.g.: inc(first([1,3])) becomes thread([1,3], first, inc) // 2',
@@ -929,6 +1009,8 @@ var fjs = function() {
     }
   );
 
+  // Partially applies a function to a variable number of arguments
+  // e.g.: partial(add, 1)(2) // 3
   exports.partial = partial = fn(
     'Partially applies a function to a variable number of arguments',
     'e.g.: partial(add, 1)(2) // 3',
@@ -940,6 +1022,14 @@ var fjs = function() {
     }
   );
 
+  // Allows to curry a function.
+  // The arity if by default f.length, but it can be set.
+  // e.g.: var cmap = curry(map)
+  //       var mapinc = cmap(inc)
+  //       mapinc([1, 2, 3]) // [2, 3, 4]
+  //       mapinc([2, 3, 4]) // [3, 4, 5]
+  // e.g.: var cadd = curry(add, 3)
+  //       cadd(1)(2)(3) // 6
   exports.curry = curry = fn(
     'Allows to curry a function.',
     'The arity if by default f.length, but it can be set.',
@@ -961,6 +1051,9 @@ var fjs = function() {
     }
   );
 
+  // Sequentially applies each function to a variadic number of arguments
+  // then returns an array with the results.
+  // e.g.: juxt(inc, dec)(2) // [3,1]
   exports.juxt = juxt = fn(
     'Sequentially applies each function to a variadic number of arguments',
     'then returns an array with the results.',
@@ -976,6 +1069,9 @@ var fjs = function() {
     }
   );
 
+  // Flips the arguments given to a function.
+  // e.g.: div(10, 2) // 5
+  //       flip(div)(10, 2) // 0.2
   exports.flip = flip = fn(
     'Flips the arguments given to a function.',
     'e.g.: div(10, 2) // 5',
@@ -987,26 +1083,34 @@ var fjs = function() {
     }
   );
 
+  // Flips the arguments given to drop
   exports.fdrop = fdrop = fn(
     'Flips the arguments given to drop',
     flip(drop)
   );
 
+  // Flips the arguments given to get
   exports.fget = fget = fn(
     'Flips the arguments given to get',
     flip(get)
   );
 
+  // Flips the arguments given to map
   exports.fmap = fmap = fn(
     'Flips the arguments given to map',
     flip(map)
   );
 
+  // Flips the arguments given to mapkv
   exports.fmapkv = fmapkv = fn(
     'Flips the arguments given to mapkv',
     flip(mapkv)
   );
 
+  // Flips the arguments given to reduce.
+  // The aggregator remains the third and last argument.
+  // e.g.: freduce([2, 3], mul) // 6
+  //       freduce([2, 3], mul, 2) // 12
   exports.freduce = freduce = fn(
     'Flips the arguments given to reduce.',
     'The aggregator remains the third and last argument.',
@@ -1017,6 +1121,12 @@ var fjs = function() {
     }
   );
 
+  // Flips the arguments given to reducekv.
+  // The aggregator remains the third and last argument.
+  // e.g.: var obj = {foo: 1, bar: 2, baz: 3}
+  //       var f = function(agg, _, v) { return agg * v }
+  //       freducekv(obj, f, 1) // 6
+  //       freducekv(obj, f, 2) // 12
   exports.freducekv = freducekv = fn(
     'Flips the arguments given to reducekv.',
     'The aggregator remains the third and last argument.',
@@ -1029,6 +1139,9 @@ var fjs = function() {
     }
   );
 
+  // Flips the argument given to reducer.
+  // The aggregator remains the third and last argument.
+  // e.g.: freducer([3, 2, 10], sub) // 5
   exports.freducer = freducer = fn(
     'Flips the argument given to reducer.',
     'The aggregator remains the third and last argument.',
@@ -1038,46 +1151,57 @@ var fjs = function() {
     }
   );
 
+  // console.log and returns the given argument(s)
   exports.log = log = fn(
     'console.log and returns the given argument(s)',
     cs('log')
   );
 
+  // console.log and returns the first argument given
   exports.log1 = log1 = fn(
     'console.log and returns the first argument given',
     arity1(log)
   );
 
+  // console.dir and returns the given argument(s)
   exports.dir = dir = fn(
     'console.dir and returns the given argument(s)',
     cs('dir')
   );
 
+  // console.dir and returns the first argument given
   exports.dir1 = dir1 = fn(
     'console.dir and returns the first argument given',
     arity1(dir)
   );
 
+  // console.warn and returns the given argument(s)
   exports.warn = warn = fn(
     'console.warn and returns the given argument(s)',
     cs('warn')
   );
 
+  // console.warn and returns the first argument given
   exports.warn1 = warn1 = fn(
     'console.warn and returns the first argument given',
     arity1(warn)
   );
 
+  // console.error and returns the given argument(s)
   exports.error = error = fn(
     'console.error and returns the given argument(s)',
     cs('error')
   );
 
+  // console.error and returns the first argument given
   exports.error1 = error1 = fn(
     'console.error and returns the first argument given',
     arity1(error)
   );
 
+  // Uses console.time and console.timeEnd to calculate
+  // the time taken by a given function and returns its value.
+  // Remainings arguments are given to function.
   exports.time = time = fn(
     'Uses console.time and console.timeEnd to calculate',
     'the time taken by a given function and returns its value.',
@@ -1092,6 +1216,11 @@ var fjs = function() {
     }
   );
 
+  // Returns an array.
+  // Step must be positive.
+  // e.g.: range(5) // [0, 1, 2, 3, 4]
+  //       range(3, 6) // [3, 4, 5]
+  //       range(3, 10, 2) // [3, 5, 7, 9]
   exports.range = range = fn(
     'Returns an array.',
     'Step must be positive.',
@@ -1112,6 +1241,9 @@ var fjs = function() {
     }
   );
 
+  // Pending version of range.
+  // e.g.: var r = xrange(3) // function() {...}
+  //       r() // [0, 1, 2]
   exports.xrange = xrange = fn(
     'Pending version of range.',
     'e.g.: var r = xrange(3) // function() {...}',
@@ -1124,7 +1256,8 @@ var fjs = function() {
     }
   );
 
-  //#test
+  // Returns wether x equals y or not.
+  // eq does a deep comparison of x and y.
   exports.eq = eq = fn(
     'Returns wether x equals y or not.',
     'eq does a deep comparison of x and y.',
@@ -1158,6 +1291,7 @@ var fjs = function() {
     }
   );
 
+  // Returns true if x is even
   exports.even = even = fn(
     'Returns true if x is even',
     function(x) {
@@ -1165,11 +1299,13 @@ var fjs = function() {
     }
   );
 
+  // Returns true if x is odd
   exports.odd = odd = fn(
     'Returns true if x is odd',
     complement(even)
   );
 
+  // Returns a number one greater than x
   exports.inc = inc = fn(
     'Returns a number one greater than x',
     function(x) {
@@ -1177,6 +1313,7 @@ var fjs = function() {
     }
   );
 
+  // Returns a number one less than x
   exports.dec = dec = fn(
     'Returns a number one less than x',
     function(x) {
@@ -1184,6 +1321,7 @@ var fjs = function() {
     }
   );
 
+  // Returns true if x equals 0
   exports.eqZero = eqZero = fn(
     'Returns true if x equals 0',
     function(x) {
@@ -1191,6 +1329,7 @@ var fjs = function() {
     }
   );
 
+  // Returns true if x equals 1
   exports.eqOne = eqOne = fn(
     'Returns true if x equals 1',
     function(x) {
@@ -1198,19 +1337,21 @@ var fjs = function() {
     }
   );
 
+  // Returns true if x is empty.
+  // Works on objects, arrays and strings.
   exports.isEmpty = isEmpty = fn(
     'Returns true if x is empty.',
     'Works on objects, arrays and strings.',
     function(x) {
       switch(true) {
       case(isArrayLike(x) || isString(x)): return eqZero(x.length);
-      //case(isObject(x)): for(i in x) return false; return true;
       case(isObject(x)): return isEmpty(keys(x));
       default: throw new Error('x must be an Array, a String or an Object');
       }
     }
   );
 
+  // Returns true if x is an Object
   exports.isObject = isObject = fn(
     'Returns true if x is an Object',
     function(x) {
@@ -1218,33 +1359,31 @@ var fjs = function() {
     }
   );
 
+  // Returns true if x is an Array
   exports.isArray = isArray = fn(
     'Returns true if x is an Array',
     is('Array')
   );
 
+  // Returns true if x is a String
   exports.isString = isString = fn(
     'Returns true if x is a String',
     is('String')
   );
 
+  // Returns true if x is a Function
   exports.isFunction = isFunction = fn(
     'Returns true if x is a Function',
     is('Function')
-    //function(x) {
-    //  return typeof x === 'function';
-    //}
   );
 
+  // Returns true if x is an instance of Arguments
   exports.areArguments = areArguments = fn(
     'Returns true if x is an instance of Arguments',
     is('Arguments')
-    //function(x) {
-    //  if(isNull(x) || isUndefined(x)) return false;
-    //  return x.toString && x.toString() === '[object Arguments]';
-    //}
   );
 
+  // Returns true if x is an Array or an instance of Arguments
   exports.isArrayLike = isArrayLike = fn(
     'Returns true if x is an Array or an instance of Arguments',
     function(x) {
@@ -1252,16 +1391,20 @@ var fjs = function() {
     }
   );
 
+  // Returns true if x is a Number
   exports.isNumber = isNumber = fn(
     'Returns true if x is a Number',
     is('Number')
   );
 
+  // Returns true if x is a Boolean
   exports.isBoolean = isBoolean = fn(
     'Returns true if x is a Boolean',
     is('Boolean')
   );
 
+  // Returns true if x is a Float.
+  // Notice: isFloat(1.0) returns false.
   exports.isFloat = isFloat = fn(
     'Returns true if x is a Float.',
     'Notice: isFloat(1.0) returns false.',
@@ -1270,6 +1413,8 @@ var fjs = function() {
     }
   );
 
+  // Returns true if x is an Int
+  // Notice: isInt(1.0) returns true.
   exports.isInt = isInt = fn(
     'Returns true if x is an Int',
     'Notice: isInt(1.0) returns true.',
@@ -1278,6 +1423,7 @@ var fjs = function() {
     }
   );
 
+  // Returns true if x is true
   exports.isTrue = isTrue = fn(
     'Returns true if x is true',
     function(x) {
@@ -1285,6 +1431,7 @@ var fjs = function() {
     }
   );
 
+  // Returns true if x is false
   exports.isFalse = isFalse = fn(
     'Returns true if x is false',
     function(x) {
@@ -1292,6 +1439,7 @@ var fjs = function() {
     }
   );
 
+  // Returns true if x is null
   exports.isNull = isNull = fn(
     'Returns true if x is null',
     function(x) {
@@ -1299,6 +1447,7 @@ var fjs = function() {
     }
   );
 
+  // Returns true if x is undefined
   exports.isUndefined = isUndefined = fn(
     'Returns true if x is undefined',
     function(x) {
@@ -1306,6 +1455,8 @@ var fjs = function() {
     }
   );
 
+  // Returns the sum of given arguments.
+  // add() returns 0
   exports.add = add = fn(
     'Returns the sum of given arguments.',
     'add() returns 0',
@@ -1316,6 +1467,8 @@ var fjs = function() {
     }
   );
 
+  // Returns the product of given arguments.
+  // mul() returns 1
   exports.mul = mul = fn(
     'Returns the product of given arguments.',
     'mul() returns 1',
@@ -1327,6 +1480,8 @@ var fjs = function() {
     }
   );
 
+  // Subtracts the remaining arguments to the first one.
+  // sub() returns 0
   exports.sub = sub = fn(
     'Subtracts the remaining arguments to the first one.',
     'sub() returns 0',
@@ -1338,6 +1493,8 @@ var fjs = function() {
     }
   );
 
+  // Divides the first argument with the others.
+  // div() returns 1
   exports.div = div = fn(
     'Divides the first argument with the others.',
     'div() returns 1',
@@ -1349,24 +1506,29 @@ var fjs = function() {
     }
   );
 
+  // Convert args to Object which can be used by use and del
   parseArgs = fn(
     'Convert args to Object which can be used by use and del',
     function(args) {
-      ////the imperative version of parseArgs:
-      //var parsedArgs = {};
-      //loop(function(_, arg) {
-      //  if(isObject(arg))
-      //    loop(function(k, v) { parsedArgs[k] = v; }, arg);
-      //  else parsedArgs[arg] = arg;
-      //}, args);
-      //return parsedArgs;
-
       return merge(apply(merge, filter(isObject, args)),
                    marshal(map(partial(repeat, 2), filter(isString, args))));
     }
   );
 
-  //#messy
+  // May be really messy!
+  // Uses in main scope some of the fjs functions.
+  // e.g.: fjs.use(\'map\', \'inc\')
+  //       map(inc, [1, 2, 3]) // [2, 3, 4]
+  //       fjs.del(\'map\', \'inc\')
+  // e.g.: var vars = [\'fmap\', \'dec\']
+  //       fjs.use(vars)
+  //       fmap([1, 2, 3], dec) // [0, 1, 2]
+  //       fjs.del(vars)
+  // e.g.: var vars = [{inc: \'inc2\', dec: \'dec2\'}, \'map\']
+  //       fjs.use(vars)
+  //       map(inc2, [1, 2, 3]) // [2, 3, 4]
+  //       map(dec2, [1, 2, 3]) // [0, 1, 2]
+  //       fjs.del(vars)
   exports.use = fn(
     'May be really messy!',
     'Uses in main scope some of the fjs functions.',
@@ -1385,8 +1547,6 @@ var fjs = function() {
     function() {
       loop(function(fjsname, parentname) {
         if(exports.hasOwnProperty(fjsname)) {
-          //if(parent[parentname]) warn('"' + parentname + '" has  been replaced by fjs.' + fjsname);
-          //parent[parentname] = exports[fjsname];
           if(this[parentname]) warn('"' + parentname + '" has  been replaced by fjs.' + fjsname);
           this[parentname] = exports[fjsname];
         }
@@ -1395,7 +1555,8 @@ var fjs = function() {
     }
   );
 
-  //#messy
+  // May be really messy!
+  // Uses all the exported function of fjs.
   exports.useAll = fn(
     'May be really messy!',
     'Uses all the exported function of fjs.',
@@ -1406,7 +1567,10 @@ var fjs = function() {
     }
   );
 
-  //#messy
+  // May be really messy!
+  // Deletes variables in the main scope.
+  // Handy when you want to clean the scope after using fjs variables.
+  // See fjs.use.doc
   exports.del = fn(
     'May be really messy!',
     'Deletes variables in the main scope.',
@@ -1414,13 +1578,14 @@ var fjs = function() {
     'See fjs.use.doc',
     function() {
       loop(function(_, parentname) {
-        //delete parent[parentname];
         delete this[parentname];
       }, parseArgs(isArrayLike(first(arguments)) ? first(arguments) : arguments));
     }
   );
 
-  //Currying
+  // Currying
+  // --------
+
   (function() {
     var fs = ['apply', 'applyWith', 'assoc', 'cons', 'cycle', 'drop', 'dropWhile',
               'every', 'filter', 'get', 'loop', 'map', 'mapkv', 'repeat', 'repeatedly',
@@ -1437,15 +1602,18 @@ var fjs = function() {
     exports.curriedFunctions = sort(concat(fs, keys(fs2)));
   })();
 
-  //Version
+  // Version
+  // -------
+
   (function() {
+    // Returns version of fjs
     exports.version = fn(
       'Returns version of fjs',
       function() {
         return join(values(exports.version.details), '.');
       }
     );
-    exports.version.details = {major: 0, minor: 13, patch: 2};
+    exports.version.details = {major: 0, minor: 14, patch: 0};
   })();
 
   return exports;
