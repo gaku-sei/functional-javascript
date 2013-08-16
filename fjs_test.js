@@ -524,6 +524,13 @@
   assertEq(xs[1][0], 4, 175);
   assertEq(xs[2][0], 1);
 
+  //#drop
+  var xs = [1, 2, 3, 4];
+  var ys = fjs.drop(2, xs);
+  assertEq(ys.length, 2);
+  assertEq(ys[0], 3);
+  assertEq(ys[1], 4);
+
   //#first
   assertEq(fjs.first([4, 5, 2]), 4);
   assertEq(fjs.first(['foo', 'bar', 'baz']), 'foo');
@@ -704,6 +711,13 @@
   var g = fjs.flip(f);
   assertEq(f(10, 2), 5);
   assertEq(g(10, 2), 0.2);
+
+  //#fdrop
+  var xs = [1, 2, 3, 4];
+  var ys = fjs.fdrop(xs, 2);
+  assertEq(ys.length, 2);
+  assertEq(ys[0], 3);
+  assertEq(ys[1], 4);
 
   //#fget
   assertEq(fjs.fget(1, [1, 2, 3]), 2);

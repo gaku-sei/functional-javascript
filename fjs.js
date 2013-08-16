@@ -3,10 +3,10 @@ var fjs = function() {
   //public
   var add, apply, applyWith, and, areArguments, arity, arity0, arity1, arity2, arity3, assoc, attrs, butfirst, butlast, call,
       callWith, clone, comp, complement, concat, conj, cons, cs, curriedFunctions, curry, cycle, dec, del, dir, dir1, div, doc,
-      dropWhile, eq, eq2, eq3, eqOne, eqZero, error, error1, even, every, fget, filter, first, flip, fmap, fmapkv, fn, freduce,
-      freducekv, freducer, get, gt, gte, id, inc, interpose, isa, isArray, isArrayLike, isBoolean, isEmpty, isFalse, isFloat,
-      isFunction, isInt, isNull, isNumber, isObject, isString, isTrue, isUndefined, join, juxt, keys, last, len, log, log1, loop,
-      lookup, lt, lte, map, mapkv, marshal, max, merge, min, mul, neq2, not, neq3, odd, or, owns, partial, product, rand, randIndex,
+      drop, dropWhile, eq, eq2, eq3, eqOne, eqZero, error, error1, even, every, fdrop, fget, filter, first, flip, fmap, fmapkv,
+      fn, freduce, freducekv, freducer, get, gt, gte, id, inc, interpose, isa, isArray, isArrayLike, isBoolean, isEmpty, isFalse,
+      isFloat, isFunction, isInt, isNull, isNumber, isObject, isString, isTrue, isUndefined, join, juxt, keys, last, len, log, log1,
+      loop, lookup, lt, lte, map, mapkv, marshal, max, merge, min, mul, neq2, not, neq3, odd, or, owns, partial, product, rand, randIndex,
       randInt, range, reduce, reducekv, reducer, repeat, repeatedly, reverse, second, shuffle, slice, some, sort, source, sub, sum,
       takeWhile, thread, time, times, unmarshal, use, useAll, values, version, warn, warn1, xor, xrange, zip;
   //private
@@ -694,6 +694,13 @@ var fjs = function() {
     }
   );
 
+  exports.drop = drop = fn(
+    'Drops the n first elements of xs',
+    function(n, xs) {
+      return slice(xs, n);
+    }
+  );
+
   exports.first = first = fn(
     'Returns the first element of xs',
     function(xs) {
@@ -980,8 +987,13 @@ var fjs = function() {
     }
   );
 
+  exports.fdrop = fdrop = fn(
+    'Flips the arguments given to drop',
+    flip(drop)
+  );
+
   exports.fget = fget = fn(
-    'Flips the args given to get',
+    'Flips the arguments given to get',
     flip(get)
   );
 
@@ -1410,15 +1422,15 @@ var fjs = function() {
 
   //Currying
   (function() {
-    var fs = ['apply', 'applyWith', 'assoc', 'cons', 'cycle', 'dropWhile', 'every',
-              'filter', 'get', 'loop', 'map', 'mapkv', 'repeat', 'repeatedly',
+    var fs = ['apply', 'applyWith', 'assoc', 'cons', 'cycle', 'drop', 'dropWhile',
+              'every', 'filter', 'get', 'loop', 'map', 'mapkv', 'repeat', 'repeatedly',
               'some', 'takeWhile'];
     loop(function(_, v) {
       exports['c'+v] = curry(exports[v]);
     }, fs);
-    var fs2 = {'add': 2, 'and': 2, 'div': 2, 'eq': 2, 'eq2': 2, 'eq3': 2, 'fget': 2,
-               'fmap': 2, 'fmapkv': 2, 'gt': 2, 'gte': 2, 'lt': 2, 'lte': 2, 'mul': 2,
-               'neq2': 2, 'neq3': 2, 'or': 2, 'sub': 2, 'xor': 2};
+    var fs2 = {'add': 2, 'and': 2, 'div': 2, 'eq': 2, 'eq2': 2, 'eq3': 2, 'fdrop': 2,
+               'fget': 2, 'fmap': 2, 'fmapkv': 2, 'gt': 2, 'gte': 2, 'lt': 2, 'lte': 2,
+               'mul': 2, 'neq2': 2, 'neq3': 2, 'or': 2, 'sub': 2, 'xor': 2};
     loop(function(k, v) {
       exports['c'+k] = curry(exports[k], v);
     }, fs2);
