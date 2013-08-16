@@ -4,11 +4,11 @@ var fjs = function() {
   var add, apply, applyWith, and, areArguments, arity, arity0, arity1, arity2, arity3, assoc, attrs, butfirst, butlast, call,
       callWith, clone, comp, complement, concat, conj, cons, cs, curriedFunctions, curry, cycle, dec, del, dir, dir1, div, doc,
       dropWhile, eq, eq2, eq3, eqOne, eqZero, error, error1, even, every, filter, findex, first, flip, fmap, fmapkv, fn, freduce,
-      freducekv, freducer, get, gt, gte, id, inc, index, isa, isArray, isArrayLike, isBoolean, isEmpty, isFalse, isFloat, isFunction,
-      isInt, isNull, isNumber, isObject, isString, isTrue, isUndefined, join, juxt, keys, last, log, log1, loop, lt, lte, map, mapkv,
-      marshal, merge, mul, neq2, not, neq3, odd, or, owns, partial, product, rand, randIndex, randInt, range, reduce, reducekv, reducer,
-      repeat, repeatedly, reverse, second, shuffle, slice, some, sort, source, sub, sum, takeWhile, thread, time, times, unmarshal, use,
-      useAll, values, version, warn, warn1, xor, xrange;
+      freducekv, freducer, get, gt, gte, id, inc, index, interpose, isa, isArray, isArrayLike, isBoolean, isEmpty, isFalse, isFloat,
+      isFunction, isInt, isNull, isNumber, isObject, isString, isTrue, isUndefined, join, juxt, keys, last, len, log, log1, loop, lt,
+      lte, map, mapkv, marshal, max, merge, min, mul, neq2, not, neq3, odd, or, owns, partial, product, rand, randIndex, randInt, range,
+      reduce, reducekv, reducer, repeat, repeatedly, reverse, second, shuffle, slice, some, sort, source, sub, sum, takeWhile, thread,
+      time, times, unmarshal, use, useAll, values, version, warn, warn1, xor, xrange, zip;
   //private
   var is, parseArgs, wip;
 
@@ -17,7 +17,7 @@ var fjs = function() {
     if(typeof f !== 'function')
       throw new Error('Last argument of fn must be a function');
     f.doc = [].slice.call(arguments, 0, -1).join('\n');
-    f.source = f.toString();
+    //f.source = f.toString();
     return f;
   };
 
@@ -322,10 +322,17 @@ var fjs = function() {
     }
   );
 
-  exports.source = source = fn(
-    'Returns the attribute source of an object',
+  //exports.source = source = fn(
+  //  'Returns the attribute source of an object',
+  //  function(obj) {
+  //    return obj.source;
+  //  }
+  //);
+
+  exports.len = len = fn(
+    'Return the length attribute of obj',
     function(obj) {
-      return obj.source;
+      return obj.length;
     }
   );
 
@@ -434,21 +441,20 @@ var fjs = function() {
   );
 
   //#Array.prototype
-  //#notice(for any reason my version of map is way faster on Chrome)
   exports.map = map = fn(
     'Applies f to each item of xs and returns the results as an array.',
     'e.g.: map(partial(add, 2), [1, 2, 4]) // [3, 4, 6]',
     function(f, xs) {
-      //if([].map) return callWith([].map, xs, arity1(f));
+      if([].map) return callWith([].map, xs, arity1(f));
 
       ////the functionnal version of map:
       //return reduce(function(agg, x) {
       //  return conj(agg, call(f, x));
       //}, xs, []);
 
-      var ret = Array(xs.length);
+      var ret = [];
       loop(function(i, x) {
-        ret[i] = call(f, x);
+        ret.push(call(f, x));
       }, xs);
       return ret;
     }
@@ -519,6 +525,35 @@ var fjs = function() {
     }
   );
 
+  exports.zip = zip = fn(
+    'Zips arrays together.',
+    'e.g.: zip([1, 2, 3], [4, 5, 6]) // [[1, 4], [2, 5], [3, 6]]',
+    function() {
+      var ret = [],
+          args = arguments,
+          len = apply(min , map(exports.len, args));
+      if(args.length == 1) return first(args);
+      for(var i = 0; i < len; i++) {
+        ret.push(map(exports.cfindex(i), args));
+      }
+      return ret;
+    }
+  );
+
+  exports.min = min = fn(
+    'Returns min value',
+    function() {
+      return reduce(Math.min, arguments);
+    }
+  );
+
+  exports.max = max = fn(
+    'Returns max value',
+    function() {
+      return reduce(Math.max, arguments);
+    }
+  );
+
   exports.rand = rand = fn(
     'Wrapper for the Math.random function.',
     'rand returns a random floating point number between 0 and n (default 1).',
@@ -570,6 +605,16 @@ var fjs = function() {
     }
   );
 
+  exports.interpose = interpose = fn(
+    'Returns an array of the elements of xs separated of sep',
+    function(sep, xs) {
+      var len = xs.length * 2 - 1, ret = [];
+      for(var i = 0; i < len; i++)
+        ret.push(odd(i) ? sep : xs[i/2]);
+      return ret;
+    }
+  );
+
   exports.keys = keys = fn(
     'Returns the keys of an Object',
     //partial(mapkv, id)
@@ -586,15 +631,18 @@ var fjs = function() {
   );
 
   exports.merge = merge = fn(
-    'Merges two objects',
-    function(obj1, obj2) {
+    'Merges a variable number of objects',
+    function() {
       ////the functionnal version of merge:
       //return marshal(concat(unmarshal(xs), unmarshal(ys)));
 
-      var ret = {};
-      for(k in obj1) ret[k] = obj1[k];
-      for(k in obj2) ret[k] = obj2[k];
-      return ret;
+      var merge2 = function(obj1, obj2) {
+        var ret = {};
+        for(k in obj1) ret[k] = obj1[k];
+        for(k in obj2) ret[k] = obj2[k];
+        return ret;
+      };
+      return reduce(merge2, arguments, {});
     }
   );
 
@@ -1064,28 +1112,37 @@ var fjs = function() {
     }
   );
 
+  //#test
   exports.eq = eq = fn(
     'Returns wether x equals y or not.',
     'eq does a deep comparison of x and y.',
     function(x, y) {
-      switch(true) {
-      case isArrayLike(x) && isArrayLike(y):
-        if(x.length === y.length) {
-          for(var i = 0; i < x.length; i++)
-            if(!eq(x[i], y[i]))
-              return false;
-          return true;
-        } else return false;
-      case isObject(x) && isObject(y):
-        if(eq(keys(x), keys(y))) {
-          for(i in x)
-            if(!eq(x[i], y[i]))
-              return false;
-          return true;
-        } else return false;
-      default:
-        return x === y;
-      }
+      var args = arguments;
+      var eq2 = function(x, y) {
+        switch(true) {
+        case isArrayLike(x) && isArrayLike(y):
+          if(x.length === y.length) {
+            for(var i = 0; i < x.length; i++)
+              if(!eq(x[i], y[i]))
+                return false;
+            return true;
+          } else return false;
+        case isObject(x) && isObject(y):
+          if(eq(keys(x), keys(y))) {
+            for(i in x)
+              if(!eq(x[i], y[i]))
+                return false;
+            return true;
+          } else return false;
+        default:
+          return x === y;
+        }
+      };
+      var reducer = function(x, y, rest) {
+        if(rest.length == 1) return eq2(x, y);
+        return eq2(x, y) && reducer(rest[0], rest[1], slice(rest, 1));
+      };
+      return reducer(args[0], args[1], slice(args, 1));
     }
   );
 
@@ -1316,8 +1373,10 @@ var fjs = function() {
     function() {
       loop(function(fjsname, parentname) {
         if(exports.hasOwnProperty(fjsname)) {
-          if(parent[parentname]) warn('"' + parentname + '" has  been replaced by fjs.' + fjsname);
-          parent[parentname] = exports[fjsname];
+          //if(parent[parentname]) warn('"' + parentname + '" has  been replaced by fjs.' + fjsname);
+          //parent[parentname] = exports[fjsname];
+          if(this[parentname]) warn('"' + parentname + '" has  been replaced by fjs.' + fjsname);
+          this[parentname] = exports[fjsname];
         }
         else throw new Error('"' + fjsname + '" is not defined in fjs!');
       }, parseArgs(isArrayLike(first(arguments)) ? first(arguments) : arguments));
@@ -1343,20 +1402,23 @@ var fjs = function() {
     'See fjs.use.doc',
     function() {
       loop(function(_, parentname) {
-        delete parent[parentname];
+        //delete parent[parentname];
+        delete this[parentname];
       }, parseArgs(isArrayLike(first(arguments)) ? first(arguments) : arguments));
     }
   );
 
   //Currying
   (function() {
-    var fs = ['apply', 'applyWith', 'assoc', 'cons', 'cycle', 'dropWhile',
-              'every', 'filter', 'findex', 'index', 'loop', 'map', 'mapkv',
-              'repeat', 'repeatedly', 'some', 'takeWhile'];
+    var fs = ['apply', 'applyWith', 'assoc', 'cons', 'cycle', 'dropWhile', 'every',
+              'filter', 'findex', 'index', 'loop', 'map', 'mapkv', 'repeat', 'repeatedly',
+              'some', 'takeWhile'];
     loop(function(_, v) {
       exports['c'+v] = curry(exports[v]);
     }, fs);
-    var fs2 = {'findex': 2, 'fmap': 2, 'fmapkv': 2};
+    var fs2 = {'add': 2, 'and': 2, 'div': 2, 'eq': 2, 'eq2': 2, 'eq3': 2, 'findex': 2,
+               'fmap': 2, 'fmapkv': 2, 'gt': 2, 'gte': 2, 'lt': 2, 'lte': 2, 'mul': 2,
+               'neq2': 2, 'neq3': 2, 'or': 2, 'sub': 2, 'xor': 2};
     loop(function(k, v) {
       exports['c'+k] = curry(exports[k], v);
     }, fs2);
@@ -1371,7 +1433,7 @@ var fjs = function() {
         return join(values(exports.version.details), '.');
       }
     );
-    exports.version.details = {major: 0, minor: 13, patch: 0};
+    exports.version.details = {major: 0, minor: 13, patch: 1};
   })();
 
   return exports;

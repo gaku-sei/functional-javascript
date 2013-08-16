@@ -378,6 +378,38 @@
     assertEq(xs.length, ys.length);
   }
 
+  //#zip
+  var xs = [1, 2, 3];
+  var ys = [4, 5, 6];
+  var zs = [7, 8, 9];
+  var xss = fjs.zip(xs, ys, zs);
+  assertEq(xss[0][0], 1);
+  assertEq(xss[0][1], 4);
+  assertEq(xss[0][2], 7);
+  assertEq(xss[1][0], 2);
+  assertEq(xss[1][1], 5);
+  assertEq(xss[1][2], 8);
+  assertEq(xss[2][0], 3);
+  assertEq(xss[2][1], 6);
+  assertEq(xss[2][2], 9);
+  var xs = [1, 2, 3];
+  var ys = [4, 5];
+  var xss = fjs.zip(xs, ys);
+  assertEq(xss[0][0], 1);
+  assertEq(xss[0][1], 4);
+  assertEq(xss[1][0], 2);
+  assertEq(xss[1][1], 5);
+
+  //#min
+  assertEq(fjs.min(1, 2, 3, 4, 5), 1);
+  assertEq(fjs.min(2, 3, 4, 5, 1), 1);
+  assertEq(fjs.min(2, 3, 1, 4, 5), 1);
+
+  //#max
+  assertEq(fjs.max(1, 2, 3, 4, 5), 5);
+  assertEq(fjs.max(5, 1, 2, 3, 4), 5);
+  assertEq(fjs.max(1, 2, 5, 3, 4), 5);
+
   //#times
   var i = 0;
   fjs.times(12, function() { i++ });
@@ -413,6 +445,16 @@
   assertEq(ys[0], 2);
   assertEq(ys[1], 1);
   assertEq(ys[2], 1);
+
+  //#interpose
+  var xs = [1, 2, 3];
+  var ys = fjs.interpose('foo', xs);
+  assertEq(ys.length, 5);
+  assertEq(ys[0], 1);
+  assertEq(ys[1], 'foo');
+  assertEq(ys[2], 2);
+  assertEq(ys[3], 'foo');
+  assertEq(ys[4], 3);
 
   //#keys
   var xs = {foo: 1, bar: 2};

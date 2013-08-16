@@ -9,7 +9,7 @@ or in their doc attribute. Plus, the source code defines several versions of the
 
 # What is FJS
 
-  FJS defines an object fjs (and _ if not defined yet) with more than 120 functions:
+  FJS defines an object fjs (and _ if not defined yet) with more than 165 functions:
     - general purpose functions (eq, clone, keys, values, etc...)
     - iteration functions (map, mapkv, reduce, reducer, reducekv, filter, some, every, takeWhile, dropWhile, etc...)
     - functions manipulation (comp, partial, curry, juxt, call, callWith, apply, applyWith, etc...)
