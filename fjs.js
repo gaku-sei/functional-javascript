@@ -3,12 +3,12 @@ var fjs = function() {
   //public
   var add, apply, applyWith, and, areArguments, arity, arity0, arity1, arity2, arity3, assoc, attrs, butfirst, butlast, call,
       callWith, clone, comp, complement, concat, conj, cons, cs, curriedFunctions, curry, cycle, dec, del, dir, dir1, div, doc,
-      dropWhile, eq, eq2, eq3, eqOne, eqZero, error, error1, even, every, filter, findex, first, flip, fmap, fmapkv, fn, freduce,
-      freducekv, freducer, get, gt, gte, id, inc, index, interpose, isa, isArray, isArrayLike, isBoolean, isEmpty, isFalse, isFloat,
-      isFunction, isInt, isNull, isNumber, isObject, isString, isTrue, isUndefined, join, juxt, keys, last, len, log, log1, loop, lt,
-      lte, map, mapkv, marshal, max, merge, min, mul, neq2, not, neq3, odd, or, owns, partial, product, rand, randIndex, randInt, range,
-      reduce, reducekv, reducer, repeat, repeatedly, reverse, second, shuffle, slice, some, sort, source, sub, sum, takeWhile, thread,
-      time, times, unmarshal, use, useAll, values, version, warn, warn1, xor, xrange, zip;
+      dropWhile, eq, eq2, eq3, eqOne, eqZero, error, error1, even, every, fget, filter, first, flip, fmap, fmapkv, fn, freduce,
+      freducekv, freducer, get, gt, gte, id, inc, interpose, isa, isArray, isArrayLike, isBoolean, isEmpty, isFalse, isFloat,
+      isFunction, isInt, isNull, isNumber, isObject, isString, isTrue, isUndefined, join, juxt, keys, last, len, log, log1, loop,
+      lookup, lt, lte, map, mapkv, marshal, max, merge, min, mul, neq2, not, neq3, odd, or, owns, partial, product, rand, randIndex,
+      randInt, range, reduce, reducekv, reducer, repeat, repeatedly, reverse, second, shuffle, slice, some, sort, source, sub, sum,
+      takeWhile, thread, time, times, unmarshal, use, useAll, values, version, warn, warn1, xor, xrange, zip;
   //private
   var is, parseArgs, wip;
 
@@ -534,7 +534,7 @@ var fjs = function() {
           len = apply(min , map(exports.len, args));
       if(args.length == 1) return first(args);
       for(var i = 0; i < len; i++) {
-        ret.push(map(exports.cfindex(i), args));
+        ret.push(map(exports.cfget(i), args));
       }
       return ret;
     }
@@ -729,18 +729,18 @@ var fjs = function() {
     }
   );
 
-  exports.index = index = fn(
-    'Similar to xs[i].',
-    function(xs, i) {
-      return xs[i];
+  exports.get = get = fn(
+    'Similar to obj[i].',
+    function(obj, i) {
+      return obj[i];
     }
   );
 
-  exports.get = get = fn(
+  exports.lookup = lookup = fn(
     'Object, Array, String and arguments lookup.',
-    'e.g.: get([1, 2, 3], 0) // 1',
-    '      get({foo: {bar: [1, 2]}}, [\'foo\', \'bar\', 1]) // 2',
-    '      get([1, 2], 4, \'Not Found...\') // \'Not Found...\'.',
+    'e.g.: lookup([1, 2, 3], 0) // 1',
+    '      lookup({foo: {bar: [1, 2]}}, [\'foo\', \'bar\', 1]) // 2',
+    '      lookup([1, 2], 4, \'Not Found...\') // \'Not Found...\'.',
     function(xs, ks, notFound) {
       var found;
       if(isArrayLike(ks)) {
@@ -748,7 +748,7 @@ var fjs = function() {
           found = xs[first(ks)];
         else
           //?if(xs[first(ks)])
-            found = get(xs[first(ks)], butfirst(ks));
+            found = lookup(xs[first(ks)], butfirst(ks));
       }
       else found = xs[ks];
       return isUndefined(found) ? notFound : found;
@@ -980,9 +980,9 @@ var fjs = function() {
     }
   );
 
-  exports.findex = findex = fn(
-    'Flips the args given to index.',
-    flip(index)
+  exports.fget = fget = fn(
+    'Flips the args given to get',
+    flip(get)
   );
 
   exports.fmap = fmap = fn(
@@ -1411,12 +1411,12 @@ var fjs = function() {
   //Currying
   (function() {
     var fs = ['apply', 'applyWith', 'assoc', 'cons', 'cycle', 'dropWhile', 'every',
-              'filter', 'findex', 'index', 'loop', 'map', 'mapkv', 'repeat', 'repeatedly',
+              'filter', 'get', 'loop', 'map', 'mapkv', 'repeat', 'repeatedly',
               'some', 'takeWhile'];
     loop(function(_, v) {
       exports['c'+v] = curry(exports[v]);
     }, fs);
-    var fs2 = {'add': 2, 'and': 2, 'div': 2, 'eq': 2, 'eq2': 2, 'eq3': 2, 'findex': 2,
+    var fs2 = {'add': 2, 'and': 2, 'div': 2, 'eq': 2, 'eq2': 2, 'eq3': 2, 'fget': 2,
                'fmap': 2, 'fmapkv': 2, 'gt': 2, 'gte': 2, 'lt': 2, 'lte': 2, 'mul': 2,
                'neq2': 2, 'neq3': 2, 'or': 2, 'sub': 2, 'xor': 2};
     loop(function(k, v) {
@@ -1433,7 +1433,7 @@ var fjs = function() {
         return join(values(exports.version.details), '.');
       }
     );
-    exports.version.details = {major: 0, minor: 13, patch: 1};
+    exports.version.details = {major: 0, minor: 13, patch: 2};
   })();
 
   return exports;

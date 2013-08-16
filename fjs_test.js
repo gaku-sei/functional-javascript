@@ -550,17 +550,18 @@
   for(i in zs)
     assertEq(zs[i], ys[i]);
 
-  //#index
-  assertEq(fjs.index([1, 2, 3], 1), 2);
-
   //#get
-  assertEq(fjs.get([1, 2, 3], 0), 1);
-  assertEq(fjs.get({foo: {bar: [1, 2]}}, ['foo', 'bar', 1]), 2);
-  assertEq(fjs.get([1, 2], 4, 'Not Found...'), 'Not Found...');
-  assertEq(fjs.get([1, 2], 4), undefined);
-  assertEq(fjs.get({foo: [1, 'bar']}, ['foo', 1, 2]), 'r');
-  assertEq(fjs.get({foo: 'bar'}, 'foo'), 'bar');
-  assertEq(fjs.get([1, 2, 3], 0), 1);
+  assertEq(fjs.get([1, 2, 3], 1), 2);
+  assertEq(fjs.get({foo: 1, bar: 2}, 'bar'), 2);
+
+  //#lookup
+  assertEq(fjs.lookup([1, 2, 3], 0), 1);
+  assertEq(fjs.lookup({foo: {bar: [1, 2]}}, ['foo', 'bar', 1]), 2);
+  assertEq(fjs.lookup([1, 2], 4, 'Not Found...'), 'Not Found...');
+  assertEq(fjs.lookup([1, 2], 4), undefined);
+  assertEq(fjs.lookup({foo: [1, 'bar']}, ['foo', 1, 2]), 'r');
+  assertEq(fjs.lookup({foo: 'bar'}, 'foo'), 'bar');
+  assertEq(fjs.lookup([1, 2, 3], 0), 1);
 
   //#sum
   assertEq(fjs.sum([1, 2, 3, 4]), 10);
@@ -704,8 +705,9 @@
   assertEq(f(10, 2), 5);
   assertEq(g(10, 2), 0.2);
 
-  //#findex
-  assertEq(fjs.findex(1, [1, 2, 3]), 2);
+  //#fget
+  assertEq(fjs.fget(1, [1, 2, 3]), 2);
+  assertEq(fjs.fget('bar', {foo: 1, bar: 2}), 2);
 
   //#fmap
   var xs = [1, 2, 4];
