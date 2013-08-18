@@ -1,4 +1,4 @@
-//     Fjs.js 0.14.0
+//     Fjs.js 0.14.1
 //     http://github.com/../..
 //     (c) 2013 Beviral
 
@@ -9,7 +9,7 @@ var fjs = function() {
   var exports = {};
   // Public
   var add, apply, applyWith, and, areArguments, arity, arity0, arity1, arity2, arity3, assoc, attrs, butfirst, butlast, call,
-      callWith, clone, comp, complement, concat, conj, cons, cs, curriedFunctions, curry, cycle, dec, del, dir, dir1, div, doc,
+      callWith, clone, comp, complement, concat, conj, cons, cs, curriedFunctions, curry, curry1, cycle, dec, del, dir, dir1, div, doc,
       drop, dropWhile, eq, eq2, eq3, eqOne, eqZero, error, error1, even, every, fdrop, fget, filter, first, flatten, flip, fmap, fmapkv,
       fn, freduce, freducekv, freducer, get, gt, gte, id, inc, interpose, isa, isArray, isArrayLike, isBoolean, isEmpty, isFalse,
       isFloat, isFunction, isInt, isNull, isNumber, isObject, isString, isTrue, isUndefined, join, juxt, keys, last, len, log, log1,
@@ -257,7 +257,7 @@ var fjs = function() {
     }
   );
 
-  // Uses context and rebinds \'this\',
+  // Uses context and rebinds 'this',
   // it applies a function to an array of arguments.
   // The first argument must be a function,
   // and the second one the context.
@@ -273,7 +273,7 @@ var fjs = function() {
     }
   );
 
-  // Uses context and rebinds \'this\',
+  // Uses context and rebinds 'this',
   // It applies a function to a variable number of arguments.
   // The first argument must be a function,
   // and the second one is the context.
@@ -315,8 +315,8 @@ var fjs = function() {
 
   // Wrapper for the console object.
   // The function returned by cs itself returns its arguments.
-  // e.g.: map(inc, cs(\'log\')(1, 2)) // logs [1, 2] then returns [2, 3]
-  //       add(cs(\'log\')(1), 2) // logs 1 then returns 3
+  // e.g.: map(inc, cs('log')(1, 2)) // logs [1, 2] then returns [2, 3]
+  //       add(cs('log')(1), 2) // logs 1 then returns 3
   exports.cs = cs = fn(
     'Wrapper for the console object.',
     'The function returned by cs itself returns its arguments.',
@@ -440,13 +440,13 @@ var fjs = function() {
 
   // Based on the function Array.prototype.slice.
   // e.g.: slice(arguments) // similar to [].slice.call(arguments)
-  //       slice([1,2,3,4], 1,3) // [2, 3]
-  //       slice([1,2,3], -1) // [3]
+  //       slice([1, 2, 3, 4], 1, 3) // [2, 3]
+  //       slice([1, 2, 3], -1) // [3]
   exports.slice = slice = fn(
     'Based on the function Array.prototype.slice.',
     'e.g.: slice(arguments) // similar to [].slice.call(arguments)',
-    '      slice([1,2,3,4], 1,3) // [2, 3]',
-    '      slice([1,2,3], -1) // [3]',
+    '      slice([1, 2, 3, 4], 1, 3) // [2, 3]',
+    '      slice([1, 2, 3], -1) // [3]',
     function(xs) {
       var args = [].slice.call(arguments).slice(1);
       if([].slice) return applyWith([].slice, xs, args);
@@ -708,7 +708,7 @@ var fjs = function() {
   );
 
   // Assoc key/value to object.
-  // Equivalent to `obj[k] = v` but doesn\'t modify obj.
+  // Equivalent to `obj[k] = v` but doesn't modify obj.
   exports.assoc = assoc = fn(
     'Assoc key/value to object.',
     'Equivalent to `obj[k] = v` but doesn\'t modify obj.',
@@ -818,8 +818,8 @@ var fjs = function() {
 
   // Object, Array, String and arguments lookup.
   // e.g.: lookup([1, 2, 3], 0) // 1
-  //       lookup({foo: {bar: [1, 2]}}, [\'foo\', \'bar\', 1]) // 2
-  //       lookup([1, 2], 4, \'Not Found...\') // \'Not Found...\'.
+  //       lookup({foo: {bar: [1, 2]}}, ['foo', 'bar', 1]) // 2
+  //       lookup([1, 2], 4, 'Not Found...') // 'Not Found...'.
   exports.lookup = lookup = fn(
     'Object, Array, String and arguments lookup.',
     'e.g.: lookup([1, 2, 3], 0) // 1',
@@ -1000,10 +1000,10 @@ var fjs = function() {
   );
 
   // Targeting readability, thread looks like OOP writting.
-  // e.g.: inc(first([1,3])) becomes thread([1,3], first, inc) // 2
+  // e.g.: inc(first([1, 3])) becomes thread([1, 3], first, inc) // 2
   exports.thread = thread = fn(
     'Targeting readability, thread looks like OOP writting.',
-    'e.g.: inc(first([1,3])) becomes thread([1,3], first, inc) // 2',
+    'e.g.: inc(first([1, 3])) becomes thread([1, 3], first, inc) // 2',
     function() {
       return apply(flip(comp), butfirst(arguments))(first(arguments));
     }
@@ -1030,6 +1030,10 @@ var fjs = function() {
   //       mapinc([2, 3, 4]) // [3, 4, 5]
   // e.g.: var cadd = curry(add, 3)
   //       cadd(1)(2)(3) // 6
+  //       cadd(1, 2)(3) // 6
+  //       cadd(1)(2, 3) // 6
+  //       cadd(1, 2, 3) // 6
+  var curry;
   exports.curry = curry = fn(
     'Allows to curry a function.',
     'The arity if by default f.length, but it can be set.',
@@ -1039,15 +1043,53 @@ var fjs = function() {
     '      mapinc([2, 3, 4]) // [3, 4, 5]',
     'e.g.: var cadd = curry(add, 3)',
     '      cadd(1)(2)(3) // 6',
+    '      cadd(1, 2)(3) // 6',
+    '      cadd(1)(2, 3) // 6',
+    '      cadd(1, 2, 3) // 6',
     function(f, arity) {
       var curried = function(args, arity) {
+        return function() {
+          if((arity - arguments.length) > 0)
+            return curried(concat(args, arguments), arity - arguments.length);
+          else return apply(f, concat(args, arguments));
+        };
+      };
+      return curried([], or(arity, f.length));
+    }
+  );
+
+  // Similar to curry but with arity fixed to 1 for each call.
+  // The arity if by default f.length, but it can be set.
+  // e.g.: var cmap = curry(map)
+  //       var mapinc = cmap(inc)
+  //       mapinc([1, 2, 3]) // [2, 3, 4]
+  //       mapinc([2, 3, 4]) // [3, 4, 5]
+  // e.g.: var cadd = curry(add, 3)
+  //       cadd(1)(2)(3) // 6
+  //       cadd(1)(2, 3) // wrong: the second argument here is ignored
+  //       cadd(1)(2)() // NaN: unlike curry, curry1 decreasese arity at each call
+  //                    // So cadd does 1 + 2 + undefined here
+  exports.curry1 = curry1 = fn(
+    'Similar to curry but with arity fixed to 1 for each call.',
+    'The arity if by default f.length, but it can be set.',
+    'e.g.: var cmap = curry(map)',
+    '      var mapinc = cmap(inc)',
+    '      mapinc([1, 2, 3]) // [2, 3, 4]',
+    '      mapinc([2, 3, 4]) // [3, 4, 5]',
+    'e.g.: var cadd = curry(add, 3)',
+    '      cadd(1)(2)(3) // 6',
+    '      cadd(1)(2, 3) // wrong: the second argument here is ignored',
+    '      cadd(1)(2)() // NaN: unlike curry, curry1 decreasese arity at each call',
+    '                   // So cadd does 1 + 2 + undefined here',
+    function(f, arity) {
+      var curried1 = function(args, arity) {
         return function(arg) {
           if(arity > 1)
-            return curried(conj(args, arg), dec(arity));
+            return curried1(conj(args, arg), dec(arity));
           else return apply(f, conj(args, arg));
         };
       };
-      return curried([], arity || f.length);
+      return curried1([], or(arity, f.length));
     }
   );
 
@@ -1517,14 +1559,14 @@ var fjs = function() {
 
   // May be really messy!
   // Uses in main scope some of the fjs functions.
-  // e.g.: fjs.use(\'map\', \'inc\')
+  // e.g.: fjs.use('map', 'inc')
   //       map(inc, [1, 2, 3]) // [2, 3, 4]
-  //       fjs.del(\'map\', \'inc\')
-  // e.g.: var vars = [\'fmap\', \'dec\']
+  //       fjs.del('map', 'inc')
+  // e.g.: var vars = ['fmap', 'dec']
   //       fjs.use(vars)
   //       fmap([1, 2, 3], dec) // [0, 1, 2]
   //       fjs.del(vars)
-  // e.g.: var vars = [{inc: \'inc2\', dec: \'dec2\'}, \'map\']
+  // e.g.: var vars = [{inc: 'inc2', dec: 'dec2'}, 'map']
   //       fjs.use(vars)
   //       map(inc2, [1, 2, 3]) // [2, 3, 4]
   //       map(dec2, [1, 2, 3]) // [0, 1, 2]
@@ -1613,7 +1655,7 @@ var fjs = function() {
         return join(values(exports.version.details), '.');
       }
     );
-    exports.version.details = {major: 0, minor: 14, patch: 0};
+    exports.version.details = {major: 0, minor: 14, patch: 1};
   })();
 
   return exports;

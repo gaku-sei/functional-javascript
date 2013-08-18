@@ -701,6 +701,21 @@
   var add2and3 = cadd(2)(3);
   assertEq(add2and3(4), 9);
   assertEq(cadd(1)(2)(3), 6);
+  assertEq(cadd(1)(2, 3), 6);
+  assertEq(cadd(1, 2)(3), 6);
+  assertEq(cadd(1, 2, 3), 6);
+
+  //#curry1
+  var cmap = fjs.curry1(fjs.map);
+  var mapinc = cmap(fjs.inc);
+  var xs = mapinc([1, 2, 3]);
+  assertEq(xs[0], 2);
+  assertEq(xs[1], 3);
+  assertEq(xs[2], 4);
+  var cadd = fjs.curry1(fjs.add, 3);
+  var add2and3 = cadd(2)(3);
+  assertEq(add2and3(4), 9);
+  assertEq(cadd(1)(2)(3), 6);
 
   //#juxt
   var f = function(x) { return x + 1 };
