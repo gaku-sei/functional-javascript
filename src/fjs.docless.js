@@ -51,12 +51,14 @@ var fjs = function() {
     };
   };
 
-  // Wrapper for instanceof operator
-  // e.g.: isa({}, Object) // true
-  //       var Foo = function() {}
-  //       var foo = new Foo
-  //       isa(foo, Foo) // true
-  //       isa(foo, Foo, Object) // true
+  // Wrapper for instanceof operator<br />
+  // ```
+  //   isa({}, Object)         // true
+  //   var Foo = function() {}
+  //   var foo = new Foo
+  //   isa(foo, Foo)           // true
+  //   isa(foo, Foo, Object)   // true
+  // ```
   exports.isa = isa = function(obj) {
     var fs = butfirst(arguments);
     for(i in fs)
@@ -215,7 +217,9 @@ var fjs = function() {
 
   // Use with caution as arity may leads to cryptic errors!
   // Limit the arguments given to a function.
-  // e.g.: arity(2)(add)(2, 7, 6) //=> 9
+  // ```
+  //   arity(2)(add)(2, 7, 6) // 9
+  // ```
   // The first two arguments only are passed to the function add.
   exports.arity = arity = function(n) {
     return function(f) {
@@ -235,8 +239,10 @@ var fjs = function() {
 
   // Wrapper for the console object.
   // The function returned by cs itself returns its arguments.
-  // e.g.: map(inc, cs('log')(1, 2)) // logs [1, 2] then returns [2, 3]
-  //       add(cs('log')(1), 2) // logs 1 then returns 3
+  // ```
+  //   map(inc, cs('log')(1, 2)) // logs [1, 2] then returns [2, 3]
+  //   add(cs('log')(1), 2)      // logs 1 then returns 3
+  // ```
   exports.cs = cs = function(met) {
     return function() {
       var args = arguments.length < 2 ? first(arguments) : slice(arguments);
@@ -309,8 +315,10 @@ var fjs = function() {
   };
 
   // Composes functions.
-  // e.g.: comp(partial(add, 1), partial(mul, 2))(2) // 5
-  //       comp(partial(mul, 2), partial(add, 1), partial(mul, 3))(4) // 26
+  // ```
+  //   comp(partial(add, 1), partial(mul, 2))(2)                  // 5
+  //   comp(partial(mul, 2), partial(add, 1), partial(mul, 3))(4) // 26
+  // ```
   exports.comp = comp = function() {
     return reduce(function(f, g) {
       return function() {
@@ -320,9 +328,11 @@ var fjs = function() {
   };
 
   // Based on the function Array.prototype.slice.
-  // e.g.: slice(arguments) // similar to [].slice.call(arguments)
-  //       slice([1, 2, 3, 4], 1, 3) // [2, 3]
-  //       slice([1, 2, 3], -1) // [3]
+  // ```
+  //   slice(arguments)          // similar to [].slice.call(arguments)
+  //   slice([1, 2, 3, 4], 1, 3) // [2, 3]
+  //   slice([1, 2, 3], -1)      // [3]
+  // ```
   exports.slice = slice = function(xs) {
     var args = [].slice.call(arguments).slice(1);
     if([].slice) return applyWith([].slice, xs, args);
@@ -331,7 +341,9 @@ var fjs = function() {
   };
 
   // Based on Array.prototype.join, join replaces ',' with ''.
-  // e.g.: join(['foo', 'bar']) // 'foobar'
+  // ```
+  //   join(['foo', 'bar']) // 'foobar'
+  // ```
   exports.join = join = function(xs) {
     var sep = second(arguments)||'';
     if([].join) return callWith([].join, xs, sep);
@@ -354,7 +366,9 @@ var fjs = function() {
   };
 
   // Applies f to each item of xs and returns the results as an array.
-  // e.g.: map(partial(add, 2), [1, 2, 4]) // [3, 4, 6]
+  // ```
+  //   map(partial(add, 2), [1, 2, 4]) // [3, 4, 6]
+  // ```
   exports.map = map = function(f, xs) {
     if([].map) return callWith([].map, xs, arity1(f));
 
@@ -415,7 +429,9 @@ var fjs = function() {
   };
 
   // Zips arrays together.
-  // e.g.: zip([1, 2, 3], [4, 5, 6]) // [[1, 4], [2, 5], [3, 6]]
+  // ```
+  //   zip([1, 2, 3], [4, 5, 6]) // [[1, 4], [2, 5], [3, 6]]
+  // ```
   exports.zip = zip = function() {
     var ret = [],
         args = arguments,
@@ -540,13 +556,17 @@ var fjs = function() {
   };
 
   // Prepends x to xs.
-  // e.g.: cons([2, 3], 1) // [1, 2, 3]
+  // ```
+  //   cons([2, 3], 1) // [1, 2, 3]
+  // ```
   exports.cons = cons = function(xs, x) {
     return concat([x], xs);
   };
 
   // Appends arguments to xs.
-  // e.g.: conj([1, 2], 3) // [1, 2, 3]
+  // ```
+  //   conj([1, 2], 3) // [1, 2, 3]
+  // ```
   exports.conj = conj = function(xs) {
     return concat(xs, butfirst(arguments));
   };
@@ -587,16 +607,17 @@ var fjs = function() {
   };
 
   // Object, Array, String and arguments lookup.
-  // e.g.: lookup([1, 2, 3], 0) // 1
-  //       lookup({foo: {bar: [1, 2]}}, ['foo', 'bar', 1]) // 2
-  //       lookup([1, 2], 4, 'Not Found...') // 'Not Found...'.
+  // ```
+  //   lookup([1, 2, 3], 0)                            // 1
+  //   lookup({foo: {bar: [1, 2]}}, ['foo', 'bar', 1]) // 2
+  //   lookup([1, 2], 4, 'Not Found...')               // 'Not Found...'
+  // ```
   exports.lookup = lookup = function(xs, ks, notFound) {
-    var found;
-    if(isArrayLike(ks))
-      found = eqOne(ks.length)
+    var found = isArrayLike(ks)
+      ? eqOne(ks.length)
         ? xs[first(ks)]
-        : lookup(xs[first(ks)], butfirst(ks));
-    else found = xs[ks];
+        : lookup(xs[first(ks)], butfirst(ks))
+      : xs[ks];
     return isUndefined(found) ? notFound : found;
   };
 
@@ -639,8 +660,10 @@ var fjs = function() {
   // The first argument is a function which takes two arguments,
   // the second one is an array and you may pass a third argument which is an aggregator
   // the aggregator is the first element of xs by default.
-  // e.g.: reduce(add, [1, 2, 3]) // 6
-  //       reduce(add, [1, 2, 3], 2) // 8
+  // ```
+  //   reduce(add, [1, 2, 3])    // 6
+  //   reduce(add, [1, 2, 3], 2) // 8
+  // ```
   exports.reduce = reduce = function(f, xs, agg) {
     if([].reduce) {
       if(isUndefined(agg))
@@ -659,9 +682,11 @@ var fjs = function() {
 
   // The first argument is a function which takes three arguments,
   // the second one is an array and the third one is an aggregator
-  // e.g.: var f = function(agg, _, v) { return agg + v }
-  //       reducekv(f, {foo: 1, bar: 2, baz: 3}, 0) // 6
-  //       reducekv(f, {foo: 1, bar: 2, baz: 3}, 2) // 8
+  // ```
+  //   var f = function(agg, _, v) { return agg + v }
+  //   reducekv(f, {foo: 1, bar: 2, baz: 3}, 0) // 6
+  //   reducekv(f, {foo: 1, bar: 2, baz: 3}, 2) // 8
+  // ```
   exports.reducekv = reducekv = function(f, obj, agg) {
     if([].reduce && !isObject(obj)) return callWith([].reduce, obj, arity3(f), agg);
 
@@ -673,8 +698,10 @@ var fjs = function() {
   };
 
   // Similar to reduce but starts iteration at the end of the array.
-  // e.g.: reduce(sub, [10, 2, 5]) // 3
-  //       reducer(sub, [10, 2, 5]) // -7
+  // ```
+  //   reduce(sub, [10, 2, 5])  // 3
+  //   reducer(sub, [10, 2, 5]) // -7
+  // ```
   exports.reducer = reducer = function(f, xs, agg) {
     if([].reduce) {
       if(isUndefined(agg))
@@ -719,13 +746,19 @@ var fjs = function() {
   };
 
   // Targeting readability, thread looks like OOP writting.
-  // e.g.: inc(first([1,3])) becomes thread([1,3], first, inc) // 2
+  // ```
+  //   inc(first([1, 3]))
+  //   // becomes
+  //   thread([1, 3], first, inc) // 2
+  // ```
   exports.thread = thread = function() {
     return apply(flip(comp), butfirst(arguments))(first(arguments));
   };
 
   // Partially applies a function to a variable number of arguments
-  // e.g.: partial(add, 1)(2) // 3
+  // ```
+  //   partial(add, 1)(2) // 3
+  // ```
   exports.partial = partial = function(f) {
     var args = butfirst(arguments);
     return function() {
@@ -735,16 +768,19 @@ var fjs = function() {
 
   // Allows to curry a function.
   // The arity if by default f.length, but it can be set.
-  // e.g.: var cmap = curry(map)
-  //       var mapinc = cmap(inc)
-  //       mapinc([1, 2, 3]) // [2, 3, 4]
-  //       mapinc([2, 3, 4]) // [3, 4, 5]
-  // e.g.: var cadd = curry(add, 3)
-  //       cadd(1)(2)(3) // 6
-  //       cadd(1, 2)(3) // 6
-  //       cadd(1)(2, 3) // 6
-  //       cadd(1, 2, 3) // 6
-  var curry;
+  // ```
+  //   var cmap = curry(map)
+  //   var mapinc = cmap(inc)
+  //   mapinc([1, 2, 3]) // [2, 3, 4]
+  //   mapinc([2, 3, 4]) // [3, 4, 5]
+  // ```
+  // ```
+  //   var cadd = curry(add, 3)
+  //   cadd(1)(2)(3) // 6
+  //   cadd(1, 2)(3) // 6
+  //   cadd(1)(2, 3) // 6
+  //   cadd(1, 2, 3) // 6
+  // ```
   exports.curry = curry = function(f, arity) {
     var curried = function(args, arity) {
       return function() {
@@ -758,15 +794,19 @@ var fjs = function() {
 
   // Similar to curry but with arity fixed to 1 for each call.
   // The arity if by default f.length, but it can be set.
-  // e.g.: var cmap = curry(map)
-  //       var mapinc = cmap(inc)
-  //       mapinc([1, 2, 3]) // [2, 3, 4]
-  //       mapinc([2, 3, 4]) // [3, 4, 5]
-  // e.g.: var cadd = curry(add, 3)
-  //       cadd(1)(2)(3) // 6
-  //       cadd(1)(2, 3) // wrong: the second argument here is ignored
-  //       cadd(1)(2)() // NaN: unlike curry, curry1 decreasese arity at each call
-  //                    // So cadd does 1 + 2 + undefined here
+  // ```
+  //   var cmap = curry(map)
+  //   var mapinc = cmap(inc)
+  //   mapinc([1, 2, 3]) // [2, 3, 4]
+  //   mapinc([2, 3, 4]) // [3, 4, 5]
+  // ```
+  // ```
+  //   var cadd = curry(add, 3)
+  //   cadd(1)(2)(3) // 6
+  //   cadd(1)(2, 3) // wrong: the second argument here is ignored
+  //   cadd(1)(2)()  // NaN: unlike curry, curry1 decreases arity at each call
+  //                 // So cadd does 1 + 2 + undefined here
+  // ```
   exports.curry1 = curry1 = function(f, arity) {
     var curried1 = function(args, arity) {
       return function(arg) {
@@ -780,7 +820,9 @@ var fjs = function() {
 
   // Sequentially applies each function to a variadic number of arguments
   // then returns an array with the results.
-  // e.g.: juxt(inc, dec)(2) // [3,1]
+  // ```
+  //   juxt(inc, dec)(2) // [3, 1]
+  // ```
   exports.juxt = juxt = function() {
     var fs = arguments;
     return function() {
@@ -792,8 +834,10 @@ var fjs = function() {
   };
 
   // Flips the arguments given to a function.
-  // e.g.: div(10, 2) // 5
-  //       flip(div)(10, 2) // 0.2
+  // ```
+  //   div(10, 2)       // 5
+  //   flip(div)(10, 2) // 0.2
+  // ```
   exports.flip = flip = function(f) {
     return function() {
       return apply(f, reverse(arguments));
@@ -814,25 +858,31 @@ var fjs = function() {
 
   // Flips the arguments given to reduce.
   // The aggregator remains the third and last argument.
-  // e.g.: freduce([2, 3], mul) // 6
-  //       freduce([2, 3], mul, 2) // 12
+  // ```
+  //   freduce([2, 3], mul)    // 6
+  //   freduce([2, 3], mul, 2) // 12
+  // ```
   exports.freduce = freduce = function(xs, f, agg) {
     return reduce(f, xs, agg)
   };
 
   // Flips the arguments given to reducekv.
   // The aggregator remains the third and last argument.
-  // e.g.: var obj = {foo: 1, bar: 2, baz: 3}
-  //       var f = function(agg, _, v) { return agg * v }
-  //       freducekv(obj, f, 1) // 6
-  //       freducekv(obj, f, 2) // 12
+  // ```
+  //   var obj = {foo: 1, bar: 2, baz: 3}
+  //   var f = function(agg, _, v) { return agg * v }
+  //   freducekv(obj, f, 1) // 6
+  //   freducekv(obj, f, 2) // 12
+  // ```
   exports.freducekv = freducekv = function(obj, f, agg) {
     return reducekv(f, obj, agg)
   };
 
   // Flips the argument given to reducer.
   // The aggregator remains the third and last argument.
-  // e.g.: freducer([3, 2, 10], sub) // 5
+  // ```
+  //   freducer([3, 2, 10], sub) // 5
+  // ```
   exports.freducer = freducer = function(xs, f, agg) {
     return reducer(f, xs, agg);
   };
@@ -875,9 +925,11 @@ var fjs = function() {
 
   // Returns an array.
   // Step must be positive.
-  // e.g.: range(5) // [0, 1, 2, 3, 4]
-  //       range(3, 6) // [3, 4, 5]
-  //       range(3, 10, 2) // [3, 5, 7, 9]
+  // ```
+  //   range(5)        // [0, 1, 2, 3, 4]
+  //   range(3, 6)     // [3, 4, 5]
+  //   range(3, 10, 2) // [3, 5, 7, 9]
+  // ```
   exports.range = range = function() {
     var args = arguments;
     switch(args.length) {
@@ -892,8 +944,10 @@ var fjs = function() {
   };
 
   // Pending version of range.
-  // e.g.: var r = xrange(3) // function() {...}
-  //       r() // [0, 1, 2]
+  // ```
+  //   var r = xrange(3) // function() {...}
+  //   r()               // [0, 1, 2]
+  // ```
   exports.xrange = xrange = function() {
     var args = arguments;
     return function() {
@@ -1073,18 +1127,24 @@ var fjs = function() {
 
   // May be really messy!
   // Uses in main scope some of the fjs functions.
-  // e.g.: fjs.use('map', 'inc')
-  //       map(inc, [1, 2, 3]) // [2, 3, 4]
-  //       fjs.del('map', 'inc')
-  // e.g.: var vars = ['fmap', 'dec']
-  //       fjs.use(vars)
-  //       fmap([1, 2, 3], dec) // [0, 1, 2]
-  //       fjs.del(vars)
-  // e.g.: var vars = [{inc: 'inc2', dec: 'dec2'}, 'map']
-  //       fjs.use(vars)
-  //       map(inc2, [1, 2, 3]) // [2, 3, 4]
-  //       map(dec2, [1, 2, 3]) // [0, 1, 2]
-  //       fjs.del(vars)
+  // ```
+  //   fjs.use('map', 'inc')
+  //   map(inc, [1, 2, 3]) // [2, 3, 4]
+  //   fjs.del('map', 'inc')
+  // ```
+  // ```
+  //   var vars = ['fmap', 'dec']
+  //   fjs.use(vars)
+  //   fmap([1, 2, 3], dec) // [0, 1, 2]
+  //   fjs.del(vars)
+  // ```
+  // ```
+  //   var vars = [{inc: 'inc2', dec: 'dec2'}, 'map']
+  //   fjs.use(vars)
+  //   map(inc2, [1, 2, 3]) // [2, 3, 4]
+  //   map(dec2, [1, 2, 3]) // [0, 1, 2]
+  //   fjs.del(vars)
+  // ```
   exports.use = function() {
     loop(function(fjsname, parentname) {
       if(exports.hasOwnProperty(fjsname)) {
@@ -1146,10 +1206,14 @@ var fjs = function() {
   return exports;
 }();
 
-if(typeof window === 'undefined' && typeof module !== 'undefined') {
+// For node
+if(typeof window === 'undefined' && typeof module !== 'undefined')
   module.exports = fjs;
-} else {
+// For browser
+else {
   this.fjs = fjs;
+  // Alias \_ with fjs if \_ is not defined yet
   if(typeof this._ === 'undefined') this._ = this.fjs;
 }
+// Cleaning
 delete fjs;
