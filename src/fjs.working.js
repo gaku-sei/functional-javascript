@@ -1,4 +1,4 @@
-//     Fjs.js 0.14.1
+//     Fjs.js 0.14.2
 //     http://github.com/../..
 //     (c) 2013 Beviral
 
@@ -9,16 +9,15 @@ var fjs = function() {
   var exports = {};
   // Public
   var add, apply, applyWith, and, areArguments, arity, arity0, arity1, arity2, arity3, assoc, attrs, butfirst, butlast, call,
-      callWith, clone, comp, complement, concat, conj, cons, cs, curriedFunctions, curry, curry1, cycle, dec, del, dir, dir1, div, doc,
-      drop, dropWhile, eq, eq2, eq3, eqOne, eqZero, error, error1, even, every, fdrop, fget, filter, first, flatten, flip, fmap, fmapkv,
-      fn, freduce, freducekv, freducer, get, gt, gte, id, inc, interpose, isa, isArray, isArrayLike, isBoolean, isEmpty, isFalse,
-      isFloat, isFunction, isInt, isNull, isNumber, isObject, isString, isTrue, isUndefined, join, juxt, keys, last, len, log, log1,
+      callWith, clone, comp, complement, concat, concatMap, conj, cons, cs, curriedFunctions, curry, curry1, cycle, dec, del, dir, dir1,
+      div, doc, drop, dropWhile, eq, eq2, eq3, eqOne, eqZero, error, error1, even, every, fdrop, fget, filter, first, flatten, flip, fmap,
+      fmapkv, fn, freduce, freducekv, freducer, get, gt, gte, id, inc, interleave, interpose, is, isa, isArray, isArrayLike, isBoolean, isEmpty,
+      isFalse, isFloat, isFunction, isInt, isNull, isNumber, isObject, isString, isTrue, isUndefined, join, juxt, keys, last, len, log, log1,
       loop, lookup, lt, lte, map, mapkv, marshal, max, merge, min, mul, neq2, not, neq3, odd, or, owns, partial, product, rand, randIndex,
       randInt, range, reduce, reducekv, reducer, repeat, repeatedly, reverse, second, shuffle, slice, some, sort, source, sub, sum,
       takeWhile, thread, time, times, unmarshal, use, useAll, values, version, warn, warn1, xor, xrange, zip;
   // Private
-  var is, parseArgs, wip;
-
+  var parseArgs, wip;
 
   // Functions
   // ---------
@@ -562,6 +561,14 @@ var fjs = function() {
     }
   );
 
+  // Map f over xs then concats the result
+  exports.concatMap = concatMap = fn(
+    'Map f over xs then concats the result',
+    function(f, xs) {
+      return apply(concat, map(f, xs));
+    }
+  );
+
   // Returns an array of the items in coll for which pred(x) returns true
   //#Array.prototype
   exports.filter = filter = fn(
@@ -627,16 +634,12 @@ var fjs = function() {
   );
 
   // Flattens an ArrayLike object
-  //#test #finish
   exports.flatten = flatten = fn(
     'Flattens an ArrayLike object',
     function(xs) {
-      wip('flatten');
-      var ret = [];
-      loop(function(_, v) {
-        ret.push(isArrayLike(v) ? flatten(v) : v);
-      }, xs);
-      return ret;
+      return reduce(function(acc, value) {
+        return concat(acc, isArrayLike(value) ? flatten(value) : [value]);
+      }, xs, []);
     }
   );
 
@@ -725,6 +728,15 @@ var fjs = function() {
       for(var i = 0; i < len; i++)
         ret.push(odd(i) ? sep : xs[i/2]);
       return ret;
+    }
+  );
+
+  // Returns an array of the first item in each array, then the second etc
+  exports.interleave = interleave = fn(
+    'Returns an array of the first item in each array, then the second etc',
+    //comp(flatten, zip)
+    function() {
+      return apply(comp(flatten, zip), arguments);
     }
   );
 
@@ -1098,7 +1110,6 @@ var fjs = function() {
       };
     }
   );
-
 
   // Allows to curry a function.
   // The arity if by default f.length, but it can be set.
@@ -1740,9 +1751,9 @@ var fjs = function() {
     loop(function(_, v) {
       exports['c'+v] = curry(exports[v]);
     }, fs);
-    var fs2 = {'add': 2, 'and': 2, 'div': 2, 'eq': 2, 'eq2': 2, 'eq3': 2, 'fdrop': 2,
-               'fget': 2, 'fmap': 2, 'fmapkv': 2, 'gt': 2, 'gte': 2, 'lt': 2, 'lte': 2,
-               'mul': 2, 'neq2': 2, 'neq3': 2, 'or': 2, 'sub': 2, 'xor': 2};
+    var fs2 = {'add': 2, 'and': 2, 'conj': 2, 'div': 2, 'eq': 2, 'eq2': 2, 'eq3': 2,
+               'fdrop': 2, 'fget': 2, 'fmap': 2, 'fmapkv': 2, 'gt': 2, 'gte': 2, 'lt': 2,
+               'lte': 2, 'mul': 2, 'neq2': 2, 'neq3': 2, 'or': 2, 'sub': 2, 'xor': 2};
     loop(function(k, v) {
       exports['c'+k] = curry(exports[k], v);
     }, fs2);
@@ -1760,7 +1771,7 @@ var fjs = function() {
         return join(values(exports.version.details), '.');
       }
     );
-    exports.version.details = {major: 0, minor: 14, patch: 1};
+    exports.version.details = {major: 0, minor: 14, patch: 2};
   })();
 
   return exports;

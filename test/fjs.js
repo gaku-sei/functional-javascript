@@ -348,6 +348,19 @@
   assertEq(ys[0], 2);
   assertEq(ys[1], 3);
 
+  //#mapConcat
+  var xs = fjs.concatMap(fjs.cconj([0]), [1, 2]);
+  assertEq(xs.length, 4);
+  assertEq(xs[0], 0);
+  assertEq(xs[1], 1);
+  assertEq(xs[2], 0);
+  assertEq(xs[3], 2);
+  var xs = fjs.concatMap(fjs.id, [[1], [2], [3]]);
+  assertEq(xs.length, 3);
+  assertEq(xs[0], 1);
+  assertEq(xs[1], 2);
+  assertEq(xs[2], 3);
+
   //#filter
   var xs = [1, 2, 3, 4, 5];
   var ys = fjs.filter(fjs.even, xs);
@@ -401,7 +414,17 @@
   assertEq(xss[1][1], 5);
 
   //#flatten
-  true
+  var xs = [1, [2, 3], [[[4], 5, 6]], 7, [8]];
+  var ys = fjs.flatten(xs);
+  assertEq(ys.length, 8);
+  assertEq(ys[0], 1);
+  assertEq(ys[1], 2);
+  assertEq(ys[2], 3);
+  assertEq(ys[3], 4);
+  assertEq(ys[4], 5);
+  assertEq(ys[5], 6);
+  assertEq(ys[6], 7);
+  assertEq(ys[7], 8);
 
   //#min
   assertEq(fjs.min(1, 2, 3, 4, 5), 1);
@@ -458,6 +481,25 @@
   assertEq(ys[2], 2);
   assertEq(ys[3], 'foo');
   assertEq(ys[4], 3);
+
+  //#interleave
+  var xs = fjs.interleave([1, 2, 3], [4, 5, 6], [7, 8, 9]);
+  assertEq(xs.length, 9);
+  assertEq(xs[0], 1);
+  assertEq(xs[1], 4);
+  assertEq(xs[2], 7);
+  assertEq(xs[3], 2);
+  assertEq(xs[4], 5);
+  assertEq(xs[5], 8);
+  assertEq(xs[6], 3);
+  assertEq(xs[7], 6);
+  assertEq(xs[8], 9);
+  var xs = fjs.interleave([1, 2, 3], [4, 5]);
+  assertEq(xs.length, 4);
+  assertEq(xs[0], 1);
+  assertEq(xs[1], 4);
+  assertEq(xs[2], 2);
+  assertEq(xs[3], 5);
 
   //#keys
   var xs = {foo: 1, bar: 2};
