@@ -187,6 +187,10 @@
   var f = function() { return 'Hello ' + this; };
   assertEq(fjs.callWith(f, 'World'), 'Hello World');
 
+  //#bind
+  var f = fjs.bind(Math.pow, Math);
+  assertEq(f(2, 3), 8);
+
   //#arity
   var xs = fjs.arity(3)(Array)(1, 2, 3, 4);
   assertEq(xs.length, 3);
@@ -677,10 +681,10 @@
   assertEq(x, 6);
   assertEq(y, 8);
 
-  //#reducer
+  //#reduceR
   var xs = [1, 2, 3];
-  var x = fjs.reducer(fjs.sub, xs);
-  var y = fjs.reducer(fjs.sub, xs, 2);
+  var x = fjs.reduceR(fjs.sub, xs);
+  var y = fjs.reduceR(fjs.sub, xs, 2);
   assertEq(x, 0);
   assertEq(y, -4);
 
@@ -834,8 +838,8 @@
 
   //#freducer
   var xs = [5, 10];
-  assertEq(fjs.freducer(xs, fjs.sub), 5);
-  assertEq(fjs.freducer(xs, fjs.sub, 2), -13);
+  assertEq(fjs.freduceR(xs, fjs.sub), 5);
+  assertEq(fjs.freduceR(xs, fjs.sub, 2), -13);
 
   //#log
   //See #cs
