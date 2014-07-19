@@ -11,9 +11,6 @@ var add, apply, applyWith, and, areArguments, arity, arity0, arity1, arity2, ari
     randInt, range, reduce, reducekv, reducer, repeat, repeatedly, reverse, second, shuffle, slice, some, sort, source, sqrt, sub, sum,
     takeWhile, thread, time, times, unmarshal, use, useAll, values, version, warn, warn1, xor, xrange, zip;
 
-/** @typedef {(Array.<*>|Argument)} ArrayLike */
-/** @typedef {Array(2)} Pair */
-
 // Errors
 // ------
 
@@ -1166,7 +1163,7 @@ exports.assoc = assoc = function assoc(obj, k, v) {
 /**
  * Converts an array of pairs into an object
  * @function
- * @param {Array.<Pair.<*>>} xs - Array of pairs
+ * @param {Array.<Array(2)>} xs - Array of pairs
  * @returns {object} Marshalized object
  * @example
  *   marshal([['a', 1], ['b', 2], ['c', 3]]) // returns {a: 1, b: 2, c: 3}
@@ -1181,8 +1178,8 @@ exports.marshal = marshal = function marshal(xs) {
 /**
  * Converts an object into an array of pairs
  * @function
- * @param {object}
- * @returns {Array.<Pair.<*>>}
+ * @param {object} obj - JS Object
+ * @returns {Array.<Array(2)>} - Unmarshalized object
  * @example
  *   unmarshal({a: 1, b: 2, c: 3}) // returns [['a', 1], ['b', 2], ['c', 3]]
  */
@@ -2024,7 +2021,7 @@ exports.eqOne = eqOne = function eqOne(x) {
  * Returns true if x is empty.
  * Works on objects, arrays and strings.
  * @function
- * @param {ArrayLike|object|string} x
+ * @param {Array.<*>|object|string} x
  * @returns {boolean}
  * @throws {ArgumentError} If x is not an Array, a String or a JS Object
  * @see is
