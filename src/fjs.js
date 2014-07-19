@@ -54,7 +54,7 @@ exports.ArgumentError = ArgumentError;
  */
 exports.fn = fn = function fn() {
   var f = arguments[arguments.length - 1];
-  if(typeof f !== 'function')
+  if (typeof f !== 'function')
     throw new ArgumentError('Last argument of fn must be a function');
   f.doc = [].slice.call(arguments, 0, -1).join('\n');
   return f;
@@ -70,8 +70,8 @@ exports.fn = fn = function fn() {
  * @returns {undefined}
  */
 exports.loop = loop = function loop(f, xs) {
-  for(var i in xs)
-    if(xs.hasOwnProperty(i))
+  for (var i in xs)
+    if (xs.hasOwnProperty(i))
       f.call(null, i, xs[i]);
 };
 
@@ -104,8 +104,8 @@ exports.is = is = function is(type) {
  */
 exports.isa = isa = function isa(obj) {
   var fs = butfirst(arguments);
-  for(i in fs)
-    if(fs.hasOwnProperty(i) && !(obj instanceof fs[i]))
+  for (i in fs)
+    if (fs.hasOwnProperty(i) && !(obj instanceof fs[i]))
       return false;
   return true;
 };
@@ -140,7 +140,7 @@ exports.not = not = function not(bool) {
 exports.eq2 = eq2 = function eq2() {
   var args = arguments;
   var reducer = function(x, y, rest) {
-    if(rest.length == 1) return x == y;
+    if (rest.length == 1) return x == y;
     return (x == y) && reducer(rest[0], rest[1], slice(rest, 1));
   }
   return reducer(args[0], args[1], slice(args, 1));
@@ -155,7 +155,7 @@ exports.eq2 = eq2 = function eq2() {
 exports.eq3 = eq3 = function eq3() {
   var args = arguments;
   var reducer = function(x, y, rest) {
-    if(rest.length == 1) return x === y;
+    if (rest.length == 1) return x === y;
     return (x === y) && reducer(rest[0], rest[1], slice(rest, 1));
   }
   return reducer(args[0], args[1], slice(args, 1));
@@ -170,7 +170,7 @@ exports.eq3 = eq3 = function eq3() {
 exports.neq2 = neq2 = function neq2() {
   var args = arguments;
   var reducer = function(x, y, rest) {
-    if(rest.length == 1) return x != y;
+    if (rest.length == 1) return x != y;
     return (x != y) || reducer(rest[0], rest[1], slice(rest, 1));
   }
   return reducer(args[0], args[1], slice(args, 1));
@@ -185,7 +185,7 @@ exports.neq2 = neq2 = function neq2() {
 exports.neq3 = neq3 = function neq3() {
   var args = arguments;
   var reducer = function(x, y, rest) {
-    if(rest.length == 1) return x !== y;
+    if (rest.length == 1) return x !== y;
     return (x !== y) || reducer(rest[0], rest[1], slice(rest, 1));
   }
   return reducer(args[0], args[1], slice(args, 1));
@@ -200,7 +200,7 @@ exports.neq3 = neq3 = function neq3() {
 exports.lt = lt = function lt() {
   var args = arguments;
   var reducer = function(x, y, rest) {
-    if(rest.length == 1) return x < y;
+    if (rest.length == 1) return x < y;
     return (x < y) && reducer(rest[0], rest[1], slice(rest, 1));
   }
   return reducer(args[0], args[1], slice(args, 1));
@@ -215,7 +215,7 @@ exports.lt = lt = function lt() {
 exports.gt = gt = function gt() {
   var args = arguments;
   var reducer = function(x, y, rest) {
-    if(rest.length == 1) return x > y;
+    if (rest.length == 1) return x > y;
     return (x > y) && reducer(rest[0], rest[1], slice(rest, 1));
   }
   return reducer(args[0], args[1], slice(args, 1));
@@ -230,7 +230,7 @@ exports.gt = gt = function gt() {
 exports.lte = lte = function lte() {
   var args = arguments;
   var reducer = function(x, y, rest) {
-    if(rest.length == 1) return x <= y;
+    if (rest.length == 1) return x <= y;
     return (x <= y) && reducer(rest[0], rest[1], slice(rest, 1));
   }
   return reducer(args[0], args[1], slice(args, 1));
@@ -245,7 +245,7 @@ exports.lte = lte = function lte() {
 exports.gte = gte = function gte() {
   var args = arguments;
   var reducer = function(x, y, rest) {
-    if(rest.length == 1) return x >= y;
+    if (rest.length == 1) return x >= y;
     return (x >= y) && reducer(rest[0], rest[1], slice(rest, 1));
   }
   return reducer(args[0], args[1], slice(args, 1));
@@ -260,7 +260,7 @@ exports.gte = gte = function gte() {
 exports.and = and = function and() {
   var args = arguments;
   var reducer = function(x, y, rest) {
-    if(rest.length == 1) return x && y;
+    if (rest.length == 1) return x && y;
     return (x && y) && reducer(rest[0], rest[1], slice(rest, 1));
   }
   return reducer(args[0], args[1], slice(args, 1));
@@ -275,7 +275,7 @@ exports.and = and = function and() {
 exports.or = or = function or() {
   var args = arguments;
   var reducer = function(x, y, rest) {
-    if(rest.length == 1) return x || y;
+    if (rest.length == 1) return x || y;
     return (x || y) || reducer(rest[0], rest[1], slice(rest, 1));
   }
   return reducer(args[0], args[1], slice(args, 1));
@@ -290,7 +290,7 @@ exports.or = or = function or() {
 exports.xor = xor = function xor() {
   var args = arguments;
   var reducer = function(x, y, rest) {
-    if(rest.length == 1) return !x !== !y && (x || y);
+    if (rest.length == 1) return !x !== !y && (x || y);
     var val1 = (!x !== !y && (x || y));
     var val2 = reducer(rest[0], rest[1], slice(rest, 1));
     return !val1 !== !val2 && (val1 || val2);
@@ -327,7 +327,7 @@ exports.complement = complement = function complement(f) {
  * @see apply
  */
 exports.applyWith = applyWith = function applyWith(f, cxt, args) {
-  if(!isArrayLike(args))
+  if (!isArrayLike(args))
     throw new ArgumentError('args must be an array or some arguments');
   return f.apply(cxt, args);
 };
@@ -471,19 +471,22 @@ exports.id = id = function id(x) {
  * General purpose clone function.
  * The objects and arrays are mutable in JS
  * clone allows to bypass this with ease.
+ * @todo Test and benchmark: own version or JSON.parse / JSON.stringify ?
  * @function
  * @param {*} x - Object to clone
  * @returns {*} Returns a clone of x
  */
 exports.clone = clone = function clone(x) {
-  if(this.JSON) return JSON.parse(JSON.stringify(x));
+  // JSON.parse / JSON.stringify
+  return JSON.parse(JSON.stringify(x));
 
+  // Own version (supposedly faster)
   var cloneArray = function(xs) {
     return map(clone, xs);
   };
   var cloneObject = function(xs) {
     var y = {};
-    for(i in xs)
+    for (i in xs)
       y[clone(i)] = clone(xs[i]);
     return y;
   };
@@ -526,7 +529,7 @@ exports.len = len = function len(obj) {
  */
 exports.attrs = attrs = function attrs(obj) {
   var attrsObj = {};
-  for(var i in obj)
+  for (var i in obj)
     attrsObj[i] = obj[i];
   return attrsObj;
 };
@@ -545,7 +548,7 @@ exports.attrs = attrs = function attrs(obj) {
  * @see call
  */
 exports.apply = apply = function apply(f, args) {
-  if(!isArrayLike(args))
+  if (!isArrayLike(args))
     throw new ArgumentError('args must be an array or some arguments');
   return applyWith(f, void 8, args);
 };
@@ -627,8 +630,8 @@ exports.join = join = function join(xs) {
  */
 exports.concat = concat = function concat() {
   var xs = [];
-  for(var i in arguments)
-    for(var j in arguments[i])
+  for (var i in arguments)
+    for (var j in arguments[i])
       xs.push(arguments[i][j]);
   return xs;
 };
@@ -730,7 +733,7 @@ exports.filter = filter = function filter(pred, xs) {
   // Own version (supposedly faster)
   var ys = [];
   loop(function(_, x) {
-    if(pred(x)) ys.push(x);
+    if (pred(x)) ys.push(x);
   }, xs);
   return ys;
 };
@@ -746,7 +749,7 @@ exports.filter = filter = function filter(pred, xs) {
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort|MDN - sort}
  */
 exports.sort = sort = function sort(comp, xs) {
-  if(isUndefined(xs)) {
+  if (isUndefined(xs)) {
     xs = comp;
     comp = void 8;
   }
@@ -761,7 +764,7 @@ exports.sort = sort = function sort(comp, xs) {
  */
 exports.shuffle = shuffle = function shuffle(xs) {
   var ys = Array(xs.length);
-  for(i in xs) {
+  for (i in xs) {
     var r = randInt(i);
     ys[i] = ys[r];
     ys[r] = xs[i];
@@ -781,8 +784,8 @@ exports.zip = zip = function zip() {
   var ret = [],
       args = arguments,
       len = apply(min , map(exports.len, args));
-  if(args.length == 1) return first(args);
-  for(var i = 0; i < len; i++) {
+  if (args.length == 1) return first(args);
+  for (var i = 0; i < len; i++) {
     ret.push(map(exports.cfget(i), args));
   }
   return ret;
@@ -869,7 +872,7 @@ exports.randIndex = randIndex = function randIndex(xs) {
  * @returns {undefined}
  */
 exports.times = times = function times(n, f) {
-  while(n--)
+  while (n--)
     apply(f, slice(arguments, 2));
 };
 
@@ -882,8 +885,8 @@ exports.times = times = function times(n, f) {
  * @returns {Array.<*>} Filtered Array
  * @see dropWhile
  */
-exports.takeWhile = takeWhile = function takeWhile(pred, xs) {
-  for(var i = 0; i < xs.length && pred(xs[i]); i++);
+exports.takeWhile = takeWhile = function takewhile(pred, xs) {
+  for (var i = 0; i < xs.length && pred(xs[i]); i++);
   return slice(xs, 0, i);
 };
 
@@ -896,8 +899,8 @@ exports.takeWhile = takeWhile = function takeWhile(pred, xs) {
  * @returns {Array.<*>} Filtered Array
  * @see takeWhile
  */
-exports.dropWhile = dropWhile = function dropWhile(pred, xs) {
-  for(var i = 0; i < xs.length && pred(xs[i]); i++);
+exports.dropWhile = dropWhile = function dropwhile(pred, xs) {
+  for (var i = 0; i < xs.length && pred(xs[i]); i++);
   return slice(xs, i);
 };
 
@@ -912,7 +915,7 @@ exports.dropWhile = dropWhile = function dropWhile(pred, xs) {
  */
 exports.interpose = interpose = function interpose(sep, xs) {
   var len = xs.length * 2 - 1, ret = [];
-  for(var i = 0; i < len; i++)
+  for (var i = 0; i < len; i++)
     ret.push(odd(i) ? sep : xs[i/2]);
   return ret;
 };
@@ -962,8 +965,8 @@ exports.values = values = function values(obj) {
 exports.merge = merge = function merge() {
   var merge2 = function(obj1, obj2) {
     var ret = {};
-    for(k in obj1) ret[k] = obj1[k];
-    for(k in obj2) ret[k] = obj2[k];
+    for (k in obj1) ret[k] = obj1[k];
+    for (k in obj2) ret[k] = obj2[k];
     return ret;
   };
   return reduce(merge2, arguments, {});
@@ -1164,7 +1167,7 @@ exports.product = product = function product(xs) {
  */
 exports.cycle = cycle = function cycle(n, xs) {
   var ys = [];
-  while(n--)
+  while (n--)
     applyWith([].push, ys, xs);
   return ys;
   };
@@ -1179,9 +1182,9 @@ exports.cycle = cycle = function cycle(n, xs) {
  *   repeat(3, 'a') // returns ['a', 'a', 'a']
  */
 exports.repeat = repeat = function repeat(n, x) {
-  if(n < 1) return [];
+  if (n < 1) return [];
   var xs = [];
-  for(var i = 0; i < n; i++)
+  for (var i = 0; i < n; i++)
     xs[i] = x;
   return xs;
 };
@@ -1198,10 +1201,10 @@ exports.repeat = repeat = function repeat(n, x) {
  *   repeatedly(3, function(x, y) { return 1 + x + y }, 1, 2) // returns [4, 4, 4]
  */
 exports.repeatedly = repeatedly = function repeatedly(n, f) {
-  if(n < 1) return [];
+  if (n < 1) return [];
   var args = slice(arguments, 2);
   var xs = [];
-  for(var i = 0; i < n; i++)
+  for (var i = 0; i < n; i++)
     xs[i] = apply(f, args);
   return xs;
 };
@@ -1228,16 +1231,16 @@ exports.repeatedly = repeatedly = function repeatedly(n, f) {
  */
 exports.reduce = reduce = function reduce(f, xs, agg) {
   // [].reduce
-  if(isUndefined(agg))
+  if (isUndefined(agg))
     return callWith([].reduce, xs, arity2(f));
   else return callWith([].reduce, xs, arity2(f), agg);
 
   // Own version (supposedly faster)
   var reducer = function(ys, agg) {
-    if(isEmpty(ys)) return agg;
+    if (isEmpty(ys)) return agg;
     return reducer(butfirst(ys), call(f, agg, first(ys)));
   };
-  if(isUndefined(agg))
+  if (isUndefined(agg))
     return reducer(butfirst(xs), first(xs));
   else return reducer(xs, agg);
 };
@@ -1262,11 +1265,11 @@ exports.reduce = reduce = function reduce(f, xs, agg) {
  */
 exports.reducekv = reducekv = function reducekv(f, obj, agg) {
   // [].reduce
-  if(!isObject(obj)) return callWith([].reduce, obj, arity3(f), agg);
+  if (!isObject(obj)) return callWith([].reduce, obj, arity3(f), agg);
 
   // Own version (supposedly faster)
   var reducer = function(obj, agg) {
-    if(isEmpty(obj)) return agg;
+    if (isEmpty(obj)) return agg;
     return reducer(butfirst(obj), call(f, agg, obj[0][0], obj[0][1]));
   };
   return reducer(unmarshal(obj), agg);
@@ -1292,16 +1295,16 @@ exports.reducekv = reducekv = function reducekv(f, obj, agg) {
  */
 exports.reducer = reducer = function reducer(f, xs, agg) {
   // [].reduceRight
-  if(isUndefined(agg))
+  if (isUndefined(agg))
     return callWith([].reduceRight, xs, arity2(f));
   else return callWith([].reduceRight, xs, arity2(f), agg);
 
   // Own version (supposedly faster)
   var reducer2 = function(ys, agg) {
-    if(isEmpty(ys)) return agg;
+    if (isEmpty(ys)) return agg;
     return reducer2(butlast(ys), call(f, agg, last(ys)));
   };
-  if(isUndefined(agg))
+  if (isUndefined(agg))
     return reducer2(butlast(xs), last(xs));
   else return reducer2(xs, agg);
 };
@@ -1314,7 +1317,7 @@ exports.reducer = reducer = function reducer(f, xs, agg) {
  */
 exports.reverse = reverse = function reverse(xs) {
   var ys = Array(xs.length), i = xs.length;
-  while(i > 0)
+  while (i > 0)
     ys[xs.length - i] = xs[--i];
   return ys;
 };
@@ -1332,8 +1335,8 @@ exports.reverse = reverse = function reverse(xs) {
  *   every(f, [1, 1, 1, 2]) // returns false
  */
 exports.every = every = function every(pred, xs) {
-  for(i in xs)
-    if(xs.hasOwnProperty(i) && !pred(xs[i]))
+  for (i in xs)
+    if (xs.hasOwnProperty(i) && !pred(xs[i]))
       return false;
   return true;
 };
@@ -1351,9 +1354,9 @@ exports.every = every = function every(pred, xs) {
  *   some(f, [0, 0, 0, 0]) // returns false
  */
 exports.some = some = function some(pred, xs) {
-  for(i in xs)
-    if(xs.hasOwnProperty(i))
-      if(pred(xs[i]))
+  for (i in xs)
+    if (xs.hasOwnProperty(i))
+      if (pred(xs[i]))
         return true;
   return false;
 };
@@ -1415,7 +1418,7 @@ exports.partial = partial = function partial(f) {
 exports.curry = curry = function curry(f, arity) {
   var curried = function(args, arity) {
     return function() {
-      if((arity - arguments.length) > 0)
+      if ((arity - arguments.length) > 0)
         return curried(concat(args, arguments), arity - arguments.length);
       else return apply(f, concat(args, arguments));
     };
@@ -1447,7 +1450,7 @@ exports.curry = curry = function curry(f, arity) {
 exports.curry1 = curry1 = function curry1(f, arity) {
   var curried1 = function(args, arity) {
     return function(arg) {
-      if(arity > 1)
+      if (arity > 1)
         return curried1(conj(args, arg), dec(arity));
       else return apply(f, conj(args, arg));
     };
@@ -1704,8 +1707,8 @@ exports.range = range = function range() {
   case 2: return range(first(args), second(args), 1); break;
   case 3:
     var xs = [], min = args[0], max = args[1], step = (args[2] > 0) ? args[2] : 1;
-    if(min >= max) return [];
-    do xs.push(min); while((min+=step) < max)
+    if (min >= max) return [];
+    do xs.push(min); while ((min+=step) < max)
     return xs;
   }
 };
@@ -1741,16 +1744,16 @@ exports.eq = eq = function eq(x, y) {
   var eq2 = function(x, y) {
     switch(true) {
     case isArrayLike(x) && isArrayLike(y):
-      if(x.length === y.length) {
-        for(var i = 0; i < x.length; i++)
-          if(!eq(x[i], y[i]))
+      if (x.length === y.length) {
+        for (var i = 0; i < x.length; i++)
+          if (!eq(x[i], y[i]))
             return false;
         return true;
       } else return false;
     case isObject(x) && isObject(y):
-      if(eq(keys(x), keys(y))) {
-        for(i in x)
-          if(!eq(x[i], y[i]))
+      if (eq(keys(x), keys(y))) {
+        for (i in x)
+          if (!eq(x[i], y[i]))
             return false;
         return true;
       } else return false;
@@ -1759,7 +1762,7 @@ exports.eq = eq = function eq(x, y) {
     }
   };
   var reducer = function(x, y, rest) {
-    if(rest.length == 1) return eq2(x, y);
+    if (rest.length == 1) return eq2(x, y);
     return eq2(x, y) && reducer(rest[0], rest[1], slice(rest, 1));
   };
   return reducer(args[0], args[1], slice(args, 1));
@@ -2005,7 +2008,7 @@ exports.add = add = function add() {
  * @see sqrt
  */
 exports.mul = mul = function mul() {
-  if(isEmpty(arguments)) return 1;
+  if (isEmpty(arguments)) return 1;
   return reduce(function(x, y) {
     return x * y;
   }, arguments);
@@ -2024,7 +2027,7 @@ exports.mul = mul = function mul() {
  * @see sqrt
  */
 exports.sub = sub = function sub() {
-  if(isEmpty(arguments)) return 0;
+  if (isEmpty(arguments)) return 0;
   return reduce(function(x, y) {
     return x - y;
   }, arguments);
@@ -2043,7 +2046,7 @@ exports.sub = sub = function sub() {
  * @see sqrt
  */
 exports.div = div = function div() {
-  if(isEmpty(arguments)) return 1;
+  if (isEmpty(arguments)) return 1;
   return reduce(function(x, y) {
     return x / y;
   }, arguments);
@@ -2118,8 +2121,8 @@ var parseArgs = function(args) {
  */
 exports.use = function use() {
   loop(function(fjsname, parentname) {
-    if(exports.hasOwnProperty(fjsname)) {
-      if(this[parentname]) warn('"' + parentname + '" has  been replaced by fjs.' + fjsname);
+    if (exports.hasOwnProperty(fjsname)) {
+      if (this[parentname]) warn('"' + parentname + '" has  been replaced by fjs.' + fjsname);
       this[parentname] = exports[fjsname];
     }
     else throw new Error('"' + fjsname + '" is not defined in fjs!');
