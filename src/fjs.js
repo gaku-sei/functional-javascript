@@ -1,15 +1,15 @@
-//     Fjs.js 0.16.0
+//     Fjs.js 0.16.1
 //     https://github.com/gaku-sei/functional-javascript
 //     (c) 2014 Beviral
 
 var add, apply, applyWith, and, areArguments, arity, arity0, arity1, arity2, arity3, assoc, attrs, bind, butfirst, butlast, call,
-    callWith, clone, comp, complement, concat, concatMap, concatMapkv, conj, cons, cs, curriedFunctions, curry, curry1, cycle, dec, del,
-    dir, dir1, div, doc, drop, dropWhile, eq, eq2, eq3, eqOne, eqZero, error, error1, even, every, fdrop, fget, filter, first, flatten, flip,
-    fmap, fmapkv, fn, freduce, freducekv, freducer, get, gt, gte, id, inc, interleave, interpose, is, isa, isArray, isArrayLike, isBoolean,
-    isEmpty, isFalse, isFloat, isFunction, isInt, isNull, isNumber, isObject, isString, isTrue, isUndefined, join, juxt, keys, last, len, log,
-    log1, lookup, loop, lt, lte, map, mapkv, marshal, max, merge, min, mul, neq2, neq3, not, odd, or, owns, partial, pow, product, rand, randIndex,
-    randInt, range, reduce, reducekv, reducer, repeat, repeatedly, reverse, second, shuffle, slice, some, sort, source, sqrt, sub, sum,
-    takeWhile, thread, time, times, unmarshal, use, useAll, values, version, warn, warn1, xor, xrange, zip;
+    callWith, clone, comp, complement, concat, concatMap, concatMapkv, conj, cons, cs, curriedFunctions, curry, curry1,
+    cycle, dec, del, dir, dir1, div, doc, drop, dropWhile, eq, eq2, eq3, eqOne, eqZero, error, error1, even, every, fdrop, fget, filter,
+    first, flatten, flip, fmap, fmapkv, fmapkvo, fmapo, fn, freduce, freducekv, freducer, get, gt, gte, id, inc, interleave, interpose, is,
+    isa, isArray, isArrayLike, isBoolean, isEmpty, isFalse, isFloat, isFunction, isInt, isNull, isNumber, isObject, isString, isTrue, isUndefined,
+    join, juxt, keys, last, len, log, log1, lookup, loop, lt, lte, map, mapkv, mapkvo, mapo, marshal, max, merge, min, mul, neq2, neq3, not, odd, or,
+    owns, partial, pow, product, rand, randIndex, randInt, range, reduce, reducekv, reducer, repeat, repeatedly, reverse, second, shuffle, slice,
+    some, sort, source, sqrt, sub, sum, takeWhile, thread, time, times, unmarshal, use, useAll, values, version, warn, warn1, xor, xrange, zip;
 
 // Errors
 // ------
@@ -644,7 +644,6 @@ exports.id = id = function id(x) {
  * General purpose clone function.
  * The objects and arrays are mutable in JS
  * clone allows to bypass this with ease.
- * @todo Test and benchmark: own version or JSON.parse / JSON.stringify ?
  * @function
  * @param {*} x - Object to clone
  * @returns {*} Returns a clone of x
@@ -653,22 +652,22 @@ exports.clone = clone = function clone(x) {
   // JSON.parse / JSON.stringify
   return JSON.parse(JSON.stringify(x));
 
-  // Own version (supposedly faster)
-  var cloneArray = function(xs) {
-    return map(clone, xs);
-  };
-  var cloneObject = function(xs) {
-    var y = {};
-    for (i in xs)
-      y[clone(i)] = clone(xs[i]);
-    return y;
-  };
+  //// Own version (slower)
+  //var cloneArray = function(xs) {
+  //  return map(clone, xs);
+  //};
+  //var cloneObject = function(xs) {
+  //  var y = {};
+  //  for (i in xs)
+  //    y[clone(i)] = clone(xs[i]);
+  //  return y;
+  //};
 
-  switch(true) {
-  case isArrayLike(x): return cloneArray(x);
-  case isObject(x): return cloneObject(x);
-  default: return x;
-  }
+  //switch(true) {
+  //case isArrayLike(x): return cloneArray(x);
+  //case isObject(x): return cloneObject(x);
+  //default: return x;
+  //}
 };
 
 /**
@@ -811,45 +810,74 @@ exports.concat = concat = function concat() {
 
 /**
  * Applies f to each item of xs and returns the results as an array.
- * @todo Test and benchmark: own version or [].map ?
  * @function
  * @param {function(*): *} f - Function to apply on each element of xs
  * @param {Array.<*>} xs - Consumed Array
  * @returns {Array.<*>}
  * @example
  *   map(partial(add, 2), [1, 2, 4]) // returns [3, 4, 6]
+ * @see mapo
  * @see mapkv
+ * @see mapkvo
  * @see concatMap
  * @see concatMapkv
  * @see fmap
+ * @see fmapo
  * @see fmapkv
+ * @see fmapkvo
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map|MDN - map}
  */
 exports.map = map = function map(f, xs) {
   // [].map
   return callWith([].map, xs, arity1(f));
 
-  // Own version (supposedly faster)
-  var ret = [];
-  loop(function(i, x) {
-    ret.push(call(f, x));
-  }, xs);
-  return ret;
+  //// Own version (slower)
+  //var ret = [];
+  //loop(function(i, x) {
+  //  ret.push(call(f, x));
+  //}, xs);
+  //return ret;
+};
+
+/**
+ * Applies f to each item of xs and returns the results as a JS Object.
+ * f must returns an array of length two, since the first element is used a key and the second as a value.
+ * @function
+ * @param {function(*): *} f - Function to apply on each element of xs
+ * @param {Array.<*>} xs - Consumed Array
+ * @returns {object}
+ * @example
+ *   map(partial(add, 2), [1, 2, 4]) // returns [3, 4, 6]
+ * @see map
+ * @see mapkv
+ * @see mapkvo
+ * @see concatMap
+ * @see concatMapkv
+ * @see fmap
+ * @see fmapo
+ * @see fmapkv
+ * @see fmapkvo
+*/
+exports.mapo = mapo = function mapo(f, xs) {
+  return marshal(map(f, xs));
 };
 
 /**
  * Like map but mapkv also passes the key to the given function.
  * Notice that if xs is an Array its indexes are automatically casted into Int.
- * @todo Consider returning a JS Object instead of an Array
  * @function
  * @param {function(*): *} f - Function to apply on each element of obj
  * @param {object} obj - Consumed JS Object
  * @returns {Array.<*>}
  * @see map
+ * @see mapo
+ * @see mapkvo
  * @see concatMap
  * @see concatMapkv
  * @see fmap
+ * @see fmapo
  * @see fmapkv
+ * @see fmapkvo
  */
 exports.mapkv = mapkv = function mapkv(f, obj) {
   var ret = [];
@@ -860,16 +888,42 @@ exports.mapkv = mapkv = function mapkv(f, obj) {
 };
 
 /**
+ * Like mapkv but returns an object.
+ * f must returns an array of length two, since the first element is used a key and the second as a value.
+ * Be careful, keys can be overwritten.
+ * @function
+ * @param {function(*): Array(2)} f - Function to apply on each element of obj (must return a pair)
+ * @param {object} obj - Consumed JS Object
+ * @returns {object}
+ * @see map
+ * @see mapo
+ * @see mapkv
+ * @see concatMap
+ * @see concatMapkv
+ * @see fmap
+ * @see fmapo
+ * @see fmapkv
+ * @see fmapkvo
+ */
+exports.mapkvo = mapkvo = function mapkvo(f, obj) {
+  return marshal(mapkv(f, obj));
+};
+
+/**
  * Map f over xs then concats the result
  * @function
  * @param {function(*): *} f - Function to apply on each element of xs
  * @param {Array.<*>} xs - Consumed Array
  * @returns {Array.<*>}
  * @see map
+ * @see mapo
  * @see mapkv
+ * @see mapkvo
  * @see concatMapkv
  * @see fmap
+ * @see fmapo
  * @see fmapkv
+ * @see fmapkvo
  */
 exports.concatMap = concatMap = function concatMap(f, xs) {
   return apply(concat, map(f, xs));
@@ -882,10 +936,14 @@ exports.concatMap = concatMap = function concatMap(f, xs) {
  * @param {object} obj - Consumed JS Object
  * @returns {Array.<*>}
  * @see map
+ * @see mapo
  * @see mapkv
+ * @see mapkvo
  * @see concatMap
  * @see fmap
+ * @see fmapo
  * @see fmapkv
+ * @see fmapkvo
  */
 exports.concatMapkv = concatMapkv = function concatMapkv(f, obj) {
   return apply(concat, mapkv(f, obj));
@@ -893,17 +951,16 @@ exports.concatMapkv = concatMapkv = function concatMapkv(f, obj) {
 
 /**
  * Returns an array of the items in coll for which pred(x) returns true
- * @todo Test and benchmark: own version or [].filter ?
  * @function
  * @param {function(*): boolean} pred - Function to apply on each element of xs
  * @param {Array.<*>} xs - Array to filter
  * @returns {Array.<*>} Filtered Array
  */
 exports.filter = filter = function filter(pred, xs) {
-  // [].filter
-  return callWith([].filter, xs, arity1(pred));
+  //// [].filter
+  //return callWith([].filter, xs, arity1(pred));
 
-  // Own version (supposedly faster)
+  // Own version (faster)
   var ys = [];
   loop(function(_, x) {
     if (pred(x)) ys.push(x);
@@ -1386,7 +1443,6 @@ exports.repeatedly = repeatedly = function repeatedly(n, f) {
  * The first argument is a function which takes two arguments,
  * the second one is an array and you may pass a third argument which is an aggregator
  * the aggregator is the first element of xs by default.
- * @todo Test and benchmark: own version or [].reduce ?
  * @function
  * @param {function(*, *): *} f - Reducer function, the first arguments is the aggregator, the second one the next value
  * @param {Array.<*>} xs - Array to consume
@@ -1408,14 +1464,14 @@ exports.reduce = reduce = function reduce(f, xs, agg) {
     return callWith([].reduce, xs, arity2(f));
   else return callWith([].reduce, xs, arity2(f), agg);
 
-  // Own version (supposedly faster)
-  var reducer = function(ys, agg) {
-    if (isEmpty(ys)) return agg;
-    return reducer(butfirst(ys), call(f, agg, first(ys)));
-  };
-  if (isUndefined(agg))
-    return reducer(butfirst(xs), first(xs));
-  else return reducer(xs, agg);
+  //// Own version (same benchmarks)
+  //var reducer = function(ys, agg) {
+  //  if (isEmpty(ys)) return agg;
+  //  return reducer(butfirst(ys), call(f, agg, first(ys)));
+  //};
+  //if (isUndefined(agg))
+  //  return reducer(butfirst(xs), first(xs));
+  //else return reducer(xs, agg);
 };
 
 /**
@@ -1450,7 +1506,6 @@ exports.reducekv = reducekv = function reducekv(f, obj, agg) {
 
 /**
  * Similar to reduce but starts iteration at the end of the array.
- * @todo Test and benchmark: own version or [].reduceRight ?
  * @function
  * @param {function(*, *): *} f - Reducer function, the first arguments is the aggregator, the second one the next value
  * @param {Array.<*>} xs - Array to consume
@@ -1472,14 +1527,14 @@ exports.reducer = reducer = function reducer(f, xs, agg) {
     return callWith([].reduceRight, xs, arity2(f));
   else return callWith([].reduceRight, xs, arity2(f), agg);
 
-  // Own version (supposedly faster)
-  var reducer2 = function(ys, agg) {
-    if (isEmpty(ys)) return agg;
-    return reducer2(butlast(ys), call(f, agg, last(ys)));
-  };
-  if (isUndefined(agg))
-    return reducer2(butlast(xs), last(xs));
-  else return reducer2(xs, agg);
+  //// Own version (same benchmarks)
+  //var reducer2 = function(ys, agg) {
+  //  if (isEmpty(ys)) return agg;
+  //  return reducer2(butlast(ys), call(f, agg, last(ys)));
+  //};
+  //if (isUndefined(agg))
+  //  return reducer2(butlast(xs), last(xs));
+  //else return reducer2(xs, agg);
 };
 
 /**
@@ -1692,12 +1747,34 @@ exports.fget = fget = flip(get);
  * @example
  *   map(partial(add, 2), [1, 2, 4]) // returns [3, 4, 6]
  * @see map
+ * @see mapo
  * @see mapkv
+ * @see mapkvo
  * @see concatMap
  * @see concatMapkv
+ * @see fmapo
  * @see fmapkv
+ * @see fmapkvo
  */
 exports.fmap = fmap = flip(map);
+
+/**
+ * Flips the arguments given to mapo
+ * @function
+ * @param {object} obj - Consumed JS Object
+ * @param {function(*): *} f - Function to apply on each element of obj
+ * @returns {Array.<*>}
+ * @see map
+ * @see mapo
+ * @see mapkv
+ * @see mapkvo
+ * @see concatMap
+ * @see concatMapkv
+ * @see fmap
+ * @see fmapkv
+ * @see fmapkvo
+ */
+exports.fmapo = fmapo = flip(mapo);
 
 /**
  * Flips the arguments given to mapkv
@@ -1706,12 +1783,34 @@ exports.fmap = fmap = flip(map);
  * @param {function(*): *} f - Function to apply on each element of obj
  * @returns {Array.<*>}
  * @see map
+ * @see mapo
  * @see mapkv
+ * @see mapkvo
  * @see concatMap
  * @see concatMapkv
  * @see fmap
+ * @see fmapo
+ * @see fmapkvo
  */
 exports.fmapkv = fmapkv = flip(mapkv);
+
+/**
+ * Flips the arguments given to mapkvo
+ * @function
+ * @param {object} obj - Consumed JS Object
+ * @param {function(*): *} f - Function to apply on each element of obj
+ * @returns {Array.<*>}
+ * @see map
+ * @see mapo
+ * @see mapkv
+ * @see mapkvo
+ * @see concatMap
+ * @see concatMapkv
+ * @see fmap
+ * @see fmapo
+ * @see fmapkv
+ */
+exports.fmapkvo = fmapkvo = flip(mapkvo);
 
 /**
  * Flips the arguments given to reduce.
@@ -2247,7 +2346,6 @@ exports.isBoolean = isBoolean = is('Boolean');
 /**
  * Returns true if x is a Float.
  * Notice: isFloat(1.0) returns false.
- * @todo Consider using toString
  * @function
  * @param {*} x
  * @returns {boolean}
@@ -2593,15 +2691,16 @@ exports.del = function del() {
 (function() {
   // Exports curried version of functions with a known arity
   var fs = ['apply', 'applyWith', 'assoc', 'cons', 'cycle', 'drop', 'dropWhile',
-            'every', 'filter', 'get', 'loop', 'map', 'mapkv', 'pow', 'repeat',
-            'repeatedly', 'some', 'takeWhile'];
+            'every', 'filter', 'get', 'loop', 'map', 'mapo', 'mapkv', 'mapkvo',
+            'pow', 'repeat', 'repeatedly', 'some', 'takeWhile'];
   loop(function(_, v) {
     exports['c'+v] = curry(exports[v]);
   }, fs);
 
   // Exports curried version of functions with an arity set at 2
-  var fs2 = ['add', 'and', 'conj', 'div', 'eq', 'eq2', 'eq3', 'fdrop', 'fget', 'fmap',
-             'fmapkv', 'gt', 'gte', 'lt', 'lte', 'mul', 'neq2', 'neq3','or', 'sub', 'xor'];
+  var fs2 = ['add', 'and', 'conj', 'div', 'eq', 'eq2', 'eq3', 'fdrop', 'fget',
+             'fmap', 'fmapo' 'fmapkv', 'fmapkvo' 'gt', 'gte', 'lt', 'lte', 'mul',
+             'neq2', 'neq3','or', 'sub', 'xor'];
   loop(function(_, v) {
     exports['c'+v] = curry(exports[v], 2);
   }, fs2);
@@ -2609,8 +2708,9 @@ exports.del = function del() {
   /**
    * Also, all the functions present in curriedFunctions are available curried * simply prefixed with a 'c':
    * 'add', 'and', 'apply', 'applyWith', 'assoc', 'conj', 'cons', 'cycle', 'div', 'drop', 'dropWhile', 'eq',
-   * 'eq2', 'eq3', 'every', 'fdrop', 'fget', 'filter', 'fmap', 'fmapkv', 'get', 'gt', 'gte', 'loop', 'lt', 'lte',
-   * 'map', 'mapkv', 'mul', 'neq2', 'neq3', 'or', 'pow', 'repeat', 'repeatedly', 'some', 'sub', 'takeWhile' and 'xor'
+   * 'eq2', 'eq3', 'every', 'fdrop', 'fget', 'filter', 'fmap', 'fmapo', 'fmapkv', 'fmapkvo', 'get', 'gt', 'gte',
+   * 'loop', 'lt', 'lte', 'map', 'mapo', 'mapkv', mapkvo', 'mul', 'neq2', 'neq3', 'or', 'pow', 'repeat', 'repeatedly', 'some',
+   * 'sub', 'takeWhile' and 'xor'
    * @name curriedFunctions
    */
   exports.curriedFunctions = sort(concat(fs, fs2));
@@ -2632,5 +2732,5 @@ exports.del = function del() {
    * Fjs current version details
    * @name versionDetails
    */
-  exports.versionDetails = {major: 0, minor: 16, patch: 0};
+  exports.versionDetails = {major: 0, minor: 16, patch: 1};
 })();
