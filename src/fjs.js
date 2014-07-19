@@ -1,4 +1,4 @@
-//     Fjs.js 0.15.1
+//     Fjs.js 0.16.0
 //     https://github.com/gaku-sei/functional-javascript
 //     (c) 2014 Beviral
 
@@ -80,6 +80,22 @@ exports.loop = loop = function loop(f, xs) {
  * @function
  * @param {string} type - The type to check
  * @returns {function(*): boolean}
+ * @see isa
+ * @see areArguments
+ * @see isArray
+ * @see isArrayLike
+ * @see isBoolean
+ * @see isEmpty
+ * @see isFalse
+ * @see isFloat
+ * @see isFunction
+ * @see isInt
+ * @see isNull
+ * @see isNumber
+ * @see isObject
+ * @see isString
+ * @see isTrue
+ * @see isUndefined
  */
 exports.is = is = function is(type) {
   return function(x) {
@@ -101,6 +117,22 @@ exports.is = is = function is(type) {
  *   isa(foo, Foo) // returns true
  * @example
  *   isa(foo, Foo, Object) // returns true
+ * @see is
+ * @see areArguments
+ * @see isArray
+ * @see isArrayLike
+ * @see isBoolean
+ * @see isEmpty
+ * @see isFalse
+ * @see isFloat
+ * @see isFunction
+ * @see isInt
+ * @see isNull
+ * @see isNumber
+ * @see isObject
+ * @see isString
+ * @see isTrue
+ * @see isUndefined
  */
 exports.isa = isa = function isa(obj) {
   var fs = butfirst(arguments);
@@ -126,6 +158,18 @@ exports.owns = owns = function owns(xs, prop) {
  * @function
  * @param {boolean} bool - Value to negate
  * @returns {boolean}
+ * @see and
+ * @see eq
+ * @see eq2
+ * @see eq3
+ * @see gt
+ * @see gte
+ * @see lt
+ * @see lte
+ * @see neq2
+ * @see neq3
+ * @see or
+ * @see xor
  */
 exports.not = not = function not(bool) {
   return !bool;
@@ -136,6 +180,18 @@ exports.not = not = function not(bool) {
  * @function
  * @param {...*} objs - Objects to test
  * @returns {boolean}
+ * @see and
+ * @see eq
+ * @see eq3
+ * @see gt
+ * @see gte
+ * @see lt
+ * @see lte
+ * @see neq2
+ * @see neq3
+ * @see not
+ * @see or
+ * @see xor
  */
 exports.eq2 = eq2 = function eq2() {
   var args = arguments;
@@ -151,6 +207,18 @@ exports.eq2 = eq2 = function eq2() {
  * @function
  * @param {...*} objs - Objects to test
  * @returns {boolean}
+ * @see and
+ * @see eq
+ * @see eq2
+ * @see gt
+ * @see gte
+ * @see lt
+ * @see lte
+ * @see neq2
+ * @see neq3
+ * @see not
+ * @see or
+ * @see xor
  */
 exports.eq3 = eq3 = function eq3() {
   var args = arguments;
@@ -166,6 +234,18 @@ exports.eq3 = eq3 = function eq3() {
  * @function
  * @param {...*} objs - Objects to test
  * @returns {boolean}
+ * @see and
+ * @see eq
+ * @see eq2
+ * @see eq3
+ * @see gt
+ * @see gte
+ * @see lt
+ * @see lte
+ * @see neq3
+ * @see not
+ * @see or
+ * @see xor
  */
 exports.neq2 = neq2 = function neq2() {
   var args = arguments;
@@ -181,6 +261,18 @@ exports.neq2 = neq2 = function neq2() {
  * @function
  * @param {...*} objs - Objects to test
  * @returns {boolean}
+ * @see and
+ * @see eq
+ * @see eq2
+ * @see eq3
+ * @see gt
+ * @see gte
+ * @see lt
+ * @see lte
+ * @see neq2
+ * @see not
+ * @see or
+ * @see xor
  */
 exports.neq3 = neq3 = function neq3() {
   var args = arguments;
@@ -196,6 +288,18 @@ exports.neq3 = neq3 = function neq3() {
  * @function
  * @param {...*} objs - Objects to test
  * @returns {boolean}
+ * @see and
+ * @see eq
+ * @see eq2
+ * @see eq3
+ * @see gt
+ * @see gte
+ * @see lte
+ * @see neq2
+ * @see neq3
+ * @see not
+ * @see or
+ * @see xor
  */
 exports.lt = lt = function lt() {
   var args = arguments;
@@ -211,6 +315,18 @@ exports.lt = lt = function lt() {
  * @function
  * @param {...*} objs - Objects to test
  * @returns {boolean}
+ * @see and
+ * @see eq
+ * @see eq2
+ * @see eq3
+ * @see gte
+ * @see lt
+ * @see lte
+ * @see neq2
+ * @see neq3
+ * @see not
+ * @see or
+ * @see xor
  */
 exports.gt = gt = function gt() {
   var args = arguments;
@@ -226,6 +342,18 @@ exports.gt = gt = function gt() {
  * @function
  * @param {...*} objs - Objects to test
  * @returns {boolean}
+ * @see and
+ * @see eq
+ * @see eq2
+ * @see eq3
+ * @see gt
+ * @see gte
+ * @see lt
+ * @see neq2
+ * @see neq3
+ * @see not
+ * @see or
+ * @see xor
  */
 exports.lte = lte = function lte() {
   var args = arguments;
@@ -241,6 +369,18 @@ exports.lte = lte = function lte() {
  * @function
  * @param {...*} objs - Objects to test
  * @returns {boolean}
+ * @see and
+ * @see eq
+ * @see eq2
+ * @see eq3
+ * @see gt
+ * @see lt
+ * @see lte
+ * @see neq2
+ * @see neq3
+ * @see not
+ * @see or
+ * @see xor
  */
 exports.gte = gte = function gte() {
   var args = arguments;
@@ -256,6 +396,18 @@ exports.gte = gte = function gte() {
  * @function
  * @param {...*} objs - Objects to test
  * @returns {boolean}
+ * @see eq
+ * @see eq2
+ * @see eq3
+ * @see gt
+ * @see gte
+ * @see lt
+ * @see lte
+ * @see neq2
+ * @see neq3
+ * @see not
+ * @see or
+ * @see xor
  */
 exports.and = and = function and() {
   var args = arguments;
@@ -271,6 +423,18 @@ exports.and = and = function and() {
  * @function
  * @param {...*} objs - Objects to test
  * @returns {boolean}
+ * @see and
+ * @see eq
+ * @see eq2
+ * @see eq3
+ * @see gt
+ * @see gte
+ * @see lt
+ * @see lte
+ * @see neq2
+ * @see neq3
+ * @see not
+ * @see xor
  */
 exports.or = or = function or() {
   var args = arguments;
@@ -286,6 +450,18 @@ exports.or = or = function or() {
  * @function
  * @param {...*} objs - Objects to test
  * @returns {boolean}
+ * @see and
+ * @see eq
+ * @see eq2
+ * @see eq3
+ * @see gt
+ * @see gte
+ * @see lt
+ * @see lte
+ * @see neq2
+ * @see neq3
+ * @see not
+ * @see or
  */
 exports.xor = xor = function xor() {
   var args = arguments;
@@ -1738,6 +1914,18 @@ exports.xrange = xrange = function xrange() {
  * @param {*} x
  * @param {*} y
  * @returns {boolean}
+ * @see and
+ * @see eq2
+ * @see eq3
+ * @see gt
+ * @see gte
+ * @see lt
+ * @see lte
+ * @see neq2
+ * @see neq3
+ * @see not
+ * @see or
+ * @see xor
  */
 exports.eq = eq = function eq(x, y) {
   var args = arguments;
@@ -1815,6 +2003,7 @@ exports.dec = dec = function dec(x) {
  * @function
  * @param {number} x
  * @returns {boolean}
+ * @see eqOne
  */
 exports.eqZero = eqZero = function eqZero(x) {
   return x === 0;
@@ -1825,6 +2014,7 @@ exports.eqZero = eqZero = function eqZero(x) {
  * @function
  * @param {number} x
  * @returns {boolean}
+ * @see eqZero
  */
 exports.eqOne = eqOne = function eqOne(x) {
   return x === 1;
@@ -1837,6 +2027,21 @@ exports.eqOne = eqOne = function eqOne(x) {
  * @param {ArrayLike|object|string} x
  * @returns {boolean}
  * @throws {ArgumentError} If x is not an Array, a String or a JS Object
+ * @see is
+ * @see isa
+ * @see areArguments
+ * @see isArrayLike
+ * @see isBoolean
+ * @see isFalse
+ * @see isFloat
+ * @see isFunction
+ * @see isInt
+ * @see isNull
+ * @see isNumber
+ * @see isObject
+ * @see isString
+ * @see isTrue
+ * @see isUndefined
  */
 exports.isEmpty = isEmpty = function isEmpty(x) {
   switch(true) {
@@ -1851,6 +2056,21 @@ exports.isEmpty = isEmpty = function isEmpty(x) {
  * @function
  * @param {*} x
  * @returns {boolean}
+ * @see is
+ * @see isa
+ * @see areArguments
+ * @see isArrayLike
+ * @see isBoolean
+ * @see isEmpty
+ * @see isFalse
+ * @see isFloat
+ * @see isFunction
+ * @see isInt
+ * @see isNull
+ * @see isNumber
+ * @see isString
+ * @see isTrue
+ * @see isUndefined
  */
 exports.isObject = isObject = function isObject(x) {
   return is('Object')(x) && !isFunction(x);
@@ -1861,6 +2081,22 @@ exports.isObject = isObject = function isObject(x) {
  * @function
  * @param {*} x
  * @returns {boolean}
+ * @see is
+ * @see isa
+ * @see areArguments
+ * @see isArrayLike
+ * @see isBoolean
+ * @see isEmpty
+ * @see isFalse
+ * @see isFloat
+ * @see isFunction
+ * @see isInt
+ * @see isNull
+ * @see isNumber
+ * @see isObject
+ * @see isString
+ * @see isTrue
+ * @see isUndefined
  */
 exports.isArray = isArray = is('Array');
 
@@ -1869,6 +2105,22 @@ exports.isArray = isArray = is('Array');
  * @function
  * @param {*} x
  * @returns {boolean}
+ * @see is
+ * @see isa
+ * @see areArguments
+ * @see isArray
+ * @see isArrayLike
+ * @see isBoolean
+ * @see isEmpty
+ * @see isFalse
+ * @see isFloat
+ * @see isFunction
+ * @see isInt
+ * @see isNull
+ * @see isNumber
+ * @see isObject
+ * @see isTrue
+ * @see isUndefined
  */
 exports.isString = isString = is('String');
 
@@ -1877,6 +2129,22 @@ exports.isString = isString = is('String');
  * @function
  * @param {*} x
  * @returns {boolean}
+ * @see is
+ * @see isa
+ * @see areArguments
+ * @see isArray
+ * @see isArrayLike
+ * @see isBoolean
+ * @see isEmpty
+ * @see isFalse
+ * @see isFloat
+ * @see isInt
+ * @see isNull
+ * @see isNumber
+ * @see isObject
+ * @see isString
+ * @see isTrue
+ * @see isUndefined
  */
 exports.isFunction = isFunction = is('Function');
 
@@ -1885,6 +2153,23 @@ exports.isFunction = isFunction = is('Function');
  * @function
  * @param {*} x
  * @returns {boolean}
+ * @see is
+ * @see isa
+ * @see areArguments
+ * @see isArray
+ * @see isArrayLike
+ * @see isBoolean
+ * @see isEmpty
+ * @see isFalse
+ * @see isFloat
+ * @see isFunction
+ * @see isInt
+ * @see isNull
+ * @see isNumber
+ * @see isObject
+ * @see isString
+ * @see isTrue
+ * @see isUndefined
  */
 exports.areArguments = areArguments = is('Arguments');
 
@@ -1893,6 +2178,22 @@ exports.areArguments = areArguments = is('Arguments');
  * @function
  * @param {*} x
  * @returns {boolean}
+ * @see is
+ * @see isa
+ * @see areArguments
+ * @see isArray
+ * @see isBoolean
+ * @see isEmpty
+ * @see isFalse
+ * @see isFloat
+ * @see isFunction
+ * @see isInt
+ * @see isNull
+ * @see isNumber
+ * @see isObject
+ * @see isString
+ * @see isTrue
+ * @see isUndefined
  */
 exports.isArrayLike = isArrayLike = function isArrayLike(x) {
   return isArray(x) || areArguments(x);
@@ -1903,6 +2204,22 @@ exports.isArrayLike = isArrayLike = function isArrayLike(x) {
  * @function
  * @param {*} x
  * @returns {boolean}
+ * @see is
+ * @see isa
+ * @see areArguments
+ * @see isArray
+ * @see isArrayLike
+ * @see isBoolean
+ * @see isEmpty
+ * @see isFalse
+ * @see isFloat
+ * @see isFunction
+ * @see isInt
+ * @see isNull
+ * @see isObject
+ * @see isString
+ * @see isTrue
+ * @see isUndefined
  */
 exports.isNumber = isNumber = is('Number');
 
@@ -1911,6 +2228,22 @@ exports.isNumber = isNumber = is('Number');
  * @function
  * @param {*} x
  * @returns {boolean}
+ * @see is
+ * @see isa
+ * @see areArguments
+ * @see isArray
+ * @see isArrayLike
+ * @see isEmpty
+ * @see isFalse
+ * @see isFloat
+ * @see isFunction
+ * @see isInt
+ * @see isNull
+ * @see isNumber
+ * @see isObject
+ * @see isString
+ * @see isTrue
+ * @see isUndefined
  */
 exports.isBoolean = isBoolean = is('Boolean');
 
@@ -1921,6 +2254,22 @@ exports.isBoolean = isBoolean = is('Boolean');
  * @function
  * @param {*} x
  * @returns {boolean}
+ * @see is
+ * @see isa
+ * @see areArguments
+ * @see isArray
+ * @see isArrayLike
+ * @see isBoolean
+ * @see isEmpty
+ * @see isFalse
+ * @see isFunction
+ * @see isInt
+ * @see isNull
+ * @see isNumber
+ * @see isObject
+ * @see isString
+ * @see isTrue
+ * @see isUndefined
  */
 exports.isFloat = isFloat = function isFloat(x) {
   return isNumber(x) && (parseFloat(x) != parseInt(x));
@@ -1932,6 +2281,22 @@ exports.isFloat = isFloat = function isFloat(x) {
  * @function
  * @param {*} x
  * @returns {boolean}
+ * @see is
+ * @see isa
+ * @see areArguments
+ * @see isArray
+ * @see isArrayLike
+ * @see isBoolean
+ * @see isEmpty
+ * @see isFalse
+ * @see isFloat
+ * @see isFunction
+ * @see isNull
+ * @see isNumber
+ * @see isObject
+ * @see isString
+ * @see isTrue
+ * @see isUndefined
  */
 exports.isInt = isInt = function isInt(x) {
   return isNumber(x) && !isFloat(x);
@@ -1942,6 +2307,22 @@ exports.isInt = isInt = function isInt(x) {
  * @function
  * @param {*} x
  * @returns {boolean}
+ * @see is
+ * @see isa
+ * @see areArguments
+ * @see isArray
+ * @see isArrayLike
+ * @see isBoolean
+ * @see isEmpty
+ * @see isFalse
+ * @see isFloat
+ * @see isFunction
+ * @see isInt
+ * @see isNull
+ * @see isNumber
+ * @see isObject
+ * @see isString
+ * @see isUndefined
  */
 exports.isTrue = isTrue = function isTrue(x) {
   return x === true;
@@ -1952,6 +2333,22 @@ exports.isTrue = isTrue = function isTrue(x) {
  * @function
  * @param {*} x
  * @returns {boolean}
+ * @see is
+ * @see isa
+ * @see areArguments
+ * @see isArray
+ * @see isArrayLike
+ * @see isBoolean
+ * @see isEmpty
+ * @see isFloat
+ * @see isFunction
+ * @see isInt
+ * @see isNull
+ * @see isNumber
+ * @see isObject
+ * @see isString
+ * @see isTrue
+ * @see isUndefined
  */
 exports.isFalse = isFalse = function isFalse(x) {
   return x === false;
@@ -1962,6 +2359,22 @@ exports.isFalse = isFalse = function isFalse(x) {
  * @function
  * @param {*} x
  * @returns {boolean}
+ * @see is
+ * @see isa
+ * @see areArguments
+ * @see isArray
+ * @see isArrayLike
+ * @see isBoolean
+ * @see isEmpty
+ * @see isFalse
+ * @see isFloat
+ * @see isFunction
+ * @see isInt
+ * @see isNumber
+ * @see isObject
+ * @see isString
+ * @see isTrue
+ * @see isUndefined
  */
 exports.isNull = isNull = function isNull(x) {
   return x === null;
@@ -1972,6 +2385,22 @@ exports.isNull = isNull = function isNull(x) {
  * @function
  * @param {*} x
  * @returns {boolean}
+ * @see is
+ * @see isa
+ * @see areArguments
+ * @see isArray
+ * @see isArrayLike
+ * @see isBoolean
+ * @see isEmpty
+ * @see isFalse
+ * @see isFloat
+ * @see isFunction
+ * @see isInt
+ * @see isNull
+ * @see isNumber
+ * @see isObject
+ * @see isString
+ * @see isTrue
  */
 exports.isUndefined = isUndefined = function isUndefined(x) {
   return x === void 8;
@@ -2206,5 +2635,5 @@ exports.del = function del() {
    * Fjs current version details
    * @name versionDetails
    */
-  exports.versionDetails = {major: 0, minor: 15, patch: 1};
+  exports.versionDetails = {major: 0, minor: 16, patch: 0};
 })();
