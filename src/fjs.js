@@ -1,6 +1,6 @@
-//     Fjs.js 0.16.2
+//     Fjs.js 0.16.3
 //     https://github.com/gaku-sei/functional-javascript
-//     (c) 2014 Beviral
+//     (c) 2014 Kevin Combriat / Beviral
 
 var add, apply, applyWith, and, areArguments, arity, arity0, arity1, arity2, arity3, assoc, attrs, bind, butfirst, butlast, call,
     callWith, clone, comp, complement, concat, concatMap, concatMapkv, conj, cons, cs, curriedFunctions, curry, curry1,
@@ -647,11 +647,13 @@ exports.id = id = function id(x) {
  * General purpose clone function.
  * The objects and arrays are mutable in JS
  * clone allows to bypass this with ease.
- * @@todo Handle dates
- * @@todo Handle self created objects
+ * Nonetheless, for the moment, clone is very, very long, use with care.
+ * @@todo Handle self created objects (?)
  * @function
  * @param {*} x - Object to clone
  * @returns {*} Returns a clone of x
+ * @see sort
+ * @see assoc
  */
 exports.clone = clone = function clone(x) {
   //// JSON.parse / JSON.stringify
@@ -669,9 +671,14 @@ exports.clone = clone = function clone(x) {
     return y;
   };
 
+  var cloneDate = function(d) {
+    return new Date(d.getTime());
+  };
+
   switch(true) {
   case isArrayLike(x): return cloneArray(x);
   case isObject(x): return cloneObject(x);
+  case isDate(x): return cloneDate(x);
   default: return x;
   }
 };
@@ -766,6 +773,7 @@ exports.comp = comp = function comp() {
 
 /**
  * Wrapper for the Array.prototype.slice function
+ * slice returns a shallow copy of the array elements
  * @function
  * @param {Array.<*>} xs - Array to slice
  * @param {number} begin
@@ -800,6 +808,7 @@ exports.join = join = function join(xs) {
 
 /**
  * Concats several arrays
+ * concat returns a shallow copy of the array elements
  * @function
  * @param {...Array.<*>} arrays - Arrays to concat
  * @returns {Array.<*>}
@@ -957,6 +966,7 @@ exports.concatMapkv = concatMapkv = function concatMapkv(f, obj) {
 
 /**
  * Returns an array of the items in coll for which pred(x) returns true
+ * fitler returns a shallow copy of the array elements
  * @function
  * @param {function(*): boolean} pred - Function to apply on each element of xs
  * @param {Array.<*>} xs - Array to filter
@@ -979,10 +989,12 @@ exports.filter = filter = function filter(pred, xs) {
  * You can pass a sorter function to sort.
  * Wrapper for the [].sort function.
  * @@todo Sort uses clone, and clone is slow... use quicksort
+ * @@use clone
  * @function
  * @param {function=} [pred=undefined] - Function to apply on each element of xs
  * @param {Array.<*>} xs - Array to sort
  * @returns {Array.<*>} Sorted Array
+ * @see clone
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort|MDN - sort}
  */
 exports.sort = sort = function sort(comp, xs) {
@@ -996,6 +1008,7 @@ exports.sort = sort = function sort(comp, xs) {
 
 /**
  * Returns a shuffled Array
+ * shuffle returns a shallow copy of the array elements
  * @function
  * @param {Array.<*>} xs - Array to shuffle
  * @returns {Array.<*>} Shuffled Array
@@ -1012,6 +1025,7 @@ exports.shuffle = shuffle = function shuffle(xs) {
 
 /**
  * Zips arrays together.
+ * zip returns a shallow copy of the array elements
  * @function
  * @param {...Array.<*>} arrays - Arrays to zip
  * @returns {Array.<*>} Zipped arrays
@@ -1031,6 +1045,7 @@ exports.zip = zip = function zip() {
 
 /**
  * Flattens an ArrayLike object
+ * flatten returns a shallow copy of the array elements
  * @function
  * @param {Array.<*>|Argument.<*>} xs - ArrayLike object to flatten
  * @returns {Array.<*>} ArrayLike object flattened
@@ -1091,6 +1106,7 @@ exports.randInt = randInt = function randInt(n) {
 
 /**
  * Returns a random item of xs
+ * randIndex returns a shallow copy of the array element
  * @function
  * @param {Array.<*>} xs
  * @returns {*} Random element of xs
@@ -1117,6 +1133,7 @@ exports.times = times = function times(n, f) {
 /**
  * Returns an Array containing the items of xs
  * while pred(item) is true.
+ * takeWhile returns a shallow copy of the array elements
  * @function
  * @param {function(*): boolean} pred - Predicate function
  * @param {Array.<*>} xs - Array to consume
@@ -1131,6 +1148,7 @@ exports.takeWhile = takeWhile = function takewhile(pred, xs) {
 /**
  * Drops all the items of xs while pred(item) is true
  * and returns all the remaining items as an Array
+ * dropWhile returns a shallow copy of the array elements
  * @function
  * @param {function(*): boolean} pred - Predicate function
  * @param {Array.<*>} xs - Array to consume
@@ -1144,6 +1162,7 @@ exports.dropWhile = dropWhile = function dropwhile(pred, xs) {
 
 /**
  * Returns an array of the elements of xs separated of sep
+ * interpose returns a shallow copy of the array elements
  * @function
  * @param {*} sep - The separator object
  * @param {Array.<*>} xs - Array to separate
@@ -1160,6 +1179,7 @@ exports.interpose = interpose = function interpose(sep, xs) {
 
 /**
  * Returns an array of the first item in each array, then the second etc
+ * interleave returns a shallow copy of the array elements
  * @function
  * @param {...Array.<*>} arrays - Arrays to interleave
  * @returns {Array.<*>} Interleaved Array
@@ -1184,11 +1204,12 @@ exports.keys = keys = function keys(obj) {
 
 /**
  * Returns the values of a JS Object
+ * values returns a shallow copy of the object values
  * @function
  * @param {object} obj
  * @returns {Array.<*>}
  * @example
- *   keys({a: 1, b: 2, c: 3}) // [1, 2, 3]
+ *   values({a: 1, b: 2, c: 3}) // [1, 2, 3]
  */
 exports.values = values = function values(obj) {
   return mapkv(flip(id), obj);
@@ -1196,6 +1217,7 @@ exports.values = values = function values(obj) {
 
 /**
  * Merges a variable number of objects
+ * merge returns a shallow copy of the objects values
  * @function
  * @param {...object} jsObjects - JS Objects to merge
  * @return {object} Merged object
@@ -1213,11 +1235,13 @@ exports.merge = merge = function merge() {
 /**
  * Assoc key/value to object.
  * Equivalent to `obj[k] = v` but doesn't modify obj.
+ * @@use clone
  * @function
  * @param {object} obj
  * @param {string|number} k
  * @param {*} v
  * @returns {object}
+ * @see clone
  */
 exports.assoc = assoc = function assoc(obj, k, v) {
   var assocedObj = clone(obj);
@@ -1227,6 +1251,7 @@ exports.assoc = assoc = function assoc(obj, k, v) {
 
 /**
  * Converts an array of pairs into an object
+ * marshal returns a shallow copy of the array elements
  * @function
  * @param {Array.<Array(2)>} xs - Array of pairs
  * @returns {object} Marshalized object
@@ -1242,6 +1267,7 @@ exports.marshal = marshal = function marshal(xs) {
 
 /**
  * Converts an object into an array of pairs
+ * unmarshal returns a shallow copy of the object elements
  * @function
  * @param {object} obj - JS Object
  * @returns {Array.<Array(2)>} - Unmarshalized object
@@ -1256,6 +1282,7 @@ exports.unmarshal = unmarshal = function unmarshal(obj) {
 
 /**
  * Prepends x to xs.
+ * cons returns a shallow copy of the array elements
  * @function
  * @param {Array.<*>} xs
  * @param {*} x
@@ -1269,7 +1296,8 @@ exports.cons = cons = function cons(xs, x) {
 
 /**
  * Appends arguments to xs.
- * @functio
+ * conj returns a shallow copy of the array elements
+ * @function
  * @param {Array.<*>} xs
  * @param {...*} args
  * @returns {Array.<*>}
@@ -1283,6 +1311,7 @@ exports.conj = conj = function conj(xs) {
 
 /**
  * Drops the n first elements of xs
+ * drop returns a shallow copy of the array elements
  * @function
  * @param {number} n
  * @param {Array.<*>} xs
@@ -1294,6 +1323,7 @@ exports.drop = drop = function drop(n, xs) {
 
 /**
  * Returns the first element of xs
+ * first returns a shallow copy of the first array element
  * @function
  * @param {Array.<*>} xs
  * @returns {*}
@@ -1304,6 +1334,7 @@ exports.first = first = function first(xs) {
 
 /**
  * Returns all the elements of xs but except first one
+ * butfirst returns a shallow copy of the array elements
  * @function
  * @param {Array.<*>}
  * @returns {Array.<*>}
@@ -1314,6 +1345,7 @@ exports.butfirst = butfirst = function butfirst(xs) {
 
 /**
  * Returns the second element of xs
+ * second returns a shallow copy of the second element of the array
  * @function
  * @param {Array.<*>}
  * @returns {*}
@@ -1324,6 +1356,7 @@ exports.second = second = function second(xs) {
 
 /**
  * Returns the last elements of xs
+ * last returns a shallow copy of the last element of the array
  * @function
  * @param {Array.<*>}
  * @returns {*}
@@ -1334,6 +1367,7 @@ exports.last = last = function last(xs) {
 
 /**
  * Returns all the elements of xs except the last one
+ * butlast returns a shallow copy of the array elements
  * @function
  * @param {Array.<*>}
  * @returns {Array.<*>}
@@ -1355,6 +1389,7 @@ exports.get = get = function get(obj, i) {
 
 /**
  * Object, Array, String and arguments lookup.
+ * lookup returns a shallow copy of the found elements
  * @function
  * @param {Array.<*>|object|string} obj - Object to look up into
  * @param {Array.<*>|*} ks - Key(s) to look up
@@ -1396,6 +1431,7 @@ exports.product = product = function product(xs) {
 
 /**
  * Returns an array containing n repetitions of the items in xs
+ * cycle returns an array containing shallow copies of the elements of xs
  * @function
  * @param {number} n
  * @param {Array.<*>} xs
@@ -1412,6 +1448,7 @@ exports.cycle = cycle = function cycle(n, xs) {
 
 /**
  * Returns an array containing n times x
+ * repeat returns an array containing shallow copies of x
  * @function
  * @param {number} n
  * @param {*} x
@@ -1547,6 +1584,7 @@ exports.reducer = reducer = function reducer(f, xs, agg) {
 
 /**
  * Reverses the elements of an array.
+ * reverse returns shallow copy of the elements of array
  * @function
  * @param {Array.<*>} xs
  * @returns {Array.<*>}
@@ -2779,5 +2817,5 @@ exports.del = function del() {
    * Fjs current version details
    * @name versionDetails
    */
-  exports.versionDetails = {major: 0, minor: 16, patch: 2};
+  exports.versionDetails = {major: 0, minor: 16, patch: 3};
 })();

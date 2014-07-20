@@ -1,6 +1,6 @@
-//     Fjs.js 0.16.2
+//     Fjs.js 0.16.3
 //     https://github.com/gaku-sei/functional-javascript
-//     (c) 2014 Beviral
+//     (c) 2014 Kevin Combriat / Beviral
 
 ;var fjs = (function() {
   // Vars
@@ -1220,7 +1220,7 @@
     exports.version = function() {
       return join(values(exports.version.details), '.');
     };
-    exports.version.details = {major: 0, minor: 16, patch: 2};
+    exports.version.details = {major: 0, minor: 16, patch: 3};
   })();
 
   return exports;
