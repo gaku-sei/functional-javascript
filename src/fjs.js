@@ -988,13 +988,12 @@ exports.filter = filter = function filter(pred, xs) {
  * Sort element of an array.
  * You can pass a sorter function to sort.
  * Wrapper for the [].sort function.
- * @@todo Sort uses clone, and clone is slow... use quicksort
- * @@use clone
+ * sort returns a shallow copy of the array elements
+ * @@todo Use quicksort
  * @function
  * @param {function=} [pred=undefined] - Function to apply on each element of xs
  * @param {Array.<*>} xs - Array to sort
  * @returns {Array.<*>} Sorted Array
- * @see clone
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort|MDN - sort}
  */
 exports.sort = sort = function sort(comp, xs) {
@@ -1002,7 +1001,10 @@ exports.sort = sort = function sort(comp, xs) {
     xs = comp;
     comp = void 8;
   }
-  var ys = clone(xs);
+  var i = xs.length, ys = Array(i);
+  loop(function(i, x) {
+    ys[i] = x;
+  }, xs);
   return callWith([].sort, ys, comp);
 };
 
@@ -1235,18 +1237,18 @@ exports.merge = merge = function merge() {
 /**
  * Assoc key/value to object.
  * Equivalent to `obj[k] = v` but doesn't modify obj.
- * @@use clone
+ * assoc returns a shallow copy of the JS Object
  * @function
  * @param {object} obj
- * @param {string|number} k
- * @param {*} v
+ * @param {string|number} key
+ * @param {*} value
  * @returns {object}
- * @see clone
  */
-exports.assoc = assoc = function assoc(obj, k, v) {
-  var assocedObj = clone(obj);
-  assocedObj[k] = v;
-  return assocedObj;
+exports.assoc = assoc = function assoc(obj, key, value) {
+  var ret = {};
+  for  (k in obj) ret[k] = obj[k];
+  ret[key] = value;
+  return ret;
 };
 
 /**
