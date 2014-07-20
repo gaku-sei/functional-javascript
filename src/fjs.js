@@ -6,10 +6,11 @@ var add, apply, applyWith, and, areArguments, arity, arity0, arity1, arity2, ari
     callWith, clone, comp, complement, concat, concatMap, concatMapkv, conj, cons, cs, curriedFunctions, curry, curry1,
     cycle, dec, del, dir, dir1, div, doc, drop, dropWhile, eq, eq2, eq3, eqOne, eqZero, error, error1, even, every, fdrop, fget, filter,
     first, flatten, flip, fmap, fmapkv, fmapkvo, fmapo, fn, freduce, freducekv, freducer, get, gt, gte, id, inc, interleave, interpose, is,
-    isa, isArray, isArrayLike, isBoolean, isEmpty, isFalse, isFloat, isFunction, isInt, isNull, isNumber, isObject, isString, isTrue, isUndefined,
-    join, juxt, keys, last, len, log, log1, lookup, loop, lt, lte, map, mapkv, mapkvo, mapo, marshal, max, merge, min, mul, neq2, neq3, not, odd, or,
-    owns, partial, pow, product, rand, randIndex, randInt, range, reduce, reducekv, reducer, repeat, repeatedly, reverse, second, shuffle, slice,
-    some, sort, source, sqrt, sub, sum, takeWhile, thread, time, times, unmarshal, use, useAll, values, version, warn, warn1, xor, xrange, zip;
+    isa, isArray, isArrayLike, isBoolean, isDate, isEmpty, isFalse, isFloat, isFunction, isInt, isNull, isNumber, isObject, isString, isTrue,
+    isUndefined, join, juxt, keys, last, len, log, log1, lookup, loop, lt, lte, map, mapkv, mapkvo, mapo, marshal, max, merge, min, mul, neq2,
+    neq3, not, odd, or, owns, partial, pow, product, rand, randIndex, randInt, range, reduce, reducekv, reducer, repeat, repeatedly, reverse,
+    second, shuffle, slice, some, sort, source, sqrt, sub, sum, takeWhile, thread, time, times, unmarshal, use, useAll, values, version, warn,
+    warn1, xor, xrange, zip;
 
 // Errors
 // ------
@@ -82,6 +83,7 @@ exports.loop = loop = function loop(f, xs) {
  * @see isArray
  * @see isArrayLike
  * @see isBoolean
+ * @see isDate
  * @see isEmpty
  * @see isFalse
  * @see isFloat
@@ -119,6 +121,7 @@ exports.is = is = function is(type) {
  * @see isArray
  * @see isArrayLike
  * @see isBoolean
+ * @see isDate
  * @see isEmpty
  * @see isFalse
  * @see isFloat
@@ -659,6 +662,7 @@ exports.clone = clone = function clone(x) {
     return map(clone, xs);
   };
   var cloneObject = function(xs) {
+    //mapo?
     var y = {};
     for (i in xs)
       y[clone(i)] = clone(xs[i]);
@@ -2132,6 +2136,7 @@ exports.eqOne = eqOne = function eqOne(x) {
  * @see areArguments
  * @see isArrayLike
  * @see isBoolean
+ * @see isDate
  * @see isFalse
  * @see isFloat
  * @see isFunction
@@ -2161,6 +2166,7 @@ exports.isEmpty = isEmpty = function isEmpty(x) {
  * @see areArguments
  * @see isArrayLike
  * @see isBoolean
+ * @see isDate
  * @see isEmpty
  * @see isFalse
  * @see isFloat
@@ -2186,6 +2192,7 @@ exports.isObject = isObject = function isObject(x) {
  * @see areArguments
  * @see isArrayLike
  * @see isBoolean
+ * @see isDate
  * @see isEmpty
  * @see isFalse
  * @see isFloat
@@ -2211,6 +2218,7 @@ exports.isArray = isArray = is('Array');
  * @see isArray
  * @see isArrayLike
  * @see isBoolean
+ * @see isDate
  * @see isEmpty
  * @see isFalse
  * @see isFloat
@@ -2235,6 +2243,7 @@ exports.isString = isString = is('String');
  * @see isArray
  * @see isArrayLike
  * @see isBoolean
+ * @see isDate
  * @see isEmpty
  * @see isFalse
  * @see isFloat
@@ -2249,7 +2258,7 @@ exports.isString = isString = is('String');
 exports.isFunction = isFunction = is('Function');
 
 /**
- * Returns true if x is an instance of Arguments
+ * Returns true if x is a Date
  * @function
  * @param {*} x
  * @returns {boolean}
@@ -2259,6 +2268,31 @@ exports.isFunction = isFunction = is('Function');
  * @see isArray
  * @see isArrayLike
  * @see isBoolean
+ * @see isEmpty
+ * @see isFalse
+ * @see isFloat
+ * @see isFunction
+ * @see isInt
+ * @see isNull
+ * @see isNumber
+ * @see isObject
+ * @see isString
+ * @see isTrue
+ * @see isUndefined
+ */
+exports.isDate = isDate = is('Date');
+
+/**
+ * Returns true if x is an instance of Arguments
+ * @function
+ * @param {*} x
+ * @returns {boolean}
+ * @see is
+ * @see isa
+ * @see isArray
+ * @see isArrayLike
+ * @see isBoolean
+ * @see isDate
  * @see isEmpty
  * @see isFalse
  * @see isFloat
@@ -2283,6 +2317,7 @@ exports.areArguments = areArguments = is('Arguments');
  * @see areArguments
  * @see isArray
  * @see isBoolean
+ * @see isDate
  * @see isEmpty
  * @see isFalse
  * @see isFloat
@@ -2310,6 +2345,7 @@ exports.isArrayLike = isArrayLike = function isArrayLike(x) {
  * @see isArray
  * @see isArrayLike
  * @see isBoolean
+ * @see isDate
  * @see isEmpty
  * @see isFalse
  * @see isFloat
@@ -2333,6 +2369,7 @@ exports.isNumber = isNumber = is('Number');
  * @see areArguments
  * @see isArray
  * @see isArrayLike
+ * @see isDate
  * @see isEmpty
  * @see isFalse
  * @see isFloat
@@ -2359,6 +2396,7 @@ exports.isBoolean = isBoolean = is('Boolean');
  * @see isArray
  * @see isArrayLike
  * @see isBoolean
+ * @see isDate
  * @see isEmpty
  * @see isFalse
  * @see isFunction
@@ -2386,6 +2424,7 @@ exports.isFloat = isFloat = function isFloat(x) {
  * @see isArray
  * @see isArrayLike
  * @see isBoolean
+ * @see isDate
  * @see isEmpty
  * @see isFalse
  * @see isFloat
@@ -2412,6 +2451,7 @@ exports.isInt = isInt = function isInt(x) {
  * @see isArray
  * @see isArrayLike
  * @see isBoolean
+ * @see isDate
  * @see isEmpty
  * @see isFalse
  * @see isFloat
@@ -2438,6 +2478,7 @@ exports.isTrue = isTrue = function isTrue(x) {
  * @see isArray
  * @see isArrayLike
  * @see isBoolean
+ * @see isDate
  * @see isEmpty
  * @see isFloat
  * @see isFunction
@@ -2464,6 +2505,7 @@ exports.isFalse = isFalse = function isFalse(x) {
  * @see isArray
  * @see isArrayLike
  * @see isBoolean
+ * @see isDate
  * @see isEmpty
  * @see isFalse
  * @see isFloat
@@ -2490,6 +2532,7 @@ exports.isNull = isNull = function isNull(x) {
  * @see isArray
  * @see isArrayLike
  * @see isBoolean
+ * @see isDate
  * @see isEmpty
  * @see isFalse
  * @see isFloat
