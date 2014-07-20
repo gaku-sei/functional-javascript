@@ -1,4 +1,4 @@
-//     Fjs.js 0.16.1
+//     Fjs.js 0.16.2
 //     https://github.com/gaku-sei/functional-javascript
 //     (c) 2014 Beviral
 
@@ -644,30 +644,32 @@ exports.id = id = function id(x) {
  * General purpose clone function.
  * The objects and arrays are mutable in JS
  * clone allows to bypass this with ease.
+ * @@todo Handle dates
+ * @@todo Handle self created objects
  * @function
  * @param {*} x - Object to clone
  * @returns {*} Returns a clone of x
  */
 exports.clone = clone = function clone(x) {
-  // JSON.parse / JSON.stringify
-  return JSON.parse(JSON.stringify(x));
+  //// JSON.parse / JSON.stringify
+  //return JSON.parse(JSON.stringify(x));
 
-  //// Own version (slower)
-  //var cloneArray = function(xs) {
-  //  return map(clone, xs);
-  //};
-  //var cloneObject = function(xs) {
-  //  var y = {};
-  //  for (i in xs)
-  //    y[clone(i)] = clone(xs[i]);
-  //  return y;
-  //};
+  //// Own version
+  var cloneArray = function(xs) {
+    return map(clone, xs);
+  };
+  var cloneObject = function(xs) {
+    var y = {};
+    for (i in xs)
+      y[clone(i)] = clone(xs[i]);
+    return y;
+  };
 
-  //switch(true) {
-  //case isArrayLike(x): return cloneArray(x);
-  //case isObject(x): return cloneObject(x);
-  //default: return x;
-  //}
+  switch(true) {
+  case isArrayLike(x): return cloneArray(x);
+  case isObject(x): return cloneObject(x);
+  default: return x;
+  }
 };
 
 /**
@@ -972,6 +974,7 @@ exports.filter = filter = function filter(pred, xs) {
  * Sort element of an array.
  * You can pass a sorter function to sort.
  * Wrapper for the [].sort function.
+ * @@todo Sort uses clone, and clone is slow... use quicksort
  * @function
  * @param {function=} [pred=undefined] - Function to apply on each element of xs
  * @param {Array.<*>} xs - Array to sort
@@ -983,7 +986,8 @@ exports.sort = sort = function sort(comp, xs) {
     xs = comp;
     comp = void 8;
   }
-  return callWith([].sort, xs, comp);
+  var ys = clone(xs);
+  return callWith([].sort, ys, comp);
 };
 
 /**
@@ -1544,7 +1548,7 @@ exports.reducer = reducer = function reducer(f, xs, agg) {
  * @returns {Array.<*>}
  */
 exports.reverse = reverse = function reverse(xs) {
-  var ys = Array(xs.length), i = xs.length;
+  var i = xs.length, ys = Array(i);
   while (i > 0)
     ys[xs.length - i] = xs[--i];
   return ys;
@@ -2699,7 +2703,7 @@ exports.del = function del() {
 
   // Exports curried version of functions with an arity set at 2
   var fs2 = ['add', 'and', 'conj', 'div', 'eq', 'eq2', 'eq3', 'fdrop', 'fget',
-             'fmap', 'fmapo' 'fmapkv', 'fmapkvo' 'gt', 'gte', 'lt', 'lte', 'mul',
+             'fmap', 'fmapo', 'fmapkv', 'fmapkvo', 'gt', 'gte', 'lt', 'lte', 'mul',
              'neq2', 'neq3','or', 'sub', 'xor'];
   loop(function(_, v) {
     exports['c'+v] = curry(exports[v], 2);
@@ -2732,5 +2736,5 @@ exports.del = function del() {
    * Fjs current version details
    * @name versionDetails
    */
-  exports.versionDetails = {major: 0, minor: 16, patch: 1};
+  exports.versionDetails = {major: 0, minor: 16, patch: 2};
 })();

@@ -1,4 +1,4 @@
-//     Fjs.js 0.16.1
+//     Fjs.js 0.16.2
 //     https://github.com/gaku-sei/functional-javascript
 //     (c) 2014 Beviral
 
@@ -348,9 +348,7 @@
   // ```
   exports.slice = slice = function slice(xs) {
     var args = [].slice.call(arguments).slice(1);
-    if([].slice) return applyWith([].slice, xs, args);
-
-    throw new NotImplementedError('function "slice" is not implemented yet');
+    return applyWith([].slice, xs, args);
   };
 
   // Based on Array.prototype.join, join replaces ',' with ''.
@@ -425,9 +423,7 @@
       xs = comp;
       comp = void 8;
     }
-    if([].sort) return callWith([].sort, xs, comp);
-
-    throw new NotImplementedError('function "sort" is not implemented yet');
+    return callWith([].sort, xs, comp);
   };
 
   // Returns a shuffled xs
@@ -1135,16 +1131,12 @@
 
   // Wrapper for the Math.pow function
   exports.pow = pow = function pow(x, y) {
-    if(Math.pow) return Math.pow(x, y);
-
-    throw new NotImplementedError('function "pow" is not implemented yet');
+    return Math.pow(x, y);
   };
 
   // Wrapper for the Math.sqrt function
   exports.sqrt = sqrt = function sqrt(x) {
-    if(Math.sqrt) return Math.sqrt(x);
-
-    throw new NotImplementedError('function "sqrt" is not implemented yet');
+    return Math.sqrt(x);
   };
 
   // Convert args to Object which can be used by use and del
@@ -1228,7 +1220,7 @@
     exports.version = function() {
       return join(values(exports.version.details), '.');
     };
-    exports.version.details = {major: 0, minor: 16, patch: 1};
+    exports.version.details = {major: 0, minor: 16, patch: 2};
   })();
 
   return exports;
