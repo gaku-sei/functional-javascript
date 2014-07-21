@@ -1,0 +1,29 @@
+{
+  "name": "functional-javascript",
+  "version": "0.17.0",
+  "description": "Library of functions targeting readability and ease",
+  "main": "lib/functional-javascript.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gaku-sei/functional-javascript.git"
+  },
+  "keywords": [
+    "functional"
+  ],
+  "author": "Kevin Combriat",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gaku-sei/functional-javascript/issues"
+  },
+  "homepage": "https://github.com/gaku-sei/functional-javascript",
+  "devDependencies": {
+    "mocha": "*",
+    "chai": "*"
+  }
+}

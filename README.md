@@ -9,7 +9,7 @@ Last but not least, FJS is fast.
 
 ### What is FJS
 
-FJS defines an object fjs (and _ if not defined yet) with more than 165 functions:
+FJS defines an object fjs (and _ if not defined yet) with more than 190 functions:
 - General purpose functions (eq, clone, keys, values, etc...)
 - Iteration functions (map, mapkv, reduce, reducer, reducekv, filter, some, every, takeWhile, dropWhile, etc...)
 - Functions manipulation (comp, partial, curry, juxt, call, callWith, apply, applyWith, etc...)
