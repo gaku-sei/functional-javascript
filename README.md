@@ -14,6 +14,8 @@ And in your script:
 var fjs = require('functional-javascript');
 ```
 
+You can also find the documentation page [here](http://gaku-sei.github.io/functional-javascript/).
+
 ### What is Functional Javascript
 
 - General purpose functions (eq, clone, keys, values, ...)
