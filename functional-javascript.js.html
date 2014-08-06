@@ -1,4 +1,31 @@
-//     Fjs.js 0.17.0
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: functional-javascript.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: functional-javascript.js</h1>
+
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>//     Fjs.js 0.17.0
 //     https://github.com/gaku-sei/functional-javascript
 //     (c) 2014 Kevin Combriat / Beviral
 
@@ -64,7 +91,7 @@ exports.fn = fn = function fn() {
  * loop is a side-effect only function
  * @function
  * @param {function(*, *)} f - Function used in iteration
- * @param {Array.<*>} xs - Array to iterate over
+ * @param {Array.&lt;*>} xs - Array to iterate over
  * @returns {undefined}
  */
 exports.loop = loop = function loop(f, xs) {
@@ -137,7 +164,7 @@ exports.is = is = function is(type) {
 exports.isa = isa = function isa(obj) {
   var fs = butfirst(arguments);
   for (i in fs)
-    if (fs.hasOwnProperty(i) && !(obj instanceof fs[i]))
+    if (fs.hasOwnProperty(i) &amp;&amp; !(obj instanceof fs[i]))
       return false;
   return true;
 };
@@ -145,7 +172,7 @@ exports.isa = isa = function isa(obj) {
 /**
  * Wrapper for the hasOwnProperty method
  * @function
- * @param {Array.<*>} xs - Array of any type
+ * @param {Array.&lt;*>} xs - Array of any type
  * @param {*} prop - Property to check
  * @returns {boolean}
  */
@@ -197,7 +224,7 @@ exports.eq2 = eq2 = function eq2() {
   var args = arguments;
   var reducer = function(x, y, rest) {
     if (rest.length == 1) return x == y;
-    return (x == y) && reducer(rest[0], rest[1], slice(rest, 1));
+    return (x == y) &amp;&amp; reducer(rest[0], rest[1], slice(rest, 1));
   }
   return reducer(args[0], args[1], slice(args, 1));
 };
@@ -224,7 +251,7 @@ exports.eq3 = eq3 = function eq3() {
   var args = arguments;
   var reducer = function(x, y, rest) {
     if (rest.length == 1) return x === y;
-    return (x === y) && reducer(rest[0], rest[1], slice(rest, 1));
+    return (x === y) &amp;&amp; reducer(rest[0], rest[1], slice(rest, 1));
   }
   return reducer(args[0], args[1], slice(args, 1));
 };
@@ -284,7 +311,7 @@ exports.neq3 = neq3 = function neq3() {
 };
 
 /**
- * Variadic wrapper for the < operator
+ * Variadic wrapper for the &lt; operator
  * @function
  * @param {...*} objs - Objects to test
  * @returns {boolean}
@@ -304,8 +331,8 @@ exports.neq3 = neq3 = function neq3() {
 exports.lt = lt = function lt() {
   var args = arguments;
   var reducer = function(x, y, rest) {
-    if (rest.length == 1) return x < y;
-    return (x < y) && reducer(rest[0], rest[1], slice(rest, 1));
+    if (rest.length == 1) return x &lt; y;
+    return (x &lt; y) &amp;&amp; reducer(rest[0], rest[1], slice(rest, 1));
   }
   return reducer(args[0], args[1], slice(args, 1));
 };
@@ -332,13 +359,13 @@ exports.gt = gt = function gt() {
   var args = arguments;
   var reducer = function(x, y, rest) {
     if (rest.length == 1) return x > y;
-    return (x > y) && reducer(rest[0], rest[1], slice(rest, 1));
+    return (x > y) &amp;&amp; reducer(rest[0], rest[1], slice(rest, 1));
   }
   return reducer(args[0], args[1], slice(args, 1));
 };
 
 /**
- * Variadic wrapper for the <= operator
+ * Variadic wrapper for the &lt;= operator
  * @function
  * @param {...*} objs - Objects to test
  * @returns {boolean}
@@ -358,8 +385,8 @@ exports.gt = gt = function gt() {
 exports.lte = lte = function lte() {
   var args = arguments;
   var reducer = function(x, y, rest) {
-    if (rest.length == 1) return x <= y;
-    return (x <= y) && reducer(rest[0], rest[1], slice(rest, 1));
+    if (rest.length == 1) return x &lt;= y;
+    return (x &lt;= y) &amp;&amp; reducer(rest[0], rest[1], slice(rest, 1));
   }
   return reducer(args[0], args[1], slice(args, 1));
 };
@@ -386,13 +413,13 @@ exports.gte = gte = function gte() {
   var args = arguments;
   var reducer = function(x, y, rest) {
     if (rest.length == 1) return x >= y;
-    return (x >= y) && reducer(rest[0], rest[1], slice(rest, 1));
+    return (x >= y) &amp;&amp; reducer(rest[0], rest[1], slice(rest, 1));
   }
   return reducer(args[0], args[1], slice(args, 1));
 };
 
 /**
- * Variadic wrapper for the && operator
+ * Variadic wrapper for the &amp;&amp; operator
  * @function
  * @param {...*} objs - Objects to test
  * @returns {boolean}
@@ -412,8 +439,8 @@ exports.gte = gte = function gte() {
 exports.and = and = function and() {
   var args = arguments;
   var reducer = function(x, y, rest) {
-    if (rest.length == 1) return x && y;
-    return (x && y) && reducer(rest[0], rest[1], slice(rest, 1));
+    if (rest.length == 1) return x &amp;&amp; y;
+    return (x &amp;&amp; y) &amp;&amp; reducer(rest[0], rest[1], slice(rest, 1));
   }
   return reducer(args[0], args[1], slice(args, 1));
 };
@@ -466,10 +493,10 @@ exports.or = or = function or() {
 exports.xor = xor = function xor() {
   var args = arguments;
   var reducer = function(x, y, rest) {
-    if (rest.length == 1) return !x !== !y && (x || y);
-    var val1 = (!x !== !y && (x || y));
+    if (rest.length == 1) return !x !== !y &amp;&amp; (x || y);
+    var val1 = (!x !== !y &amp;&amp; (x || y));
     var val2 = reducer(rest[0], rest[1], slice(rest, 1));
-    return !val1 !== !val2 && (val1 || val2);
+    return !val1 !== !val2 &amp;&amp; (val1 || val2);
   }
   return reducer(args[0], args[1], slice(args, 1));
 };
@@ -495,7 +522,7 @@ exports.complement = complement = function complement(f) {
  * @function
  * @param {function} f - Function to apply
  * @param {*} ctx - Binding for the 'this' variable
- * @param {Array.<*>} args - Arguments for f
+ * @param {Array.&lt;*>} args - Arguments for f
  * @returns {*}
  * @throws {ArgumentError} If f is not a function
  * @see callWith
@@ -627,7 +654,7 @@ exports.arity3 = arity3 = arity(3);
  */
 exports.cs = cs = function cs(met) {
   return function() {
-    var args = arguments.length < 2 ? first(arguments) : slice(arguments);
+    var args = arguments.length &lt; 2 ? first(arguments) : slice(arguments);
     console[met](args);
     return args;
   };
@@ -725,7 +752,7 @@ exports.attrs = attrs = function attrs(obj) {
  * the context is set to void 8.
  * @function
  * @param {function} f - Function to apply
- * @param {Array.<*>} args - Arguments for f
+ * @param {Array.&lt;*>} args - Arguments for f
  * @returns {*}
  * @throws {ArgumentError} If f is not a function
  * @see applyWith
@@ -775,10 +802,10 @@ exports.comp = comp = function comp() {
  * Wrapper for the Array.prototype.slice function
  * slice returns a shallow copy of the array elements
  * @function
- * @param {Array.<*>} xs - Array to slice
+ * @param {Array.&lt;*>} xs - Array to slice
  * @param {number} begin
  * @param {number=} [end=End of the sequence]
- * @returns {Array.<*>}
+ * @returns {Array.&lt;*>}
  * @example
  *   slice(arguments)          // similar to [].slice.call(arguments)
  *   slice([1, 2, 3, 4], 1, 3) // returns [2, 3]
@@ -794,7 +821,7 @@ exports.slice = slice = function slice(xs) {
  * Wrapper for the Array.prototype.join function
  * join replaces ',' with ''
  * @function
- * @param {Array.<*>} xs - Array to join
+ * @param {Array.&lt;*>} xs - Array to join
  * @param {*=} [sep=Empty string] - Separator
  * @returns {string} Joined array
  * @example
@@ -810,8 +837,8 @@ exports.join = join = function join(xs) {
  * Concats several arrays
  * concat returns a shallow copy of the array elements
  * @function
- * @param {...Array.<*>} arrays - Arrays to concat
- * @returns {Array.<*>}
+ * @param {...Array.&lt;*>} arrays - Arrays to concat
+ * @returns {Array.&lt;*>}
  * @example
  *   concat([1, 2, 3], [4, [5, 6]]) // returns [1, 2, 3, 4, [5, 6]]
  */
@@ -827,8 +854,8 @@ exports.concat = concat = function concat() {
  * Applies f to each item of xs and returns the results as an array.
  * @function
  * @param {function(*): *} f - Function to apply on each element of xs
- * @param {Array.<*>} xs - Consumed Array
- * @returns {Array.<*>}
+ * @param {Array.&lt;*>} xs - Consumed Array
+ * @returns {Array.&lt;*>}
  * @example
  *   map(partial(add, 2), [1, 2, 4]) // returns [3, 4, 6]
  * @see mapo
@@ -859,7 +886,7 @@ exports.map = map = function map(f, xs) {
  * f must returns an array of length two, since the first element is used a key and the second as a value.
  * @function
  * @param {function(*): *} f - Function to apply on each element of xs
- * @param {Array.<*>} xs - Consumed Array
+ * @param {Array.&lt;*>} xs - Consumed Array
  * @returns {object}
  * @example
  *   map(partial(add, 2), [1, 2, 4]) // returns [3, 4, 6]
@@ -883,7 +910,7 @@ exports.mapo = mapo = function mapo(f, xs) {
  * @function
  * @param {function(*): *} f - Function to apply on each element of obj
  * @param {object} obj - Consumed JS Object
- * @returns {Array.<*>}
+ * @returns {Array.&lt;*>}
  * @see map
  * @see mapo
  * @see mapkvo
@@ -928,8 +955,8 @@ exports.mapkvo = mapkvo = function mapkvo(f, obj) {
  * Map f over xs then concats the result
  * @function
  * @param {function(*): *} f - Function to apply on each element of xs
- * @param {Array.<*>} xs - Consumed Array
- * @returns {Array.<*>}
+ * @param {Array.&lt;*>} xs - Consumed Array
+ * @returns {Array.&lt;*>}
  * @see map
  * @see mapo
  * @see mapkv
@@ -949,7 +976,7 @@ exports.concatMap = concatMap = function concatMap(f, xs) {
  * @function
  * @param {function(*): *} f - Function to apply on each element of obj
  * @param {object} obj - Consumed JS Object
- * @returns {Array.<*>}
+ * @returns {Array.&lt;*>}
  * @see map
  * @see mapo
  * @see mapkv
@@ -969,8 +996,8 @@ exports.concatMapkv = concatMapkv = function concatMapkv(f, obj) {
  * fitler returns a shallow copy of the array elements
  * @function
  * @param {function(*): boolean} pred - Function to apply on each element of xs
- * @param {Array.<*>} xs - Array to filter
- * @returns {Array.<*>} Filtered Array
+ * @param {Array.&lt;*>} xs - Array to filter
+ * @returns {Array.&lt;*>} Filtered Array
  */
 exports.filter = filter = function filter(pred, xs) {
   //// [].filter
@@ -992,8 +1019,8 @@ exports.filter = filter = function filter(pred, xs) {
  * @@todo Use quicksort
  * @function
  * @param {function=} [pred=undefined] - Function to apply on each element of xs
- * @param {Array.<*>} xs - Array to sort
- * @returns {Array.<*>} Sorted Array
+ * @param {Array.&lt;*>} xs - Array to sort
+ * @returns {Array.&lt;*>} Sorted Array
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort|MDN - sort}
  */
 exports.sort = sort = function sort(comp, xs) {
@@ -1012,8 +1039,8 @@ exports.sort = sort = function sort(comp, xs) {
  * Returns a shuffled Array
  * shuffle returns a shallow copy of the array elements
  * @function
- * @param {Array.<*>} xs - Array to shuffle
- * @returns {Array.<*>} Shuffled Array
+ * @param {Array.&lt;*>} xs - Array to shuffle
+ * @returns {Array.&lt;*>} Shuffled Array
  */
 exports.shuffle = shuffle = function shuffle(xs) {
   var ys = Array(xs.length);
@@ -1029,8 +1056,8 @@ exports.shuffle = shuffle = function shuffle(xs) {
  * Zips arrays together.
  * zip returns a shallow copy of the array elements
  * @function
- * @param {...Array.<*>} arrays - Arrays to zip
- * @returns {Array.<*>} Zipped arrays
+ * @param {...Array.&lt;*>} arrays - Arrays to zip
+ * @returns {Array.&lt;*>} Zipped arrays
  * @example
  *   zip([1, 2, 3], [4, 5, 6]) // returns [[1, 4], [2, 5], [3, 6]]
  */
@@ -1039,7 +1066,7 @@ exports.zip = zip = function zip() {
       args = arguments,
       len = apply(min , map(exports.len, args));
   if (args.length == 1) return first(args);
-  for (var i = 0; i < len; i++) {
+  for (var i = 0; i &lt; len; i++) {
     ret.push(map(exports.cfget(i), args));
   }
   return ret;
@@ -1049,8 +1076,8 @@ exports.zip = zip = function zip() {
  * Flattens an ArrayLike object
  * flatten returns a shallow copy of the array elements
  * @function
- * @param {Array.<*>|Argument.<*>} xs - ArrayLike object to flatten
- * @returns {Array.<*>} ArrayLike object flattened
+ * @param {Array.&lt;*>|Argument.&lt;*>} xs - ArrayLike object to flatten
+ * @returns {Array.&lt;*>} ArrayLike object flattened
  * @see isArrayLike
  */
 exports.flatten = flatten = function flatten(xs) {
@@ -1110,7 +1137,7 @@ exports.randInt = randInt = function randInt(n) {
  * Returns a random item of xs
  * randIndex returns a shallow copy of the array element
  * @function
- * @param {Array.<*>} xs
+ * @param {Array.&lt;*>} xs
  * @returns {*} Random element of xs
  * @see rand
  * @see randInt
@@ -1138,12 +1165,12 @@ exports.times = times = function times(n, f) {
  * takeWhile returns a shallow copy of the array elements
  * @function
  * @param {function(*): boolean} pred - Predicate function
- * @param {Array.<*>} xs - Array to consume
- * @returns {Array.<*>} Filtered Array
+ * @param {Array.&lt;*>} xs - Array to consume
+ * @returns {Array.&lt;*>} Filtered Array
  * @see dropWhile
  */
 exports.takeWhile = takeWhile = function takewhile(pred, xs) {
-  for (var i = 0; i < xs.length && pred(xs[i]); i++);
+  for (var i = 0; i &lt; xs.length &amp;&amp; pred(xs[i]); i++);
   return slice(xs, 0, i);
 };
 
@@ -1153,12 +1180,12 @@ exports.takeWhile = takeWhile = function takewhile(pred, xs) {
  * dropWhile returns a shallow copy of the array elements
  * @function
  * @param {function(*): boolean} pred - Predicate function
- * @param {Array.<*>} xs - Array to consume
- * @returns {Array.<*>} Filtered Array
+ * @param {Array.&lt;*>} xs - Array to consume
+ * @returns {Array.&lt;*>} Filtered Array
  * @see takeWhile
  */
 exports.dropWhile = dropWhile = function dropwhile(pred, xs) {
-  for (var i = 0; i < xs.length && pred(xs[i]); i++);
+  for (var i = 0; i &lt; xs.length &amp;&amp; pred(xs[i]); i++);
   return slice(xs, i);
 };
 
@@ -1167,14 +1194,14 @@ exports.dropWhile = dropWhile = function dropwhile(pred, xs) {
  * interpose returns a shallow copy of the array elements
  * @function
  * @param {*} sep - The separator object
- * @param {Array.<*>} xs - Array to separate
- * @returns {Array.<*>} Separated Array
+ * @param {Array.&lt;*>} xs - Array to separate
+ * @returns {Array.&lt;*>} Separated Array
  * @example
  *   interpose(0, [1, 2, 3]) // returns [1, 0, 2, 0, 3]
  */
 exports.interpose = interpose = function interpose(sep, xs) {
   var len = xs.length * 2 - 1, ret = [];
-  for (var i = 0; i < len; i++)
+  for (var i = 0; i &lt; len; i++)
     ret.push(odd(i) ? sep : xs[i/2]);
   return ret;
 };
@@ -1183,8 +1210,8 @@ exports.interpose = interpose = function interpose(sep, xs) {
  * Returns an array of the first item in each array, then the second etc
  * interleave returns a shallow copy of the array elements
  * @function
- * @param {...Array.<*>} arrays - Arrays to interleave
- * @returns {Array.<*>} Interleaved Array
+ * @param {...Array.&lt;*>} arrays - Arrays to interleave
+ * @returns {Array.&lt;*>} Interleaved Array
  * @example
  *   interleave([1, 2], [4, 5], [7, 8]) // returns [1, 4, 7, 2, 5, 8]
  */
@@ -1196,7 +1223,7 @@ exports.interleave = interleave = function interleave() {
  * Returns the keys of a JS Object
  * @function
  * @param {object} obj
- * @returns {Array.<*>}
+ * @returns {Array.&lt;*>}
  * @example
  *   keys({a: 1, b: 2, c: 3}) // ['a', 'b', 'c']
  */
@@ -1209,7 +1236,7 @@ exports.keys = keys = function keys(obj) {
  * values returns a shallow copy of the object values
  * @function
  * @param {object} obj
- * @returns {Array.<*>}
+ * @returns {Array.&lt;*>}
  * @example
  *   values({a: 1, b: 2, c: 3}) // [1, 2, 3]
  */
@@ -1255,7 +1282,7 @@ exports.assoc = assoc = function assoc(obj, key, value) {
  * Converts an array of pairs into an object
  * marshal returns a shallow copy of the array elements
  * @function
- * @param {Array.<Array(2)>} xs - Array of pairs
+ * @param {Array.&lt;Array(2)>} xs - Array of pairs
  * @returns {object} Marshalized object
  * @example
  *   marshal([['a', 1], ['b', 2], ['c', 3]]) // returns {a: 1, b: 2, c: 3}
@@ -1272,7 +1299,7 @@ exports.marshal = marshal = function marshal(xs) {
  * unmarshal returns a shallow copy of the object elements
  * @function
  * @param {object} obj - JS Object
- * @returns {Array.<Array(2)>} - Unmarshalized object
+ * @returns {Array.&lt;Array(2)>} - Unmarshalized object
  * @example
  *   unmarshal({a: 1, b: 2, c: 3}) // returns [['a', 1], ['b', 2], ['c', 3]]
  */
@@ -1286,9 +1313,9 @@ exports.unmarshal = unmarshal = function unmarshal(obj) {
  * Prepends x to xs.
  * cons returns a shallow copy of the array elements
  * @function
- * @param {Array.<*>} xs
+ * @param {Array.&lt;*>} xs
  * @param {*} x
- * @returns {Array.<*>}
+ * @returns {Array.&lt;*>}
  * @example
  *   cons([2, 3], 1) // returns [1, 2, 3]
  */
@@ -1300,9 +1327,9 @@ exports.cons = cons = function cons(xs, x) {
  * Appends arguments to xs.
  * conj returns a shallow copy of the array elements
  * @function
- * @param {Array.<*>} xs
+ * @param {Array.&lt;*>} xs
  * @param {...*} args
- * @returns {Array.<*>}
+ * @returns {Array.&lt;*>}
  * @example
  *   conj([1, 2], 3) // returns [1, 2, 3]
  *   conj([1, 2], 3, 4, 5) // returns [1, 2, 3, 4, 5]
@@ -1316,8 +1343,8 @@ exports.conj = conj = function conj(xs) {
  * drop returns a shallow copy of the array elements
  * @function
  * @param {number} n
- * @param {Array.<*>} xs
- * @returns {Array.<*>}
+ * @param {Array.&lt;*>} xs
+ * @returns {Array.&lt;*>}
  */
 exports.drop = drop = function drop(n, xs) {
   return slice(xs, n);
@@ -1327,7 +1354,7 @@ exports.drop = drop = function drop(n, xs) {
  * Returns the first element of xs
  * first returns a shallow copy of the first array element
  * @function
- * @param {Array.<*>} xs
+ * @param {Array.&lt;*>} xs
  * @returns {*}
  */
 exports.first = first = function first(xs) {
@@ -1338,8 +1365,8 @@ exports.first = first = function first(xs) {
  * Returns all the elements of xs but except first one
  * butfirst returns a shallow copy of the array elements
  * @function
- * @param {Array.<*>}
- * @returns {Array.<*>}
+ * @param {Array.&lt;*>}
+ * @returns {Array.&lt;*>}
  */
 exports.butfirst = butfirst = function butfirst(xs) {
   return slice(xs, 1);
@@ -1349,7 +1376,7 @@ exports.butfirst = butfirst = function butfirst(xs) {
  * Returns the second element of xs
  * second returns a shallow copy of the second element of the array
  * @function
- * @param {Array.<*>}
+ * @param {Array.&lt;*>}
  * @returns {*}
  */
 exports.second = second = function second(xs) {
@@ -1360,7 +1387,7 @@ exports.second = second = function second(xs) {
  * Returns the last elements of xs
  * last returns a shallow copy of the last element of the array
  * @function
- * @param {Array.<*>}
+ * @param {Array.&lt;*>}
  * @returns {*}
  */
 exports.last = last = function last(xs) {
@@ -1371,8 +1398,8 @@ exports.last = last = function last(xs) {
  * Returns all the elements of xs except the last one
  * butlast returns a shallow copy of the array elements
  * @function
- * @param {Array.<*>}
- * @returns {Array.<*>}
+ * @param {Array.&lt;*>}
+ * @returns {Array.&lt;*>}
  */
 exports.butlast = butlast = function butlast(xs) {
   return slice(xs, 0, -1);
@@ -1381,7 +1408,7 @@ exports.butlast = butlast = function butlast(xs) {
 /**
  * Similar to obj[i]
  * @function
- * @param {Array.<*>|object} obj - Array or JS Object
+ * @param {Array.&lt;*>|object} obj - Array or JS Object
  * @param {*} i - Index or Key
  * @returns {*}
  */
@@ -1393,8 +1420,8 @@ exports.get = get = function get(obj, i) {
  * Object, Array, String and arguments lookup.
  * lookup returns a shallow copy of the found elements
  * @function
- * @param {Array.<*>|object|string} obj - Object to look up into
- * @param {Array.<*>|*} ks - Key(s) to look up
+ * @param {Array.&lt;*>|object|string} obj - Object to look up into
+ * @param {Array.&lt;*>|*} ks - Key(s) to look up
  * @param {?*} notFound - Returned if key(s) is/are not found
  * @returns {*}
  * @example
@@ -1414,7 +1441,7 @@ exports.lookup = lookup = function lookup(xs, ks, notFound) {
 /**
  * Sums the elements of an array
  * @function
- * @param {Array.<number>} xs
+ * @param {Array.&lt;number>} xs
  * @returns {number}
  */
 exports.sum = sum = function sum(xs) {
@@ -1424,7 +1451,7 @@ exports.sum = sum = function sum(xs) {
 /**
  * Returns the product of the elements of an array
  * @function
- * @param {Array.<number>} xs
+ * @param {Array.&lt;number>} xs
  * @returns {number}
  */
 exports.product = product = function product(xs) {
@@ -1436,8 +1463,8 @@ exports.product = product = function product(xs) {
  * cycle returns an array containing shallow copies of the elements of xs
  * @function
  * @param {number} n
- * @param {Array.<*>} xs
- * @returns {Array.<*>}
+ * @param {Array.&lt;*>} xs
+ * @returns {Array.&lt;*>}
  * @example
  *   cycle(3, [1, 2, 3]) // returns [1, 2, 3, 1, 2, 3, 1, 2, 3]
  */
@@ -1454,14 +1481,14 @@ exports.cycle = cycle = function cycle(n, xs) {
  * @function
  * @param {number} n
  * @param {*} x
- * @returns {Array.<*>}
+ * @returns {Array.&lt;*>}
  * @example
  *   repeat(3, 'a') // returns ['a', 'a', 'a']
  */
 exports.repeat = repeat = function repeat(n, x) {
-  if (n < 1) return [];
+  if (n &lt; 1) return [];
   var xs = [];
-  for (var i = 0; i < n; i++)
+  for (var i = 0; i &lt; n; i++)
     xs[i] = x;
   return xs;
 };
@@ -1472,16 +1499,16 @@ exports.repeat = repeat = function repeat(n, x) {
  * @param {number} n
  * @param {function} f - Called function
  * @param {...*} args - Arguments for f
- * @returns {Array.<*>}
+ * @returns {Array.&lt;*>}
  * @example
  *   repeatedly(3, function() { return 1 })                   // returns [1, 1, 1]
  *   repeatedly(3, function(x, y) { return 1 + x + y }, 1, 2) // returns [4, 4, 4]
  */
 exports.repeatedly = repeatedly = function repeatedly(n, f) {
-  if (n < 1) return [];
+  if (n &lt; 1) return [];
   var args = slice(arguments, 2);
   var xs = [];
-  for (var i = 0; i < n; i++)
+  for (var i = 0; i &lt; n; i++)
     xs[i] = apply(f, args);
   return xs;
 };
@@ -1492,7 +1519,7 @@ exports.repeatedly = repeatedly = function repeatedly(n, f) {
  * the aggregator is the first element of xs by default.
  * @function
  * @param {function(*, *): *} f - Reducer function, the first arguments is the aggregator, the second one the next value
- * @param {Array.<*>} xs - Array to consume
+ * @param {Array.&lt;*>} xs - Array to consume
  * @param {?*} agg - Defined aggregator
  * @returns {*} Reduced value
  * @example
@@ -1555,7 +1582,7 @@ exports.reducekv = reducekv = function reducekv(f, obj, agg) {
  * Similar to reduce but starts iteration at the end of the array.
  * @function
  * @param {function(*, *): *} f - Reducer function, the first arguments is the aggregator, the second one the next value
- * @param {Array.<*>} xs - Array to consume
+ * @param {Array.&lt;*>} xs - Array to consume
  * @param {?*} agg - Defined aggregator
  * @returns {*} Reduced value
  * @example
@@ -1588,8 +1615,8 @@ exports.reducer = reducer = function reducer(f, xs, agg) {
  * Reverses the elements of an array.
  * reverse returns shallow copy of the elements of array
  * @function
- * @param {Array.<*>} xs
- * @returns {Array.<*>}
+ * @param {Array.&lt;*>} xs
+ * @returns {Array.&lt;*>}
  */
 exports.reverse = reverse = function reverse(xs) {
   var i = xs.length, ys = Array(i);
@@ -1603,7 +1630,7 @@ exports.reverse = reverse = function reverse(xs) {
  * If pred(item) is true every time, return true.
  * @function
  * @param {function(*): boolean} pred - Predicate function
- * @param {Array.<*>} xs - Array to consume
+ * @param {Array.&lt;*>} xs - Array to consume
  * @returns {boolean}
  * @example
  *   var f = function(x) { return x == 1 };
@@ -1612,7 +1639,7 @@ exports.reverse = reverse = function reverse(xs) {
  */
 exports.every = every = function every(pred, xs) {
   for (i in xs)
-    if (xs.hasOwnProperty(i) && !pred(xs[i]))
+    if (xs.hasOwnProperty(i) &amp;&amp; !pred(xs[i]))
       return false;
   return true;
 };
@@ -1622,7 +1649,7 @@ exports.every = every = function every(pred, xs) {
  * If pred(item) is true, returns true.
  * @function
  * @param {function(*): boolean} pred - Predicate function
- * @param {Array.<*>} xs - Array to consume
+ * @param {Array.&lt;*>} xs - Array to consume
  * @returns {boolean}
  * @example
  *   var f = function(x) { return x == 1 };
@@ -1739,7 +1766,7 @@ exports.curry1 = curry1 = function curry1(f, arity) {
  * then returns an array with the results.
  * @function
  * @param {...function(*)} functions
- * @returns {function(): Array.<*>}
+ * @returns {function(): Array.&lt;*>}
  * @example
  *   juxt(inc, dec)(2) // returns [3, 1]
  */
@@ -1771,9 +1798,9 @@ exports.flip = flip = function flip(f) {
 /**
  * Flips the arguments given to drop
  * @function
- * @param {Array.<*>} xs
+ * @param {Array.&lt;*>} xs
  * @param {number} n
- * @returns {Array.<*>}
+ * @returns {Array.&lt;*>}
  */
 exports.fdrop = fdrop = flip(drop);
 
@@ -1781,7 +1808,7 @@ exports.fdrop = fdrop = flip(drop);
  * Flips the arguments given to get
  * @function
  * @param {*} i - Index or Key
- * @param {Array.<*>|object} obj - Array or JS Object
+ * @param {Array.&lt;*>|object} obj - Array or JS Object
  * @returns {*}
  */
 exports.fget = fget = flip(get);
@@ -1789,9 +1816,9 @@ exports.fget = fget = flip(get);
 /**
  * Flips the arguments given to map
  * @function
- * @param {Array.<*>} xs - Consumed Array
+ * @param {Array.&lt;*>} xs - Consumed Array
  * @param {function(*): *} f - Function to apply on each element of xs
- * @returns {Array.<*>}
+ * @returns {Array.&lt;*>}
  * @example
  *   map(partial(add, 2), [1, 2, 4]) // returns [3, 4, 6]
  * @see map
@@ -1811,7 +1838,7 @@ exports.fmap = fmap = flip(map);
  * @function
  * @param {object} obj - Consumed JS Object
  * @param {function(*): *} f - Function to apply on each element of obj
- * @returns {Array.<*>}
+ * @returns {Array.&lt;*>}
  * @see map
  * @see mapo
  * @see mapkv
@@ -1829,7 +1856,7 @@ exports.fmapo = fmapo = flip(mapo);
  * @function
  * @param {object} obj - Consumed JS Object
  * @param {function(*): *} f - Function to apply on each element of obj
- * @returns {Array.<*>}
+ * @returns {Array.&lt;*>}
  * @see map
  * @see mapo
  * @see mapkv
@@ -1847,7 +1874,7 @@ exports.fmapkv = fmapkv = flip(mapkv);
  * @function
  * @param {object} obj - Consumed JS Object
  * @param {function(*): *} f - Function to apply on each element of obj
- * @returns {Array.<*>}
+ * @returns {Array.&lt;*>}
  * @see map
  * @see mapo
  * @see mapkv
@@ -1864,7 +1891,7 @@ exports.fmapkvo = fmapkvo = flip(mapkvo);
  * Flips the arguments given to reduce.
  * The aggregator remains the third and last argument.
  * @function
- * @param {Array.<*>} xs - Array to consume
+ * @param {Array.&lt;*>} xs - Array to consume
  * @param {function(*, *): *} f - Reducer function, the first arguments is the aggregator, the second one the next value
  * @param {?*} agg - Defined aggregator
  * @returns {*} Reduced value
@@ -1908,7 +1935,7 @@ exports.freducekv = freducekv = function freducekv(obj, f, agg) {
  * Flips the argument given to reducer.
  * The aggregator remains the third and last argument.
  * @function
- * @param {Array.<*>} xs - Array to consume
+ * @param {Array.&lt;*>} xs - Array to consume
  * @param {function(*, *): *} f - Reducer function, the first arguments is the aggregator, the second one the next value
  * @param {?*} agg - Defined aggregator
  * @returns {*} Reduced value
@@ -1928,7 +1955,7 @@ exports.freducer = freducer = function freducer(xs, f, agg) {
  * console.log and returns the given argument(s)
  * @function
  * @param {...*} arguments
- * @returns {*|Array.<*>}
+ * @returns {*|Array.&lt;*>}
  */
 exports.log = log = cs('log');
 
@@ -1944,7 +1971,7 @@ exports.log1 = log1 = arity1(log);
  * console.dir and returns the given argument(s)
  * @function
  * @param {...*} arguments
- * @returns {*|Array.<*>}
+ * @returns {*|Array.&lt;*>}
  */
 exports.dir = dir = cs('dir');
 
@@ -1960,7 +1987,7 @@ exports.dir1 = dir1 = arity1(dir);
  * console.warn and returns the given argument(s)
  * @function
  * @param {...*} arguments
- * @returns {*|Array.<*>}
+ * @returns {*|Array.&lt;*>}
  */
 exports.warn = warn = cs('warn');
 
@@ -1976,7 +2003,7 @@ exports.warn1 = warn1 = arity1(warn);
  * console.error and returns the given argument(s)
  * @function
  * @param {...*} arguments
- * @returns {*|Array.<*>}
+ * @returns {*|Array.&lt;*>}
  */
 exports.error = error = cs('error');
 
@@ -2014,7 +2041,7 @@ exports.time = time = function time(f, fname) {
  * @param {number} min_or_max - Minimum value if max is provided, otherwise, Maximum value
  * @param {?number} max - Maximum value (not included)
  * @param {?number=} [step=1] - Step
- * @returns {Array.<number>}
+ * @returns {Array.&lt;number>}
  * @example
  *   range(5)        // returns [0, 1, 2, 3, 4]
  *   range(3, 6)     // returns [3, 4, 5]
@@ -2028,7 +2055,7 @@ exports.range = range = function range() {
   case 3:
     var xs = [], min = args[0], max = args[1], step = (args[2] > 0) ? args[2] : 1;
     if (min >= max) return [];
-    do xs.push(min); while ((min+=step) < max)
+    do xs.push(min); while ((min+=step) &lt; max)
     return xs;
   }
 };
@@ -2039,7 +2066,7 @@ exports.range = range = function range() {
  * @param {number} min_or_max - Minimum value if max is provided, otherwise, Maximum value
  * @param {?number} max - Maximum value (not included)
  * @param {?number=} [step=1] - Step
- * @returns {function(): Array.<number>}
+ * @returns {function(): Array.&lt;number>}
  * @example
  *   var r = xrange(3) // returns function() {...}
  *   r()               // returns [0, 1, 2]
@@ -2075,14 +2102,14 @@ exports.eq = eq = function eq(x, y) {
   var args = arguments;
   var eq2 = function(x, y) {
     switch(true) {
-    case isArrayLike(x) && isArrayLike(y):
+    case isArrayLike(x) &amp;&amp; isArrayLike(y):
       if (x.length === y.length) {
-        for (var i = 0; i < x.length; i++)
+        for (var i = 0; i &lt; x.length; i++)
           if (!eq(x[i], y[i]))
             return false;
         return true;
       } else return false;
-    case isObject(x) && isObject(y):
+    case isObject(x) &amp;&amp; isObject(y):
       if (eq(keys(x), keys(y))) {
         for (i in x)
           if (!eq(x[i], y[i]))
@@ -2095,7 +2122,7 @@ exports.eq = eq = function eq(x, y) {
   };
   var reducer = function(x, y, rest) {
     if (rest.length == 1) return eq2(x, y);
-    return eq2(x, y) && reducer(rest[0], rest[1], slice(rest, 1));
+    return eq2(x, y) &amp;&amp; reducer(rest[0], rest[1], slice(rest, 1));
   };
   return reducer(args[0], args[1], slice(args, 1));
 };
@@ -2108,7 +2135,7 @@ exports.eq = eq = function eq(x, y) {
  * @see odd
  */
 exports.even = even = function even(x) {
-  return (x & 1) === 0;
+  return (x &amp; 1) === 0;
 };
 
 /**
@@ -2168,7 +2195,7 @@ exports.eqOne = eqOne = function eqOne(x) {
  * Returns true if x is empty.
  * Works on objects, arrays and strings.
  * @function
- * @param {Array.<*>|object|string} x
+ * @param {Array.&lt;*>|object|string} x
  * @returns {boolean}
  * @throws {ArgumentError} If x is not an Array, a String or a JS Object
  * @see is
@@ -2219,7 +2246,7 @@ exports.isEmpty = isEmpty = function isEmpty(x) {
  * @see isUndefined
  */
 exports.isObject = isObject = function isObject(x) {
-  return is('Object')(x) && !isFunction(x);
+  return is('Object')(x) &amp;&amp; !isFunction(x);
 };
 
 /**
@@ -2449,7 +2476,7 @@ exports.isBoolean = isBoolean = is('Boolean');
  * @see isUndefined
  */
 exports.isFloat = isFloat = function isFloat(x) {
-  return isNumber(x) && (parseFloat(x) != parseInt(x));
+  return isNumber(x) &amp;&amp; (parseFloat(x) != parseInt(x));
 };
 
 /**
@@ -2477,7 +2504,7 @@ exports.isFloat = isFloat = function isFloat(x) {
  * @see isUndefined
  */
 exports.isInt = isInt = function isInt(x) {
-  return isNumber(x) && !isFloat(x);
+  return isNumber(x) &amp;&amp; !isFloat(x);
 };
 
 /**
@@ -2705,7 +2732,7 @@ var parseArgs = function(args) {
  * Uses in main scope some of the fjs functions.
  * use is a side-effect only function
  * @function
- * @param {string|Array.<string|object>} varnames = Can be a variable number of strings
+ * @param {string|Array.&lt;string|object>} varnames = Can be a variable number of strings
  * @returns {undefined}
  * @throws {Error} If fjs does not include a required variable
  * @example
@@ -2751,7 +2778,7 @@ exports.use = function use() {
  */
 exports.useAll = function useAll() {
   apply(exports.use, filter(function(key) {
-    return key != 'use' && key != 'useAll' && key != 'del';
+    return key != 'use' &amp;&amp; key != 'useAll' &amp;&amp; key != 'del';
   }, keys(exports)));
 };
 
@@ -2761,7 +2788,7 @@ exports.useAll = function useAll() {
  * Handy when you want to clean the scope after using fjs variables.
  * del is a side-effect only function
  * @function
- * @param {string|Array.<string|object>} varnames = Can be a variable number of strings
+ * @param {string|Array.&lt;string|object>} varnames = Can be a variable number of strings
  * @returns {undefined}
  * @see use
  * @see useAll
@@ -2821,3 +2848,26 @@ exports.del = function del() {
    */
   exports.versionDetails = {major: 0, minor: 17, patch: 0};
 })();
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Global</h3><ul><li><a href="global.html#add">add</a></li><li><a href="global.html#and">and</a></li><li><a href="global.html#apply">apply</a></li><li><a href="global.html#applyWith">applyWith</a></li><li><a href="global.html#areArguments">areArguments</a></li><li><a href="global.html#ArgumentError">ArgumentError</a></li><li><a href="global.html#arity">arity</a></li><li><a href="global.html#arity0">arity0</a></li><li><a href="global.html#arity1">arity1</a></li><li><a href="global.html#arity2">arity2</a></li><li><a href="global.html#arity3">arity3</a></li><li><a href="global.html#assoc">assoc</a></li><li><a href="global.html#attrs">attrs</a></li><li><a href="global.html#bind">bind</a></li><li><a href="global.html#butfirst">butfirst</a></li><li><a href="global.html#butlast">butlast</a></li><li><a href="global.html#call">call</a></li><li><a href="global.html#callWith">callWith</a></li><li><a href="global.html#clone">clone</a></li><li><a href="global.html#comp">comp</a></li><li><a href="global.html#complement">complement</a></li><li><a href="global.html#concat">concat</a></li><li><a href="global.html#concatMap">concatMap</a></li><li><a href="global.html#concatMapkv">concatMapkv</a></li><li><a href="global.html#conj">conj</a></li><li><a href="global.html#cons">cons</a></li><li><a href="global.html#cs">cs</a></li><li><a href="global.html#curriedFunctions">curriedFunctions</a></li><li><a href="global.html#curry">curry</a></li><li><a href="global.html#curry1">curry1</a></li><li><a href="global.html#cycle">cycle</a></li><li><a href="global.html#dec">dec</a></li><li><a href="global.html#del">del</a></li><li><a href="global.html#dir">dir</a></li><li><a href="global.html#dir1">dir1</a></li><li><a href="global.html#div">div</a></li><li><a href="global.html#doc">doc</a></li><li><a href="global.html#drop">drop</a></li><li><a href="global.html#dropWhile">dropWhile</a></li><li><a href="global.html#eq">eq</a></li><li><a href="global.html#eq2">eq2</a></li><li><a href="global.html#eq3">eq3</a></li><li><a href="global.html#eqOne">eqOne</a></li><li><a href="global.html#eqZero">eqZero</a></li><li><a href="global.html#error">error</a></li><li><a href="global.html#error1">error1</a></li><li><a href="global.html#even">even</a></li><li><a href="global.html#every">every</a></li><li><a href="global.html#fdrop">fdrop</a></li><li><a href="global.html#fget">fget</a></li><li><a href="global.html#filter">filter</a></li><li><a href="global.html#first">first</a></li><li><a href="global.html#flatten">flatten</a></li><li><a href="global.html#flip">flip</a></li><li><a href="global.html#fmap">fmap</a></li><li><a href="global.html#fmapkv">fmapkv</a></li><li><a href="global.html#fmapkvo">fmapkvo</a></li><li><a href="global.html#fmapo">fmapo</a></li><li><a href="global.html#fn">fn</a></li><li><a href="global.html#freduce">freduce</a></li><li><a href="global.html#freducekv">freducekv</a></li><li><a href="global.html#freducer">freducer</a></li><li><a href="global.html#get">get</a></li><li><a href="global.html#gt">gt</a></li><li><a href="global.html#gte">gte</a></li><li><a href="global.html#id">id</a></li><li><a href="global.html#inc">inc</a></li><li><a href="global.html#interleave">interleave</a></li><li><a href="global.html#interpose">interpose</a></li><li><a href="global.html#is">is</a></li><li><a href="global.html#isa">isa</a></li><li><a href="global.html#isArray">isArray</a></li><li><a href="global.html#isArrayLike">isArrayLike</a></li><li><a href="global.html#isBoolean">isBoolean</a></li><li><a href="global.html#isDate">isDate</a></li><li><a href="global.html#isEmpty">isEmpty</a></li><li><a href="global.html#isFalse">isFalse</a></li><li><a href="global.html#isFloat">isFloat</a></li><li><a href="global.html#isFunction">isFunction</a></li><li><a href="global.html#isInt">isInt</a></li><li><a href="global.html#isNull">isNull</a></li><li><a href="global.html#isNumber">isNumber</a></li><li><a href="global.html#isObject">isObject</a></li><li><a href="global.html#isString">isString</a></li><li><a href="global.html#isTrue">isTrue</a></li><li><a href="global.html#isUndefined">isUndefined</a></li><li><a href="global.html#join">join</a></li><li><a href="global.html#juxt">juxt</a></li><li><a href="global.html#keys">keys</a></li><li><a href="global.html#last">last</a></li><li><a href="global.html#len">len</a></li><li><a href="global.html#log">log</a></li><li><a href="global.html#log1">log1</a></li><li><a href="global.html#lookup">lookup</a></li><li><a href="global.html#loop">loop</a></li><li><a href="global.html#lt">lt</a></li><li><a href="global.html#lte">lte</a></li><li><a href="global.html#map">map</a></li><li><a href="global.html#mapkv">mapkv</a></li><li><a href="global.html#mapkvo">mapkvo</a></li><li><a href="global.html#mapo">mapo</a></li><li><a href="global.html#marshal">marshal</a></li><li><a href="global.html#max">max</a></li><li><a href="global.html#merge">merge</a></li><li><a href="global.html#min">min</a></li><li><a href="global.html#mul">mul</a></li><li><a href="global.html#neq2">neq2</a></li><li><a href="global.html#neq3">neq3</a></li><li><a href="global.html#not">not</a></li><li><a href="global.html#NotImplementedError">NotImplementedError</a></li><li><a href="global.html#odd">odd</a></li><li><a href="global.html#or">or</a></li><li><a href="global.html#owns">owns</a></li><li><a href="global.html#partial">partial</a></li><li><a href="global.html#pow">pow</a></li><li><a href="global.html#product">product</a></li><li><a href="global.html#rand">rand</a></li><li><a href="global.html#randIndex">randIndex</a></li><li><a href="global.html#randInt">randInt</a></li><li><a href="global.html#range">range</a></li><li><a href="global.html#reduce">reduce</a></li><li><a href="global.html#reducekv">reducekv</a></li><li><a href="global.html#reducer">reducer</a></li><li><a href="global.html#repeat">repeat</a></li><li><a href="global.html#repeatedly">repeatedly</a></li><li><a href="global.html#reverse">reverse</a></li><li><a href="global.html#second">second</a></li><li><a href="global.html#shuffle">shuffle</a></li><li><a href="global.html#slice">slice</a></li><li><a href="global.html#some">some</a></li><li><a href="global.html#sort">sort</a></li><li><a href="global.html#sqrt">sqrt</a></li><li><a href="global.html#sub">sub</a></li><li><a href="global.html#sum">sum</a></li><li><a href="global.html#takeWhile">takeWhile</a></li><li><a href="global.html#thread">thread</a></li><li><a href="global.html#time">time</a></li><li><a href="global.html#times">times</a></li><li><a href="global.html#unmarshal">unmarshal</a></li><li><a href="global.html#use">use</a></li><li><a href="global.html#useAll">useAll</a></li><li><a href="global.html#values">values</a></li><li><a href="global.html#version">version</a></li><li><a href="global.html#versionDetails">versionDetails</a></li><li><a href="global.html#warn">warn</a></li><li><a href="global.html#warn1">warn1</a></li><li><a href="global.html#xor">xor</a></li><li><a href="global.html#xrange">xrange</a></li><li><a href="global.html#zip">zip</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a> on Wed Aug 06 2014 16:36:12 GMT+0900 (JST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
