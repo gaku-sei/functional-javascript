@@ -206,6 +206,149 @@ describe 'Library', ->
       expect(fjs.neq3('foo', 'bar', 'baz')).to.be.true
       expect(fjs.neq3(true, true, true, false)).to.be.true
 
-#  describe 'lt', ->
-#    it 'should return true with 2 arguments', ->
-#      expect(false).to.be.true
+  describe 'lt', ->
+    it 'should return true with 2 arguments', ->
+      expect(fjs.lt(1, 2)).to.be.true
+      expect(fjs.lt(10, 20)).to.be.true
+      expect(fjs.lt('0', '1')).to.be.true
+      expect(fjs.lt(false, true)).to.be.true
+
+    it 'should return false with 2 arguments', ->
+      expect(fjs.lt(2, 1)).to.be.false
+      expect(fjs.lt(20, 10)).to.be.false
+      expect(fjs.lt('1', '0')).to.be.false
+      expect(fjs.lt(true, false)).to.be.false
+
+    it 'should return true with several arguments', ->
+      expect(fjs.lt(1, 2, 3)).to.be.true
+      expect(fjs.lt(10, 20, 30, 40)).to.be.true
+      expect(fjs.lt('0', '1', '2')).to.be.true
+
+    it 'should return false with several arguments', ->
+      expect(fjs.lt(3, 2, 1)).to.be.false
+      expect(fjs.lt(1, 2, 3, 4, 5, 5)).to.be.false
+      expect(fjs.lt('2', '1', '0')).to.be.false
+
+  describe 'gt', ->
+    it 'should return false with 2 arguments', ->
+      expect(fjs.gt(1, 2)).to.be.false
+      expect(fjs.gt(10, 20)).to.be.false
+      expect(fjs.gt('0', '1')).to.be.false
+      expect(fjs.gt(false, true)).to.be.false
+
+    it 'should return true with 2 arguments', ->
+      expect(fjs.gt(2, 1)).to.be.true
+      expect(fjs.gt(20, 10)).to.be.true
+      expect(fjs.gt('1', '0')).to.be.true
+      expect(fjs.gt(true, false)).to.be.true
+
+    it 'should return false with several arguments', ->
+      expect(fjs.gt(1, 2, 3)).to.be.false
+      expect(fjs.gt(10, 20, 30, 40)).to.be.false
+      expect(fjs.gt('0', '1', '2')).to.be.false
+      expect(fjs.gt(5, 4, 3, 2, 1, 1)).to.be.false
+
+    it 'should return true with several arguments', ->
+      expect(fjs.gt(3, 2, 1)).to.be.true
+      expect(fjs.gt('2', '1', '0')).to.be.true
+
+  describe 'lte', ->
+    it 'should return true with 2 arguments', ->
+      expect(fjs.lte(1, 2)).to.be.true
+      expect(fjs.lte(1, 1)).to.be.true
+      expect(fjs.lte('0', '1')).to.be.true
+      expect(fjs.lte('0', '0')).to.be.true
+
+    it 'should return false with 2 arguments', ->
+      expect(fjs.lte(2, 1)).to.be.false
+      expect(fjs.lte('1', '0')).to.be.false
+
+    it 'should return true with several arguments', ->
+      expect(fjs.lte(1, 2, 3)).to.be.true
+      expect(fjs.lte(1, 1, 1, 1, 1)).to.be.true
+      expect(fjs.lte('1', '1', '2', '3')).to.be.true
+
+    it 'should return false with several arguments', ->
+      expect(fjs.lte(3, 2, 1)).to.be.false
+      expect(fjs.lte('3', '2', '2')).to.be.false
+
+  describe 'gte', ->
+    it 'should return false with 2 arguments', ->
+      expect(fjs.gte(1, 2)).to.be.false
+      expect(fjs.gte('0', '1')).to.be.false
+
+    it 'should return true with 2 arguments', ->
+      expect(fjs.gte(1, 1)).to.be.true
+      expect(fjs.gte(2, 1)).to.be.true
+      expect(fjs.gte('1', '0')).to.be.true
+      expect(fjs.gte('0', '0')).to.be.true
+
+    it 'should return false with several arguments', ->
+      expect(fjs.gte(1, 2, 3)).to.be.false
+      expect(fjs.gte('1', '1', '2', '3')).to.be.false
+
+    it 'should return true with several arguments', ->
+      expect(fjs.gte(1, 1, 1, 1, 1)).to.be.true
+      expect(fjs.gte(3, 2, 1)).to.be.true
+      expect(fjs.gte('3', '2', '2')).to.be.true
+
+  describe 'and', ->
+    it 'should return true with 2 arguments', ->
+      expect(fjs.and(true, true)).to.be.true
+
+    it 'should return false with 2 arguments', ->
+      expect(fjs.and(true, false)).to.be.false
+      expect(fjs.and(false, false)).to.be.false
+
+    it 'should return true with several arguments', ->
+      expect(fjs.and(true, true, true, true)).to.be.true
+
+    it 'should return false with several arguments', ->
+      expect(fjs.and(true, true, true, false)).to.be.false
+      expect(fjs.and(false, false, false, false)).to.be.false
+
+  describe 'or', ->
+    it 'should return true with 2 arguments', ->
+      expect(fjs.or(true, true)).to.be.true
+      expect(fjs.or(false, true)).to.be.true
+
+    it 'should return false with 2 arguments', ->
+      expect(fjs.or(false, false)).to.be.false
+
+    it 'should return true with several arguments', ->
+      expect(fjs.or(true, true, true, true)).to.be.true
+      expect(fjs.or(false, false, false, true)).to.be.true
+      expect(fjs.or(true, true, true, false)).to.be.true
+
+    it 'should return false with several arguments', ->
+      expect(fjs.or(false, false, false, false)).to.be.false
+
+  describe 'xor', ->
+    it 'should return true with 2 arguments', ->
+      expect(fjs.xor(true, false)).to.be.true
+
+    it 'should return false with 2 arguments', ->
+      expect(fjs.xor(true, true)).to.be.false
+      expect(fjs.xor(false, false)).to.be.false
+
+    it 'should return true with several arguments', ->
+      expect(fjs.xor(true, false, true, false)).to.be.true
+      expect(fjs.xor(false, false, false, true)).to.be.true
+      expect(fjs.xor(true, false, false, false)).to.be.true
+
+    it 'should return false with several arguments', ->
+      expect(fjs.xor(true, true, true, true, true)).to.be.false
+      expect(fjs.xor(false, false, false)).to.be.false
+
+  describe 'complement', ->
+    f_id_complement = fjs.complement(f_id)
+    it 'should return a function', ->
+      expect(f_id_complement).to.be.a('Function')
+
+    it 'sould return true', ->
+      expect(f_id_complement(false)).to.be.true
+
+    it 'should return false', ->
+      expect(f_id_complement(true)).to.be.false
+
+  #describe 'applyWith', ->
