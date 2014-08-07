@@ -1,6 +1,6 @@
 {
   "name": "functional-javascript",
-  "version": "0.17.0",
+  "version": "0.17.1",
   "description": "Library of functions targeting readability and ease",
   "main": "lib/functional-javascript.js",
   "directories": {

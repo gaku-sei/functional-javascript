@@ -340,6 +340,72 @@ describe 'Library', ->
       expect(fjs.xor(true, true, true, true, true)).to.be.false
       expect(fjs.xor(false, false, false)).to.be.false
 
+  describe 'bitand', ->
+    it 'should compute with 2 arguments', ->
+      expect(fjs.bitand(1, 2)).to.equal(0)
+      expect(fjs.bitand(1, 3)).to.equal(1)
+
+    it 'should compute with several arguments', ->
+      expect(fjs.bitand(0, 4, 1)).to.equal(0)
+      expect(fjs.bitand(1, 3, 1)).to.equal(1)
+      expect(fjs.bitand(1, 3, 1, 2)).to.equal(0)
+
+  describe 'bitor', ->
+    it 'should compute with 2 arguments', ->
+      expect(fjs.bitor(1, 2)).to.equal(3)
+      expect(fjs.bitor(4, 3)).to.equal(7)
+
+    it 'should compute with several arguments', ->
+      expect(fjs.bitor(0, 4, 1)).to.equal(5)
+      expect(fjs.bitor(1, 3, 1)).to.equal(3)
+      expect(fjs.bitor(1, 3, 1, 5)).to.equal(7)
+
+  describe 'bitxor', ->
+    it 'should compute with 2 arguments', ->
+      expect(fjs.bitxor(1, 2)).to.equal(3)
+      expect(fjs.bitxor(4, 6)).to.equal(2)
+
+    it 'should compute with several arguments', ->
+      expect(fjs.bitxor(0, 4, 1)).to.equal(5)
+      expect(fjs.bitxor(1, 3, 1)).to.equal(3)
+      expect(fjs.bitxor(1, 3, 1, 5)).to.equal(6)
+
+  describe 'bitnot', ->
+    it 'should compute', ->
+      expect(fjs.bitnot(0)).to.equal(-1)
+      expect(fjs.bitnot(1)).to.equal(-2)
+      expect(fjs.bitnot(4)).to.equal(-5)
+
+  describe 'bitlshift', ->
+    it 'should compute with 2 arguments', ->
+      expect(fjs.bitlshift(1, 2)).to.equal(4)
+      expect(fjs.bitlshift(4, 6)).to.equal(256)
+
+    it 'should compute with several arguments', ->
+      expect(fjs.bitlshift(0, 4, 1)).to.equal(0)
+      expect(fjs.bitlshift(1, 3, 1)).to.equal(16)
+      expect(fjs.bitlshift(1, 3, 1, 5)).to.equal(512)
+
+  describe 'bitrshift2', ->
+    it 'should compute with 2 arguments', ->
+      expect(fjs.bitrshift2(1, 2)).to.equal(0)
+      expect(fjs.bitrshift2(4, 1)).to.equal(2)
+
+    it 'should compute with several arguments', ->
+      expect(fjs.bitrshift2(53, 1, 2)).to.equal(6)
+      expect(fjs.bitrshift2(1, 3, 1)).to.equal(0)
+      expect(fjs.bitrshift2(1, 3, 1, 5)).to.equal(0)
+
+  describe 'bitrshift3', ->
+    it 'should compute with 2 arguments', ->
+      expect(fjs.bitrshift3(1, 2)).to.equal(0)
+      expect(fjs.bitrshift3(4, 1)).to.equal(2)
+
+    it 'should compute with several arguments', ->
+      expect(fjs.bitrshift3(53, 1, 2)).to.equal(6)
+      expect(fjs.bitrshift3(1, 3, 1)).to.equal(0)
+      expect(fjs.bitrshift3(1, 3, 1, 5)).to.equal(0)
+
   describe 'complement', ->
     f_id_complement = fjs.complement(f_id)
     it 'should return a function', ->
