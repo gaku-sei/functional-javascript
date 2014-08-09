@@ -1,6 +1,6 @@
 ## Functionnal JavaScript
 
-Written with functionnal programming in mind Functional Javascript is a general purpose library providing functions allowing you to use functional programming in JS.
+Functional-JavaScript is a general purpose library targeting functional programming in JS.
 
 ### Usage
 
@@ -14,10 +14,11 @@ And in your script:
 var fjs = require('functional-javascript');
 ```
 
-You can also find the documentation page [here](http://gaku-sei.github.io/functional-javascript/).
+You can find the documentation page [here](http://gaku-sei.github.io/functional-javascript/).
 And the NPM page [here](https://www.npmjs.org/package/functional-javascript).
+Also, a browser version can be found [here](https://github.com/gaku-sei/functional-javascript-browser).
 
-### What is Functional Javascript
+### What is Functional-JavaScript
 
 - General purpose functions (eq, clone, keys, values, ...)
 - Iteration functions (map, mapkv, reduce, reducer, reducekv, filter, some, every, takeWhile, dropWhile, ...)
@@ -29,5 +30,4 @@ And the NPM page [here](https://www.npmjs.org/package/functional-javascript).
 
 ### Warnings
 
-FJS has only been tested on later versions of main browsers (Maxthon, Google Chrome, Opera and Firefox) for the moment and seems to work as excepted on nodeJS (>= 0.8).
-Also, even if already tested in browser, proper node js tests are still being written.
+Functional-JavaScript has already been tested in browser, but proper node js tests are being written.
