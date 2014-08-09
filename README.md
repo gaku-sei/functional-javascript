@@ -15,6 +15,7 @@ var fjs = require('functional-javascript');
 ```
 
 You can also find the documentation page [here](http://gaku-sei.github.io/functional-javascript/).
+And the NPM page [here](https://www.npmjs.org/package/functional-javascript).
 
 ### What is Functional Javascript
 
